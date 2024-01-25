@@ -1,16 +1,29 @@
-import styled from 'styled-components';
+import styled, {createGlobalStyle} from 'styled-components';
 
-import NxWelcome from './nx-welcome';
+import Map from './map';
 
-const StyledApp = styled.div`
-  // Your style here
+const GlobalStyle = createGlobalStyle`
+ :root {
+  --primary: #353859;
+  --secondary: #3B3B71;
+  --highlight: #B842A8;
+}
+
+html,body {
+  min-height: 100%;
+}
+
+dialog:focus {
+  outline: none;
+}
 `;
 
 export function App() {
   return (
-    <StyledApp>
-      <NxWelcome title="technique-map" />
-    </StyledApp>
+    <>
+    <GlobalStyle/>
+      <Map />
+    </>
   );
 }
 
