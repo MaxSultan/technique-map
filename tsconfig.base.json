@@ -15,6 +15,7 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
+      "@technique-map/design-system": ["design-system/src/index.ts"],
       "@technique-map/map-items": ["map-items/src/index.ts"]
     }
   },

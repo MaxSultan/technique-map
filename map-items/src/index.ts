@@ -1,1 +1,2 @@
-export * from './lib/map-items';
+export { TrashIcon } from './lib/trash-icon';
+export { ContentMap, AddToPracticePlanArgs } from './lib/content-map';
