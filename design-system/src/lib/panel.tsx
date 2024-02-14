@@ -1,4 +1,4 @@
-import { forwardRef, useRef } from 'react';
+import { ReactNode, forwardRef, useRef, MouseEvent, MutableRefObject } from 'react';
 import styled, { keyframes } from 'styled-components';
 
 const backdropFadeIn = keyframes`
@@ -73,7 +73,32 @@ export const PanelItem = styled(
   }
 `;
 
-const PanelElement = styled.dialog`
+interface RefObject<T> {
+  // immutable
+  readonly current: T | null
+}
+
+export const Panel = styled(forwardRef(({ children, className } : {children: ReactNode, className?:string}, ref) => {
+  const panelRef = (ref ? ref : useRef()) as MutableRefObject<HTMLDialogElement>;
+
+  const handleClick = (ref: MutableRefObject<HTMLDialogElement>) => (e: MouseEvent) => {
+    const { top, bottom, left, right } = ref.current.getBoundingClientRect();
+    const clickX = e.clientX;
+    const clickY = e.clientY;
+    if (clickX < left || clickX > right || clickY < top || clickY > bottom)
+      ref.current?.close();
+  };
+
+  return (
+    <dialog
+      ref={panelRef}
+      onClick={(e) => handleClick(panelRef)(e)}
+      className={className}
+    >
+      {children}
+    </dialog>
+  );
+}))`
   --animation-timing: 0.4s;
   --panel-width: 300px;
 
@@ -101,24 +126,3 @@ const PanelElement = styled.dialog`
     }
   }
 `;
-
-export const Panel = forwardRef(({ children }, ref) => {
-  const panelRef = ref ? ref : useRef();
-
-  const handleClick = (ref) => (e) => {
-    const { top, bottom, left, right } = ref.current.getBoundingClientRect();
-    const clickX = e.clientX;
-    const clickY = e.clientY;
-    if (clickX < left || clickX > right || clickY < top || clickY > bottom)
-      ref.current?.close();
-  };
-
-  return (
-    <PanelElement
-      ref={panelRef}
-      onClick={handleClick(panelRef)}
-    >
-      {children}
-    </PanelElement>
-  );
-});

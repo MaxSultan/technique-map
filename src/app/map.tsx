@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import { useState, useRef } from 'react';
 import styled from 'styled-components';
 import {
   TrashIcon,
@@ -18,6 +18,7 @@ const PracticePlanDisplay = styled.aside`
   background-color: var(--primary);
   color: white;
   padding: 32px;
+  box-shadow: 16px 0px 16px -16px hsl(from var(--primary) h s 10%);
 `;
 
 const StyledTrashIcon = styled(TrashIcon)`
@@ -41,6 +42,12 @@ const PracticePlanItem = styled.li`
   background-color: var(--secondary);
 `;
 
+type PositionType = {name: string; moves: { name: string}[]} 
+
+type AreaType = {
+  name: 'top' | 'bottom' | 'neutral'; positions: PositionType[]
+}
+
 const Map = styled(({ className }) => {
   const initialPracticePlanState = { neutral: [], top: [], bottom: [] };
   const [panelContent, setPanelContent] = useState('');
@@ -50,7 +57,7 @@ const Map = styled(({ className }) => {
   const [practicePlan, setPracticePlan] = useState(initialPracticePlanState);
   const panelRef = useRef<HTMLDialogElement | undefined>();
 
-  const AREA = [
+  const AREA: AreaType[] = [
     {
       name: 'neutral',
       positions: [
@@ -125,7 +132,7 @@ const Map = styled(({ className }) => {
     { name: 'top', positions: [{ name: 'on feet', moves: [] }] },
   ];
 
-  const showPanel = (content) => {
+  const showPanel = (content:any) => {
     setPanelContent(content);
     panelRef.current?.showModal();
   };
@@ -172,9 +179,11 @@ const Map = styled(({ className }) => {
           Icon={StyledTrashIcon}
         />
       </PracticePlanDisplay>
+      {/* @ts-ignore:next-line  */}
       <ContentMap
         addToPracticePlan={addToPracticePlan}
-        content={AREA.find((i) => i.name === currentTab)?.positions}
+       /* @ts-ignore:next-line */
+        content={AREA.find((i) => i.name === currentTab).positions}
         showPanel={showPanel}
         area={currentTab}
       />
@@ -182,7 +191,7 @@ const Map = styled(({ className }) => {
         <PanelList>{panelContent}</PanelList>
       </Panel>
       <Tabs
-        tabs={AREA}
+        tabs={AREA.map(i => i.name)}
         currentTab={currentTab}
         setCurrentTab={setCurrentTab}
       />

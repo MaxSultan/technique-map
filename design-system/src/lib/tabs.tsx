@@ -1,11 +1,7 @@
 import styled from 'styled-components';
 
-type TabProps = {
-  name: 'top' | 'bottom' | 'neutral';
-};
-
 type TabsProps = {
-  tabs: TabProps[];
+  tabs: ('top' | 'bottom' | 'neutral')[];
   currentTab: string;
   setCurrentTab: (arg0: 'top' | 'bottom' | 'neutral') => void;
   className?: string;
@@ -14,13 +10,13 @@ type TabsProps = {
 export const Tabs = styled(
   ({ tabs, currentTab, setCurrentTab, className }: TabsProps) => (
     <div className={className}>
-      {tabs.map(({ name }: TabProps) => (
+      {tabs.map((i) => (
         <div
-          onClick={() => setCurrentTab(name)}
-          aria-selected={currentTab === name}
-          key={name}
+          onClick={() => setCurrentTab(i)}
+          aria-selected={currentTab === i}
+          key={i}
         >
-          {name}
+          {i}
         </div>
       ))}
     </div>

@@ -24,6 +24,10 @@ html,body {
 dialog:focus {
   outline: none;
 }
+
+ * {
+  font-family: 'Lobster Two', sans-serif;
+ }
 `;
 
 export function App() {

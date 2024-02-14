@@ -1,3 +1,4 @@
+import styled from 'styled-components';
 import { SVGRect } from './svg-rect';
 import { PanelItem } from '@technique-map/design-system';
 
@@ -14,61 +15,47 @@ type ContentMapProps = {
   addToPracticePlan: ({ position, move, area }: AddToPracticePlanArgs) => void;
   showPanel: (arg0: Function) => void;
   content: PositionProps[];
+  className: string;
 };
 
-export const ContentMap = ({
+export const ContentMap = styled(({
+  className,
   content,
   showPanel,
   addToPracticePlan,
   area,
 }: ContentMapProps) => {
-  const paddingLeft = 25;
-  const paddingRight = 25;
-  const rectHeight = 100;
-  const rectWidth = 100;
+  const paddingLeft = 50;
+  const paddingRight = 50;
   const windowWidth = window.innerWidth - 300;
+  const circleRadius = 50;
+  const circleDiameter = 2 * circleRadius;
+  const marginTop = 50;
 
   const svgWidth = windowWidth - (paddingLeft + paddingRight);
 
   const mapIndexToXCoords = (index: number): number => {
-    const center = 0.5 * svgWidth - 0.5 * rectWidth + paddingLeft;
+    const center = 0.5 * svgWidth - 0.5 * circleDiameter + paddingLeft;
     const left = paddingLeft;
-    const right = svgWidth + paddingLeft - (rectWidth + paddingRight);
+    const right = svgWidth + paddingLeft - (circleDiameter + paddingRight);
 
-    // TODO: fix this so it is a function
-    const lookUpTable = {
-      0: center,
-      1: center,
-      2: left,
-      3: left,
-      4: center,
-      5: right,
-      6: right,
-      7: center,
-      8: left,
-      9: left,
-      10: center,
-      11: right,
-      12: right,
-      13: center,
-      14: left,
-      15: left,
-      16: center,
-    };
-    return lookUpTable[index];
+    if (index % 3 === 1 || index === 0) return center;
+    else if (index % 6 === 2 || index % 6 === 3) return left;
+    else return right;
   };
 
   return (
     <svg
       height={110 * (content.length + 2)}
       width={windowWidth}
+      className={className}
     >
       {content.map((position: PositionProps, idx: number) => (
         <SVGRect
+          key={idx}
           index={idx}
-          height={rectHeight}
-          width={rectWidth}
-          y={idx * 110}
+          r={circleRadius}
+          y={marginTop + idx * 110}
           x={mapIndexToXCoords(idx)}
           onClick={() =>
             showPanel(() => (
@@ -94,4 +81,6 @@ export const ContentMap = ({
       ))}
     </svg>
   );
-};
+})`
+  background-color: var(--primary);
+`;

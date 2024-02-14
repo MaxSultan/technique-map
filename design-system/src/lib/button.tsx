@@ -26,15 +26,16 @@ export const Button = styled(({ text, onClick, className, Icon }) => {
   border-radius: 8px;
   margin-top: 15px;
   cursor: pointer;
+  color: white;
 
   &:hover,
   &:hover > div {
-    background-color: hsl(from var(--caution) h s l / 90%);
+    background-color: hsl(from var(--caution) h s calc(l * 0.8));
   }
 
   &:active,
   &:active > div {
-    background-color: hsl(from var(--caution) h s l / 50%);
+    background-color: hsl(from var(--caution) h s calc(l * 0.7));
   }
 
   & > div {

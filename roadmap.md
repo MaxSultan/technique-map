@@ -5,18 +5,18 @@ A way to quickly create practice plans
 A way to visualize the hight level technique plan
 A way to store content related to the technique
 
-[] Type map.tsx
+[x] Type map.tsx
 [x] Add click on overlay to the panel component
 [] Make practice plan boxed a fixed height for different areas
 [] add a print/copy practice plan feature
-[] group items in are by position
 [] make usable on mobile
-[] deploy
+[x] deploy
 [] stop the same item from the same position being added more than once to a practice plan
 [] group the items in the same area by position
-[] nx-ize the code
+[x] nx-ize the code
 [] styling
 [] make content adjust on resize
+[] create github repo
 
 nice to have
 [] make the panel transition out of view nicely
