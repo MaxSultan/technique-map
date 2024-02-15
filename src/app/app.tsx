@@ -6,6 +6,7 @@ const GlobalStyle = createGlobalStyle`
  :root {
   --primary: #353859;
   --secondary: #3B3B71;
+  --tertiary: #373456;
   --highlight: #B842A8;
 
   --affirmative: #33C27D;

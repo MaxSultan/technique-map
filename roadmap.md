@@ -1,5 +1,8 @@
 # V1
 
+Hypothesis:
+1000 reps in the 20% of wrestling that makes up 80% will get kids from novice to advanced
+
 An overview of techniques
 A way to quickly create practice plans
 A way to visualize the hight level technique plan
@@ -16,7 +19,10 @@ A way to store content related to the technique
 [x] nx-ize the code
 [] styling
 [] make content adjust on resize
-[] create github repo
+[x] create github repo
+[] Add curved lines between svg circles
+[x] remove from practice plan button
+[] add error handling
 
 nice to have
 [] make the panel transition out of view nicely

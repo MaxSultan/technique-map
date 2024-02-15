@@ -37,24 +37,47 @@ const PracticePlanGroup = styled.ul`
 `;
 
 const PracticePlanItem = styled.li`
+  display: flex;
+  justify-content: space-between;
   list-style: none;
   padding: 8px 16px;
   background-color: var(--secondary);
+  position:relative;
 `;
+
+const IconButton = styled.button`
+  border-radius: 5000px 50px 5000px 5000px;
+  background: linear-gradient(var(--secondary), var(--tertiary));
+  padding: 8px;
+  border: none;
+  cursor: pointer;
+  position: absolute;
+  top: 0;
+  right: 0;
+  filter: drop-shadow(2px 2px 2px hsl(from var(--primary) h s 10%));
+`
+type Area = 'top' | 'bottom' | 'neutral';
 
 type PositionType = {name: string; moves: { name: string}[]} 
 
 type AreaType = {
-  name: 'top' | 'bottom' | 'neutral'; positions: PositionType[]
+  name: Area; positions: PositionType[]
 }
+
+type PlanType = {
+   neutral: string[];
+   top:string[];
+   bottom: string[];
+}
+
 
 const Map = styled(({ className }) => {
   const initialPracticePlanState = { neutral: [], top: [], bottom: [] };
   const [panelContent, setPanelContent] = useState('');
-  const [currentTab, setCurrentTab] = useState<'neutral' | 'top' | 'bottom'>(
+  const [currentTab, setCurrentTab] = useState<Area>(
     'neutral'
   );
-  const [practicePlan, setPracticePlan] = useState(initialPracticePlanState);
+  const [practicePlan, setPracticePlan] = useState<PlanType>(initialPracticePlanState);
   const panelRef = useRef<HTMLDialogElement | undefined>();
 
   const AREA: AreaType[] = [
@@ -141,13 +164,22 @@ const Map = styled(({ className }) => {
     setPracticePlan(initialPracticePlanState);
   };
 
+  const nothingHappened = () => {
+    console.log('already selected')
+    return [];
+  }
+
   const addToPracticePlan = ({
     position,
     move,
     area,
   }: AddToPracticePlanArgs) => {
-    setPracticePlan((prev) => ({ ...prev, [area]: [...prev[area], move] }));
+    setPracticePlan((prev) => ({ ...prev, [area]: [...prev[area], ...(prev[area].includes(move) ? [] : [move])] }));
   };
+
+  const removeFromPracticePlan = (area: 'neutral'|'top'| 'bottom', item: string) => {
+    setPracticePlan((prev) => ({ ...prev, [area]: prev[area].filter(i => i !== item) }));
+  }
 
   return (
     <main className={className}>
@@ -158,19 +190,19 @@ const Map = styled(({ className }) => {
         neutral
         <PracticePlanGroup>
           {practicePlan.neutral.map((i) => (
-            <PracticePlanItem>{i}</PracticePlanItem>
+            <PracticePlanItem>{i} <IconButton onClick={() => removeFromPracticePlan('neutral', i)}>X</IconButton></PracticePlanItem>
           ))}
         </PracticePlanGroup>
         bottom
         <PracticePlanGroup>
           {practicePlan.bottom.map((i) => (
-            <PracticePlanItem>{i}</PracticePlanItem>
+            <PracticePlanItem>{i} <IconButton onClick={() => removeFromPracticePlan('bottom', i)}>X</IconButton></PracticePlanItem>
           ))}
         </PracticePlanGroup>
         top
         <PracticePlanGroup>
           {practicePlan.top.map((i) => (
-            <PracticePlanItem>{i}</PracticePlanItem>
+            <PracticePlanItem>{i} <IconButton onClick={() => removeFromPracticePlan('top', i)}>X</IconButton></PracticePlanItem>
           ))}
         </PracticePlanGroup>
         <Button
@@ -179,7 +211,7 @@ const Map = styled(({ className }) => {
           Icon={StyledTrashIcon}
         />
       </PracticePlanDisplay>
-      {/* @ts-ignore:next-line  */}
+      {/* @ts-ignore:next-line */}
       <ContentMap
         addToPracticePlan={addToPracticePlan}
        /* @ts-ignore:next-line */

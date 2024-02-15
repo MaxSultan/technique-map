@@ -3,7 +3,7 @@ import styled from "styled-components";
 type SVGRectProps = {
   className?: string;
   text: string;
-  x: number;
+  x: string;
   y: number;
   onClick: () => void;
   index: number;
@@ -24,21 +24,21 @@ export const SVGRect = styled(({
       <circle
         key={index}
         r={r + 5}
-        cy={y + r}
-        cx={x + r}
+        cy={y}
+        cx={x}
       >
       </circle>
       <circle
         className={className}
         key={index}
         r={r}
-        cy={y + r}
-        cx={x + r}
+        cy={y}
+        cx={x}
       >
       </circle>
       <text
-        x={x + r}
-        y={y + r}
+        x={x}
+        y={y}
         dominantBaseline="middle"
         textAnchor="middle"
       >
