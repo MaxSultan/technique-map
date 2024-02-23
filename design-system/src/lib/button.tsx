@@ -15,27 +15,30 @@ export const Button = styled(({ text, onClick, className, Icon }) => {
     </button>
   );
 })`
-  padding-inline-start: 32px;
-  background-color: var(--caution);
+  --button-color: ${({ $level }) =>
+    $level === 'caution' ? 'var(--caution)' : 'var(--affirmative)'};
+
+  padding-inline-start: clamp(0px, 1vw, 32px);
+  background-color: var(--button-color);
   display: grid;
-  gap: 16px;
+  gap: clamp(2px, 2vw, 16px);
   grid-auto-flow: column;
   align-items: center;
   padding-inline-end: 0px;
   border: none;
   border-radius: 8px;
-  margin-top: 15px;
+  margin-top: 17px;
   cursor: pointer;
   color: white;
 
   &:hover,
   &:hover > div {
-    background-color: hsl(from var(--caution) h s calc(l * 0.8));
+    background-color: hsl(from var(--button-color) h s calc(l * 0.8));
   }
 
   &:active,
   &:active > div {
-    background-color: hsl(from var(--caution) h s calc(l * 0.7));
+    background-color: hsl(from var(--button-color) h s calc(l * 0.7));
   }
 
   & > div {
@@ -47,6 +50,6 @@ export const Button = styled(({ text, onClick, className, Icon }) => {
     display: grid;
     place-items: center;
     transform: translate(5%, -53%);
-    background-color: var(--caution);
+    background-color: var(--button-color);
   }
 `;

@@ -30,13 +30,12 @@ export const Tabs = styled(
   color: white;
 
   & > div[aria-selected='true'] {
-    border-bottom: none;
+    border-bottom: 2px solid var(--highlight);
     cursor: not-allowed;
   }
 
   & > div {
     cursor: pointer;
-    border-radius: 3px;
     padding: 16px 32px;
     text-transform: capitalize;
   }

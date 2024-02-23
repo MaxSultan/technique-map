@@ -10,19 +10,21 @@ A way to store content related to the technique
 
 [x] Type map.tsx
 [x] Add click on overlay to the panel component
-[] Make practice plan boxed a fixed height for different areas
-[] add a print/copy practice plan feature
-[] make usable on mobile
+[x] Make practice plan boxed a fixed height for different areas
+[x] add a print/copy practice plan feature
+[x] make usable on mobile
 [x] deploy
-[] stop the same item from the same position being added more than once to a practice plan
+[x] stop the same item from the same position being added more than once to a practice plan
 [] group the items in the same area by position
 [x] nx-ize the code
-[] styling
-[] make content adjust on resize
+[x] styling
+[x] make content adjust on resize
 [x] create github repo
 [] Add curved lines between svg circles
 [x] remove from practice plan button
 [] add error handling
+
+[] persistent storage of practice plans
 
 nice to have
 [] make the panel transition out of view nicely

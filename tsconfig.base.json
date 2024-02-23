@@ -16,7 +16,8 @@
     "baseUrl": ".",
     "paths": {
       "@technique-map/design-system": ["design-system/src/index.ts"],
-      "@technique-map/map-items": ["map-items/src/index.ts"]
+      "@technique-map/map-items": ["features/map-items/src/index.ts"],
+      "@technique-map/practice-plans": ["features/practice-plans/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

@@ -1,7 +1,7 @@
 {
   "name": "map-items",
   "$schema": "../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "map-items/src",
+  "sourceRoot": "features/src",
   "projectType": "library",
   "tags": [],
   "targets": {
@@ -14,7 +14,7 @@
       "outputs": ["{options.outputPath}"],
       "defaultConfiguration": "production",
       "options": {
-        "outputPath": "dist/map-items"
+        "outputPath": "dist/features"
       },
       "configurations": {
         "development": {
@@ -29,7 +29,7 @@
       "executor": "@nx/vite:test",
       "outputs": ["{options.reportsDirectory}"],
       "options": {
-        "reportsDirectory": "../coverage/map-items"
+        "reportsDirectory": "../coverage/features"
       }
     }
   }

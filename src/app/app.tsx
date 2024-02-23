@@ -1,4 +1,13 @@
+import './firebase';
 import { createGlobalStyle } from 'styled-components';
+import {
+  createBrowserRouter,
+  RouterProvider,
+  Route,
+  createRoutesFromElements,
+} from 'react-router-dom';
+import { NavBar } from '@technique-map/design-system';
+import { PracticePlans } from '@technique-map/practice-plans';
 
 import Map from './map';
 
@@ -31,11 +40,28 @@ dialog:focus {
  }
 `;
 
+const router = createBrowserRouter(
+  createRoutesFromElements(
+    <Route path="/" element={<NavBar />}>
+      <Route
+        path="create"
+        element={<Map />}
+      />
+      <Route
+        path="/"
+        element={<PracticePlans />}
+      />
+    </Route>
+  ),{
+    basename: "/technique-map/",
+  }
+);
+
 export function App() {
   return (
     <>
+      <RouterProvider router={router} />
       <GlobalStyle />
-      <Map />
     </>
   );
 }
