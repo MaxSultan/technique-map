@@ -1,23 +1,20 @@
 import { useState, useRef } from 'react';
 import styled from 'styled-components';
 import {
+  CloseIcon,
+  CopyIcon,
   TrashIcon,
   ContentMap,
   AddToPracticePlanArgs,
 } from '@technique-map/map-items';
-import {
-  Panel,
-  PanelList,
-  Button,
-  Tabs,
-} from '@technique-map/design-system';
+import { Panel, PanelList, Button, Tabs } from '@technique-map/design-system';
+import { collection, getDocs } from 'firebase/firestore';
+import { db } from './firebase';
 
 const PracticePlanDisplay = styled.aside`
-  height: calc(100vh - 64px);
-  width: 236px;
   background-color: var(--primary);
   color: white;
-  padding: 32px;
+  padding: clamp(8px, 3vw, 32px);
   box-shadow: 16px 0px 16px -16px hsl(from var(--primary) h s 10%);
 `;
 
@@ -42,7 +39,7 @@ const PracticePlanItem = styled.li`
   list-style: none;
   padding: 8px 16px;
   background-color: var(--secondary);
-  position:relative;
+  position: relative;
 `;
 
 const IconButton = styled.button`
@@ -55,30 +52,43 @@ const IconButton = styled.button`
   top: 0;
   right: 0;
   filter: drop-shadow(2px 2px 2px hsl(from var(--primary) h s 10%));
-`
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
 type Area = 'top' | 'bottom' | 'neutral';
 
-type PositionType = {name: string; moves: { name: string}[]} 
+type PositionType = { name: string; moves: { name: string }[] };
 
 type AreaType = {
-  name: Area; positions: PositionType[]
-}
+  name: Area;
+  positions: PositionType[];
+};
 
 type PlanType = {
-   neutral: string[];
-   top:string[];
-   bottom: string[];
-}
-
+  neutral: string[];
+  top: string[];
+  bottom: string[];
+};
 
 const Map = styled(({ className }) => {
   const initialPracticePlanState = { neutral: [], top: [], bottom: [] };
   const [panelContent, setPanelContent] = useState('');
-  const [currentTab, setCurrentTab] = useState<Area>(
-    'neutral'
+  const [currentTab, setCurrentTab] = useState<Area>('neutral');
+  const [practicePlan, setPracticePlan] = useState<PlanType>(
+    initialPracticePlanState
   );
-  const [practicePlan, setPracticePlan] = useState<PlanType>(initialPracticePlanState);
   const panelRef = useRef<HTMLDialogElement | undefined>();
+
+  const getData = async () => {
+    const querySnapshot = await getDocs(collection(db, 'practice_plan'));
+    querySnapshot.forEach((doc) => {
+      console.log(`${doc.id} => ${JSON.stringify(doc.data())}`);
+    });
+  };
+
+  const data = getData();
 
   const AREA: AreaType[] = [
     {
@@ -155,7 +165,7 @@ const Map = styled(({ className }) => {
     { name: 'top', positions: [{ name: 'on feet', moves: [] }] },
   ];
 
-  const showPanel = (content:any) => {
+  const showPanel = (content: any) => {
     setPanelContent(content);
     panelRef.current?.showModal();
   };
@@ -164,57 +174,85 @@ const Map = styled(({ className }) => {
     setPracticePlan(initialPracticePlanState);
   };
 
-  const nothingHappened = () => {
-    console.log('already selected')
-    return [];
-  }
-
   const addToPracticePlan = ({
     position,
     move,
     area,
   }: AddToPracticePlanArgs) => {
-    setPracticePlan((prev) => ({ ...prev, [area]: [...prev[area], ...(prev[area].includes(move) ? [] : [move])] }));
+    setPracticePlan((prev) => ({
+      ...prev,
+      [area]: [...prev[area], ...(prev[area].includes(move) ? [] : [move])],
+    }));
   };
 
-  const removeFromPracticePlan = (area: 'neutral'|'top'| 'bottom', item: string) => {
-    setPracticePlan((prev) => ({ ...prev, [area]: prev[area].filter(i => i !== item) }));
-  }
+  const removeFromPracticePlan = (
+    area: 'neutral' | 'top' | 'bottom',
+    item: string
+  ) => {
+    setPracticePlan((prev) => ({
+      ...prev,
+      [area]: prev[area].filter((i) => i !== item),
+    }));
+  };
+
+  const copyPracticePlan = () => {
+    window.navigator.clipboard.writeText(JSON.stringify(practicePlan));
+  };
 
   return (
     <main className={className}>
-      {/* <h1>{currentTab}</h1> */}
       <PracticePlanDisplay>
         Practice Plan
         <br />
         neutral
         <PracticePlanGroup>
           {practicePlan.neutral.map((i) => (
-            <PracticePlanItem>{i} <IconButton onClick={() => removeFromPracticePlan('neutral', i)}>X</IconButton></PracticePlanItem>
+            <PracticePlanItem>
+              {i}{' '}
+              <IconButton onClick={() => removeFromPracticePlan('neutral', i)}>
+                <CloseIcon />
+              </IconButton>
+            </PracticePlanItem>
           ))}
         </PracticePlanGroup>
         bottom
         <PracticePlanGroup>
           {practicePlan.bottom.map((i) => (
-            <PracticePlanItem>{i} <IconButton onClick={() => removeFromPracticePlan('bottom', i)}>X</IconButton></PracticePlanItem>
+            <PracticePlanItem>
+              {i}{' '}
+              <IconButton onClick={() => removeFromPracticePlan('bottom', i)}>
+                <CloseIcon />
+              </IconButton>
+            </PracticePlanItem>
           ))}
         </PracticePlanGroup>
         top
         <PracticePlanGroup>
           {practicePlan.top.map((i) => (
-            <PracticePlanItem>{i} <IconButton onClick={() => removeFromPracticePlan('top', i)}>X</IconButton></PracticePlanItem>
+            <PracticePlanItem>
+              {i}{' '}
+              <IconButton onClick={() => removeFromPracticePlan('top', i)}>
+                <CloseIcon />
+              </IconButton>
+            </PracticePlanItem>
           ))}
         </PracticePlanGroup>
         <Button
           onClick={clearPracticePlan}
           text="Clear Practice Plan"
           Icon={StyledTrashIcon}
+          $level="caution"
+        />
+        <Button
+          onClick={copyPracticePlan}
+          text="Copy Practice Plan"
+          Icon={CopyIcon}
         />
       </PracticePlanDisplay>
       {/* @ts-ignore:next-line */}
       <ContentMap
         addToPracticePlan={addToPracticePlan}
-       /* @ts-ignore:next-line */
+        /* @ts-ignore:next-line */
         content={AREA.find((i) => i.name === currentTab).positions}
         showPanel={showPanel}
         area={currentTab}
@@ -223,7 +261,7 @@ const Map = styled(({ className }) => {
         <PanelList>{panelContent}</PanelList>
       </Panel>
       <Tabs
-        tabs={AREA.map(i => i.name)}
+        tabs={AREA.map((i) => i.name)}
         currentTab={currentTab}
         setCurrentTab={setCurrentTab}
       />
@@ -232,13 +270,15 @@ const Map = styled(({ className }) => {
 })`
   display: grid;
   grid-template-areas: 'nav nav' 'plan content';
-  grid-template-columns: 300px 1fr;
+  grid-template-columns: min(236px, 25%) 1fr;
   grid-template-rows: fit-content 1fr;
 
   & > ${PracticePlanDisplay} {
     grid-area: plan;
     position: sticky;
     top: 0;
+    max-height: 100vh;
+    box-sizing: border-box;
   }
 `;
 
