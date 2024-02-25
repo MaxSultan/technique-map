@@ -1,5 +1,7 @@
-import { useState, useRef } from 'react';
+
+import { useState, useRef, useEffect } from 'react';
 import styled from 'styled-components';
+import { collection, getDocs } from 'firebase/firestore';
 import {
   CloseIcon,
   CopyIcon,
@@ -8,8 +10,7 @@ import {
   AddToPracticePlanArgs,
 } from '@technique-map/map-items';
 import { Panel, PanelList, Button, Tabs } from '@technique-map/design-system';
-import { collection, getDocs } from 'firebase/firestore';
-import { db } from './firebase';
+import {db} from './firebase'
 
 const PracticePlanDisplay = styled.aside`
   background-color: var(--primary);
@@ -72,98 +73,80 @@ type PlanType = {
   bottom: string[];
 };
 
+const newPracticePlan = {
+  date: new Date(),
+  moves: [],
+};
+
+type NeutralPositions = 'open' | 'short offense' | 'underhook' | 'overhook' | 'collar tie' | 'high crotch - defense' | 'double leg - defense' | 'single leg - defense' | 'single leg on feet - defense';
+type TopPositions = 'base' | 'belly' | 'on feet' | 'back';
+type Positions = NeutralPositions | TopPositions;
+
+type moves = {
+  move: string,
+  position: Positions,
+  area: Area,
+  level: 'JV' | 'Varsity' | 'State Qualifier' | 'State Placer',
+  id?: string,
+}
+
+/**
+  fetch moves data
+ * [{
+    id: 'ubajnfkajhdfosija134',
+    move: 'double leg',
+    position: 'open',
+    area: 'neutral',
+    level: 'JV',
+  }, ...]
+ * 
+  aggregate the moves data by area
+ * [{name: 'neutral', positions: new Set() }, {name: 'top', positions: new Set() }, {name: 'bottom', positions: new Set() }]
+  when a user clicks on a position filter the moves by area and position and display in the panel
+
+  when a user adds a move to a practice plan, update the data representation to include the move id
+   const newPracticePlan = {
+    date: new Date(),
+    moves: ['ubajnfkajhdfosija134'],
+  };
+  AND update the UI data
+  {
+    neutral: [{position: 'open', moves: ['double', 'single']}, {position: 'underhook', moves: ['single', 'fake and snap']}],
+    top: [],
+    bottom: []
+  }
+ * 
+ */
+
+const positionsByArea = (arr: moves[]): {name: Area; positions: Set<any>}[] => arr.reduce((acc, val) => {
+  const idx = acc.findIndex(i => i.name === val.area)
+  acc[idx].positions.add(val.position)
+  return acc
+}, [{name: 'neutral', positions: new Set() }, {name: 'top', positions: new Set() }, {name: 'bottom', positions: new Set() }])
+
 const Map = styled(({ className }) => {
+  const newInitialPracticePlanState = {
+    date: new Date(), // TODO: update this so a user can select a date
+    moves: ['ubajnfkajhdfosija134'],
+  };
   const initialPracticePlanState = { neutral: [], top: [], bottom: [] };
   const [panelContent, setPanelContent] = useState('');
   const [currentTab, setCurrentTab] = useState<Area>('neutral');
   const [practicePlan, setPracticePlan] = useState<PlanType>(
     initialPracticePlanState
   );
+  const [moves, setMoves] = useState<moves[]>([])
   const panelRef = useRef<HTMLDialogElement | undefined>();
 
-  const getData = async () => {
-    const querySnapshot = await getDocs(collection(db, 'practice_plan'));
-    querySnapshot.forEach((doc) => {
-      console.log(`${doc.id} => ${JSON.stringify(doc.data())}`);
-    });
-  };
+  const getData = () => getDocs(collection(db, 'moves')).then((querySnapshot) => {
+    const newData = querySnapshot.docs.map(doc => ({...doc.data(), id:doc.id }))
+    setMoves(newData); 
+    console.log(newData)
+});
 
-  const data = getData();
-
-  const AREA: AreaType[] = [
-    {
-      name: 'neutral',
-      positions: [
-        {
-          name: 'open',
-          moves: [
-            { name: 'double leg' },
-            { name: 'low single' },
-            { name: 'fake' },
-            { name: 'level change' },
-          ],
-        },
-        { name: 'short offense', moves: [] },
-        { name: 'russian tie', moves: [] },
-        {
-          name: 'underhook',
-          moves: [
-            { name: 'single' },
-            { name: 'fake to snap' },
-            { name: 'far knee blast' },
-          ],
-        },
-        { name: 'overhook', moves: [{ name: 'headlock' }] },
-        { name: 'collar tie', moves: [] },
-        { name: 'inside tie', moves: [] },
-        { name: 'in on a leg', moves: [] },
-        { name: 'opponent in on single on mat', moves: [] },
-        { name: 'opponent in on single off mat', moves: [] },
-        { name: 'opponent in on high c on mat', moves: [] },
-        { name: 'opponent in on high c off mat', moves: [] },
-        { name: 'single leg finishes', moves: [] },
-        { name: 'high c finishes', moves: [] },
-        { name: 'low single finishes', moves: [] },
-      ],
-    },
-    {
-      name: 'bottom',
-      positions: [
-        {
-          name: 'base',
-          moves: [
-            { name: 'stand up' },
-            { name: 'switch' },
-            { name: 'change over' },
-          ],
-        },
-        {
-          name: 'short sit',
-          moves: [{ name: 'sit out turn in series' }, { name: 'head gizzoni' }],
-        },
-        {
-          name: 'belly',
-          moves: [
-            { name: 'clear chicken wing' },
-            { name: 'clear half' },
-            { name: 'cradle defense' },
-            { name: 'leg ride defense' },
-            { name: 'clear near wrist' },
-            { name: 'clear cross wrist' },
-          ],
-        },
-        {
-          name: 'on back',
-          moves: [
-            { name: 'get off back (half)' },
-            { name: 'get off back (headlock)' },
-          ],
-        },
-        { name: 'on feet', moves: [] },
-      ],
-    },
-    { name: 'top', positions: [{ name: 'on feet', moves: [] }] },
-  ];
+useEffect(() => {
+  getData();
+}, [])
 
   const showPanel = (content: any) => {
     setPanelContent(content);
@@ -186,7 +169,7 @@ const Map = styled(({ className }) => {
   };
 
   const removeFromPracticePlan = (
-    area: 'neutral' | 'top' | 'bottom',
+    area: Area,
     item: string
   ) => {
     setPracticePlan((prev) => ({
@@ -207,8 +190,8 @@ const Map = styled(({ className }) => {
         neutral
         <PracticePlanGroup>
           {practicePlan.neutral.map((i) => (
-            <PracticePlanItem>
-              {i}{' '}
+            <PracticePlanItem key={i}>
+              {i}
               <IconButton onClick={() => removeFromPracticePlan('neutral', i)}>
                 <CloseIcon />
               </IconButton>
@@ -218,8 +201,8 @@ const Map = styled(({ className }) => {
         bottom
         <PracticePlanGroup>
           {practicePlan.bottom.map((i) => (
-            <PracticePlanItem>
-              {i}{' '}
+            <PracticePlanItem key={i}>
+              {i}
               <IconButton onClick={() => removeFromPracticePlan('bottom', i)}>
                 <CloseIcon />
               </IconButton>
@@ -229,8 +212,8 @@ const Map = styled(({ className }) => {
         top
         <PracticePlanGroup>
           {practicePlan.top.map((i) => (
-            <PracticePlanItem>
-              {i}{' '}
+            <PracticePlanItem key={i}>
+              {i}
               <IconButton onClick={() => removeFromPracticePlan('top', i)}>
                 <CloseIcon />
               </IconButton>
@@ -253,15 +236,16 @@ const Map = styled(({ className }) => {
       <ContentMap
         addToPracticePlan={addToPracticePlan}
         /* @ts-ignore:next-line */
-        content={AREA.find((i) => i.name === currentTab).positions}
+        content={[...positionsByArea(moves).find((i) => i.name === currentTab).positions]}
         showPanel={showPanel}
         area={currentTab}
+        moves={moves}
       />
       <Panel ref={panelRef}>
         <PanelList>{panelContent}</PanelList>
       </Panel>
       <Tabs
-        tabs={AREA.map((i) => i.name)}
+        tabs={positionsByArea(moves).map((i) => i.name)}
         currentTab={currentTab}
         setCurrentTab={setCurrentTab}
       />

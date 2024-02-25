@@ -1,8 +1,6 @@
 import styled from 'styled-components';
-import { SVGRect } from './svg-rect';
+import { SVGCircle } from './svg-circle';
 import { PanelItem } from '@technique-map/design-system';
-
-type PositionProps = { name: string; moves: { name: string }[] };
 
 export type AddToPracticePlanArgs = {
   position: string;
@@ -14,8 +12,9 @@ type ContentMapProps = {
   area: 'top' | 'bottom' | 'neutral';
   addToPracticePlan: ({ position, move, area }: AddToPracticePlanArgs) => void;
   showPanel: (arg0: Function) => void;
-  content: PositionProps[];
+  content: string[];
   className: string;
+  moves: any[]; // TODO: fix this
 };
 
 const Line = styled.line`
@@ -29,6 +28,7 @@ export const ContentMap = styled(
     showPanel,
     addToPracticePlan,
     area,
+    moves,
   }: ContentMapProps) => {
     const circleRadius = 50;
     const marginTop = 70;
@@ -49,16 +49,16 @@ export const ContentMap = styled(
         width="100%"
         className={className}
       >
-        {content.map((position: PositionProps, idx: number) => (
-          <>
+        {content.map((position: string, idx: number) => (
+          <g key={position}>
             <Line
               x1={mapIndexToRelativeXCoord(idx)}
               y1={marginTop + idx * 110}
               x2={mapIndexToRelativeXCoord(idx + 1)}
               y2={marginTop + (idx + 1) * 110}
             ></Line>
-            <SVGRect
-              key={idx}
+            <SVGCircle
+              key={`${idx}-svgRect`}
               index={idx}
               r={circleRadius}
               y={marginTop + idx * 110}
@@ -66,11 +66,12 @@ export const ContentMap = styled(
               onClick={() =>
                 showPanel(() => (
                   <>
-                    {position?.moves.map(({ name }) => (
+                    {moves.filter(i => i.area === area && i.position === position).map(({ name }, idx) => (
                       <PanelItem
+                      key={`${area}-${position}-${name}`}
                         addToPracticePlan={() =>
                           addToPracticePlan({
-                            position: position.name,
+                            position: position,
                             move: name,
                             area,
                           })
@@ -82,9 +83,9 @@ export const ContentMap = styled(
                   </>
                 ))
               }
-              text={position.name}
+              text={position}
             />
-          </>
+          </g>
         ))}
       </svg>
     );

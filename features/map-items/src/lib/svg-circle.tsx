@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-type SVGRectProps = {
+type SVGCircleProps = {
   className?: string;
   text: string;
   x: string;
@@ -10,22 +10,20 @@ type SVGRectProps = {
   r: number;
 };
 
-export const SVGRect = styled(
-  ({ className, text, x, y, r, onClick, index }: SVGRectProps) => {
+export const SVGCircle = styled(
+  ({ className, text, x, y, r, onClick, index }: SVGCircleProps) => {
     return (
       <g
         onClick={onClick}
         className={className}
       >
         <circle
-          key={index}
           r={r + 5}
           cy={y}
           cx={x}
         ></circle>
         <circle
           className={className}
-          key={index}
           r={r}
           cy={y}
           cx={x}

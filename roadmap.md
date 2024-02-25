@@ -15,7 +15,6 @@ A way to store content related to the technique
 [x] make usable on mobile
 [x] deploy
 [x] stop the same item from the same position being added more than once to a practice plan
-[] group the items in the same area by position
 [x] nx-ize the code
 [x] styling
 [x] make content adjust on resize
@@ -24,7 +23,49 @@ A way to store content related to the technique
 [x] remove from practice plan button
 [] add error handling
 
-[] persistent storage of practice plans
+[x] connect to firebase firestore
+
+[] data migration
+
+```js
+// old model
+type practicePlan = {
+  top: string[],
+  bottom: string[],
+  neutral: string[],
+};
+
+{
+  neutral: [{position: 'open', moves: ['double', 'single']}, {position: 'underhook', moves: ['single', 'fake and snap']}],
+  top: [],
+  bottom: []
+}
+
+type NewPracticePlan = {
+  date: datetime,
+  moves: moves[],
+};
+
+type moves = {
+  name: string,
+  position: 'open' | 'inside tie' | '...',
+  area: 'top' | 'bottom' | 'neutral',
+  level: 'JV' | 'Varsity' | 'State Qualifier' | 'State Placer',
+};
+```
+
+[x] add moves to db
+[x] make moves request in map
+[] group practice plan by position
+[] derive practice plan UI view data from model data
+[] add save button to practice plan create
+
+[] practice plan index
+[] practice plan index search/scoping
+[] practice plan create
+[] practice plan update
+[] practice plan delete
+[] add most recent review to moves
 
 nice to have
 [] make the panel transition out of view nicely
