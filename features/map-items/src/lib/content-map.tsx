@@ -2,15 +2,9 @@ import styled from 'styled-components';
 import { SVGCircle } from './svg-circle';
 import { PanelItem } from '@technique-map/design-system';
 
-export type AddToPracticePlanArgs = {
-  position: string;
-  move: string;
-  area: 'top' | 'bottom' | 'neutral';
-};
-
 type ContentMapProps = {
   area: 'top' | 'bottom' | 'neutral';
-  addToPracticePlan: ({ position, move, area }: AddToPracticePlanArgs) => void;
+  addToPracticePlan: (id: string) => void;
   showPanel: (arg0: Function) => void;
   content: string[];
   className: string;
@@ -66,20 +60,16 @@ export const ContentMap = styled(
               onClick={() =>
                 showPanel(() => (
                   <>
-                    {moves.filter(i => i.area === area && i.position === position).map(({ name }, idx) => (
-                      <PanelItem
-                      key={`${area}-${position}-${name}`}
-                        addToPracticePlan={() =>
-                          addToPracticePlan({
-                            position: position,
-                            move: name,
-                            area,
-                          })
-                        }
-                      >
-                        {name}
-                      </PanelItem>
-                    ))}
+                    {moves
+                      .filter((i) => i.area === area && i.position === position)
+                      .map((move) => (
+                        <PanelItem
+                          key={`${area}-${position}-${move.name}`}
+                          addToPracticePlan={() => addToPracticePlan(move.id)}
+                        >
+                          {move.name}
+                        </PanelItem>
+                      ))}
                   </>
                 ))
               }

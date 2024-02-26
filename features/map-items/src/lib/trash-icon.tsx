@@ -1,8 +1,10 @@
+import styled from 'styled-components';
+
 type TrashIconProps = {
   className: string;
 };
 
-export const TrashIcon = ({ className = '' }: TrashIconProps) => (
+export const TrashIcon = styled(({ className = '' }: TrashIconProps) => (
   <svg
     width="16"
     height="16"
@@ -19,4 +21,4 @@ export const TrashIcon = ({ className = '' }: TrashIconProps) => (
       className={className}
     />
   </svg>
-);
+))``;

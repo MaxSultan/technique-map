@@ -1,16 +1,16 @@
-
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, Fragment } from 'react';
 import styled from 'styled-components';
-import { collection, getDocs } from 'firebase/firestore';
+import { collection, getDocs, addDoc } from 'firebase/firestore';
 import {
   CloseIcon,
   CopyIcon,
   TrashIcon,
   ContentMap,
-  AddToPracticePlanArgs,
+  SaveIcon,
 } from '@technique-map/map-items';
 import { Panel, PanelList, Button, Tabs } from '@technique-map/design-system';
-import {db} from './firebase'
+// @ts-ignore next-line
+import { db } from './firebase';
 
 const PracticePlanDisplay = styled.aside`
   background-color: var(--primary);
@@ -60,93 +60,96 @@ const IconButton = styled.button`
 `;
 type Area = 'top' | 'bottom' | 'neutral';
 
-type PositionType = { name: string; moves: { name: string }[] };
-
-type AreaType = {
-  name: Area;
-  positions: PositionType[];
-};
+type PositionType = { name: string; moves: { name: string; id: string }[] };
 
 type PlanType = {
-  neutral: string[];
-  top: string[];
-  bottom: string[];
+  date: Date;
+  moves: string[];
 };
 
-const newPracticePlan = {
-  date: new Date(),
-  moves: [],
-};
-
-type NeutralPositions = 'open' | 'short offense' | 'underhook' | 'overhook' | 'collar tie' | 'high crotch - defense' | 'double leg - defense' | 'single leg - defense' | 'single leg on feet - defense';
+type NeutralPositions =
+  | 'open'
+  | 'short offense'
+  | 'underhook'
+  | 'overhook'
+  | 'collar tie'
+  | 'high crotch - defense'
+  | 'double leg - defense'
+  | 'single leg - defense'
+  | 'single leg on feet - defense';
 type TopPositions = 'base' | 'belly' | 'on feet' | 'back';
 type Positions = NeutralPositions | TopPositions;
 
 type moves = {
-  move: string,
-  position: Positions,
-  area: Area,
-  level: 'JV' | 'Varsity' | 'State Qualifier' | 'State Placer',
-  id?: string,
-}
+  name: string;
+  position: Positions;
+  area: Area;
+  level: 'JV' | 'Varsity' | 'State Qualifier' | 'State Placer';
+  id?: string;
+};
 
-/**
-  fetch moves data
- * [{
-    id: 'ubajnfkajhdfosija134',
-    move: 'double leg',
-    position: 'open',
-    area: 'neutral',
-    level: 'JV',
-  }, ...]
- * 
-  aggregate the moves data by area
- * [{name: 'neutral', positions: new Set() }, {name: 'top', positions: new Set() }, {name: 'bottom', positions: new Set() }]
-  when a user clicks on a position filter the moves by area and position and display in the panel
+const findMoves =
+  (moves: moves[]) =>
+  (ids: string[]): moves[] =>
+    ids.map((id) => moves.find((move) => move.id === id));
 
-  when a user adds a move to a practice plan, update the data representation to include the move id
-   const newPracticePlan = {
-    date: new Date(),
-    moves: ['ubajnfkajhdfosija134'],
-  };
-  AND update the UI data
-  {
-    neutral: [{position: 'open', moves: ['double', 'single']}, {position: 'underhook', moves: ['single', 'fake and snap']}],
-    top: [],
-    bottom: []
-  }
- * 
- */
+const aggregateMovesByPosition = (moves: moves[]) =>
+  moves.reduce(
+    (acc, { area, position, name, id }) => ({
+      ...acc,
+      [area]: [
+        ...acc[area].filter((obj) => obj.name !== position),
+        {
+          name: position,
+          moves: [
+            ...(acc[area].find((obj) => obj.name === position)?.moves ?? []),
+            { name, id },
+          ],
+        },
+      ],
+    }),
+    { neutral: [], top: [], bottom: [] }
+  );
 
-const positionsByArea = (arr: moves[]): {name: Area; positions: Set<any>}[] => arr.reduce((acc, val) => {
-  const idx = acc.findIndex(i => i.name === val.area)
-  acc[idx].positions.add(val.position)
-  return acc
-}, [{name: 'neutral', positions: new Set() }, {name: 'top', positions: new Set() }, {name: 'bottom', positions: new Set() }])
+const positionsByArea = (arr: moves[]): { name: Area; positions: Set<any> }[] =>
+  arr.reduce(
+    (acc, val) => {
+      const idx = acc.findIndex((i) => i.name === val.area);
+      acc[idx].positions.add(val.position);
+      return acc;
+    },
+    [
+      { name: 'neutral', positions: new Set() },
+      { name: 'top', positions: new Set() },
+      { name: 'bottom', positions: new Set() },
+    ]
+  );
 
 const Map = styled(({ className }) => {
-  const newInitialPracticePlanState = {
+  const initialPracticePlanState = {
     date: new Date(), // TODO: update this so a user can select a date
-    moves: ['ubajnfkajhdfosija134'],
+    moves: [],
   };
-  const initialPracticePlanState = { neutral: [], top: [], bottom: [] };
   const [panelContent, setPanelContent] = useState('');
   const [currentTab, setCurrentTab] = useState<Area>('neutral');
   const [practicePlan, setPracticePlan] = useState<PlanType>(
     initialPracticePlanState
   );
-  const [moves, setMoves] = useState<moves[]>([])
+  const [moves, setMoves] = useState<moves[]>([]);
   const panelRef = useRef<HTMLDialogElement | undefined>();
 
-  const getData = () => getDocs(collection(db, 'moves')).then((querySnapshot) => {
-    const newData = querySnapshot.docs.map(doc => ({...doc.data(), id:doc.id }))
-    setMoves(newData); 
-    console.log(newData)
-});
+  const getData = () =>
+    getDocs(collection(db, 'moves')).then((querySnapshot) => {
+      const newData = querySnapshot.docs.map((doc) => ({
+        ...doc.data(),
+        id: doc.id,
+      }));
+      setMoves(newData as moves[]);
+    });
 
-useEffect(() => {
-  getData();
-}, [])
+  useEffect(() => {
+    getData();
+  }, []);
 
   const showPanel = (content: any) => {
     setPanelContent(content);
@@ -157,30 +160,28 @@ useEffect(() => {
     setPracticePlan(initialPracticePlanState);
   };
 
-  const addToPracticePlan = ({
-    position,
-    move,
-    area,
-  }: AddToPracticePlanArgs) => {
+  const addToPracticePlan = (id: string) => {
+    setPracticePlan((prev) => ({ ...prev, moves: [...prev.moves, id] }));
+  };
+
+  const savePracticePlan = async () => {
+    await addDoc(collection(db, 'practice_plan'), practicePlan);
+    alert('added practice plan');
+  };
+
+  const removeFromPracticePlan = (id: string) => {
     setPracticePlan((prev) => ({
       ...prev,
-      [area]: [...prev[area], ...(prev[area].includes(move) ? [] : [move])],
+      moves: [...prev.moves].filter((i) => i !== id),
     }));
   };
 
-  const removeFromPracticePlan = (
-    area: Area,
-    item: string
-  ) => {
-    setPracticePlan((prev) => ({
-      ...prev,
-      [area]: prev[area].filter((i) => i !== item),
-    }));
-  };
-
-  const copyPracticePlan = () => {
-    window.navigator.clipboard.writeText(JSON.stringify(practicePlan));
-  };
+  const copyPracticePlan = () =>
+    window.navigator.clipboard.writeText(
+      JSON.stringify(
+        aggregateMovesByPosition(findMoves(moves)(practicePlan.moves))
+      )
+    );
 
   return (
     <main className={className}>
@@ -188,38 +189,62 @@ useEffect(() => {
         Practice Plan
         <br />
         neutral
-        <PracticePlanGroup>
-          {practicePlan.neutral.map((i) => (
-            <PracticePlanItem key={i}>
-              {i}
-              <IconButton onClick={() => removeFromPracticePlan('neutral', i)}>
-                <CloseIcon />
-              </IconButton>
-            </PracticePlanItem>
-          ))}
-        </PracticePlanGroup>
+        <br />
+        {aggregateMovesByPosition(
+          findMoves(moves)(practicePlan.moves)
+        ).neutral.map((position: PositionType) => (
+          <Fragment key={position.name}>
+            {position.name}
+            <PracticePlanGroup>
+              {position.moves.map(({ name: moveName, id }) => (
+                <PracticePlanItem key={`${position.name}=${moveName}`}>
+                  {moveName}
+                  <IconButton onClick={() => removeFromPracticePlan(id)}>
+                    <CloseIcon />
+                  </IconButton>
+                </PracticePlanItem>
+              ))}
+            </PracticePlanGroup>
+          </Fragment>
+        ))}
         bottom
-        <PracticePlanGroup>
-          {practicePlan.bottom.map((i) => (
-            <PracticePlanItem key={i}>
-              {i}
-              <IconButton onClick={() => removeFromPracticePlan('bottom', i)}>
-                <CloseIcon />
-              </IconButton>
-            </PracticePlanItem>
-          ))}
-        </PracticePlanGroup>
+        <br />
+        {aggregateMovesByPosition(
+          findMoves(moves)(practicePlan.moves)
+        ).bottom.map((position: PositionType) => (
+          <Fragment key={position.name}>
+            {position.name}
+            <PracticePlanGroup>
+              {position.moves.map(({ name: moveName, id }) => (
+                <PracticePlanItem key={`${position.name}=${moveName}`}>
+                  {moveName}
+                  <IconButton onClick={() => removeFromPracticePlan(id)}>
+                    <CloseIcon />
+                  </IconButton>
+                </PracticePlanItem>
+              ))}
+            </PracticePlanGroup>
+          </Fragment>
+        ))}
         top
-        <PracticePlanGroup>
-          {practicePlan.top.map((i) => (
-            <PracticePlanItem key={i}>
-              {i}
-              <IconButton onClick={() => removeFromPracticePlan('top', i)}>
-                <CloseIcon />
-              </IconButton>
-            </PracticePlanItem>
-          ))}
-        </PracticePlanGroup>
+        <br />
+        {aggregateMovesByPosition(findMoves(moves)(practicePlan.moves)).top.map(
+          (position: PositionType) => (
+            <Fragment key={position.name}>
+              {position.name}
+              <PracticePlanGroup>
+                {position.moves.map(({ name: moveName, id }) => (
+                  <PracticePlanItem key={`${position.name}=${moveName}`}>
+                    {moveName}
+                    <IconButton onClick={() => removeFromPracticePlan(id)}>
+                      <CloseIcon />
+                    </IconButton>
+                  </PracticePlanItem>
+                ))}
+              </PracticePlanGroup>
+            </Fragment>
+          )
+        )}
         <Button
           onClick={clearPracticePlan}
           text="Clear Practice Plan"
@@ -231,12 +256,20 @@ useEffect(() => {
           text="Copy Practice Plan"
           Icon={CopyIcon}
         />
+        <Button
+          onClick={savePracticePlan}
+          text="Save Practice Plan"
+          Icon={SaveIcon}
+        />
       </PracticePlanDisplay>
       {/* @ts-ignore:next-line */}
       <ContentMap
         addToPracticePlan={addToPracticePlan}
-        /* @ts-ignore:next-line */
-        content={[...positionsByArea(moves).find((i) => i.name === currentTab).positions]}
+        content={[
+          /* @ts-ignore:next-line */
+          ...positionsByArea(moves).find((i) => i.name === currentTab)
+            .positions,
+        ]}
         showPanel={showPanel}
         area={currentTab}
         moves={moves}

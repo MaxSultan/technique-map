@@ -42,7 +42,10 @@ dialog:focus {
 
 const router = createBrowserRouter(
   createRoutesFromElements(
-    <Route path="/" element={<NavBar />}>
+    <Route
+      path="/"
+      element={<NavBar />}
+    >
       <Route
         path="create"
         element={<Map />}
@@ -52,8 +55,9 @@ const router = createBrowserRouter(
         element={<PracticePlans />}
       />
     </Route>
-  ),{
-    basename: "/technique-map/",
+  ),
+  {
+    basename: '/technique-map/',
   }
 );
 

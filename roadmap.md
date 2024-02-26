@@ -67,6 +67,14 @@ type moves = {
 [] practice plan delete
 [] add most recent review to moves
 
+[] make admin interface with ability to add moves
+[] make filter system for move levels in create practice plan menu
+[] differentiate moves by level in create practice plan menu (stylistically)
+
+Code refactor:
+[] separate react components
+[] react components should follow the SRP principle
+
 nice to have
 [] make the panel transition out of view nicely
 
