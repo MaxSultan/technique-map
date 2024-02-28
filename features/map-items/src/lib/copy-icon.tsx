@@ -1,4 +1,6 @@
-export const CopyIcon = ({ className }: { className?: string }) => (
+import styled from 'styled-components';
+
+export const CopyIcon = styled(({ className }: { className?: string }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width="16"
@@ -15,4 +17,4 @@ export const CopyIcon = ({ className }: { className?: string }) => (
       d="M1.995 10.749a1.75 1.75 0 0 1 1.75-1.751H5.25a.75.75 0 1 1 0 1.5H3.745a.25.25 0 0 0-.25.25L3.5 20.25c0 .138.111.25.25.25h9.5a.25.25 0 0 0 .25-.25v-1.51a.75.75 0 1 1 1.5 0v1.51A1.75 1.75 0 0 1 13.25 22h-9.5A1.75 1.75 0 0 1 2 20.25z"
     />
   </svg>
-);
+))``;

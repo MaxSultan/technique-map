@@ -6,7 +6,7 @@ export const NavBar = styled(({ className }) => (
     <nav className={className}>
       <ul>
         <li>
-          <NavLink to="/">Practice Plans</NavLink>
+          <NavLink to="/practice_plans">Practice Plans</NavLink>
         </li>
         <li>
           <NavLink to="/create">Create</NavLink>

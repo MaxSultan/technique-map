@@ -3,18 +3,14 @@ import styled from 'styled-components';
 import { collection, getDocs } from 'firebase/firestore';
 // @ts-ignore next-line
 import { db } from '../../../../src/app/firebase';
+import { Link } from 'react-router-dom';
 
-/* eslint-disable-next-line */
-export interface PracticePlansProps {}
-
-const StyledPracticePlans = styled.div`
-  color: pink;
-`;
+const StyledPracticePlans = styled.div``;
 type PracticePlanType = {
   id: string;
-  date: string;
+  date: { seconds: string; milliseconds: string };
 };
-export function PracticePlans(props: PracticePlansProps) {
+export function PracticePlans() {
   const [practicePlans, setPracticePlans] = useState<PracticePlanType[]>([]);
 
   const getData = () =>
@@ -24,6 +20,7 @@ export function PracticePlans(props: PracticePlansProps) {
         id: doc.id,
       }));
       setPracticePlans(newData as PracticePlanType[]);
+      console.log(newData);
     });
 
   useEffect(() => {
@@ -33,7 +30,15 @@ export function PracticePlans(props: PracticePlansProps) {
   return (
     <StyledPracticePlans>
       <h1>Welcome to PracticePlans!</h1>
-      {practicePlans.map((i) => i.id)}
+      <ul>
+        {practicePlans.map((i) => (
+          <li>
+            <Link to={`practice_plans/${i.id}`}>
+              {new Date(i.date.seconds).toLocaleDateString()}
+            </Link>
+          </li>
+        ))}
+      </ul>
     </StyledPracticePlans>
   );
 }

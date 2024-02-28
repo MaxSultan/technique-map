@@ -7,9 +7,8 @@ import {
   createRoutesFromElements,
 } from 'react-router-dom';
 import { NavBar } from '@technique-map/design-system';
-import { PracticePlans } from '@technique-map/practice-plans';
-
-import Map from './map';
+import { PracticePlan, PracticePlans } from '@technique-map/practice-plans';
+import { Map } from '@technique-map/map-items';
 
 const GlobalStyle = createGlobalStyle`
  :root {
@@ -49,6 +48,14 @@ const router = createBrowserRouter(
       <Route
         path="create"
         element={<Map />}
+      />
+      <Route
+        path="/practice_plans"
+        element={<PracticePlans />}
+      />
+      <Route
+        path="/practice_plans/:id"
+        element={<PracticePlan />}
       />
       <Route
         path="/"

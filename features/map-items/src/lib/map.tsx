@@ -10,9 +10,181 @@ import {
 } from '@technique-map/map-items';
 import { Panel, PanelList, Button, Tabs } from '@technique-map/design-system';
 // @ts-ignore next-line
-import { db } from './firebase';
+import { db } from '../../../../src/app/firebase';
 
-const PracticePlanDisplay = styled.aside`
+type Area = 'top' | 'bottom' | 'neutral';
+
+type PositionType = { name: string; moves: { name: string; id: string }[] };
+
+export type PlanType = {
+  date: Date;
+  moves: string[];
+};
+
+type NeutralPositions =
+  | 'open'
+  | 'short offense'
+  | 'underhook'
+  | 'overhook'
+  | 'collar tie'
+  | 'high crotch - defense'
+  | 'double leg - defense'
+  | 'single leg - defense'
+  | 'single leg on feet - defense';
+type TopPositions = 'base' | 'belly' | 'on feet' | 'back';
+type Positions = NeutralPositions | TopPositions;
+
+export type MoveType = {
+  name: string;
+  position: Positions;
+  area: Area;
+  level: 'JV' | 'Varsity' | 'State Qualifier' | 'State Placer';
+  id: string;
+};
+
+export const findMoves = (moves: MoveType[], ids: string[]): MoveType[] =>
+  ids.map((id) => moves.find((move) => move.id === id) as unknown as MoveType);
+
+export const aggregateMovesByPosition = (moves: MoveType[]) =>
+  moves.reduce(
+    (acc, { area, position, name, id }) => ({
+      ...acc,
+      [area]: [
+        ...acc[area].filter((obj: { name: string }) => obj.name !== position),
+        {
+          name: position,
+          moves: [
+            ...((
+              acc[area].find(
+                (obj: { name: string; moves: MoveType[] }) =>
+                  obj.name === position
+              ) as unknown as PositionType
+            )?.moves ?? []),
+            { name, id },
+          ],
+        },
+      ],
+    }),
+    { neutral: [], top: [], bottom: [] }
+  );
+
+const positionsByArea = (
+  arr: MoveType[]
+): { name: Area; positions: Set<any> }[] =>
+  arr.reduce(
+    (acc, val) => {
+      const idx = acc.findIndex((i) => i.name === val.area);
+      acc[idx].positions.add(val.position);
+      return acc;
+    },
+    [
+      { name: 'neutral', positions: new Set() },
+      { name: 'top', positions: new Set() },
+      { name: 'bottom', positions: new Set() },
+    ]
+  );
+
+const savePracticePlan = async (practicePlan: PlanType) => {
+  await addDoc(collection(db, 'practice_plan'), practicePlan);
+  alert('added practice plan');
+};
+
+const copyPracticePlan = (moves: MoveType[], practicePlanMoves: string[]) =>
+  window.navigator.clipboard.writeText(
+    JSON.stringify(
+      aggregateMovesByPosition(findMoves(moves, practicePlanMoves))
+    )
+  );
+
+const PracticePlanDisplay = styled(
+  ({
+    className,
+    moves,
+    practicePlan,
+    removeFromPracticePlan,
+    clearPracticePlan,
+  }) => {
+    return (
+      <aside className={className}>
+        Practice Plan
+        <br />
+        neutral
+        <br />
+        {aggregateMovesByPosition(
+          findMoves(moves, practicePlan.moves)
+        ).neutral.map((position: PositionType) => (
+          <Fragment key={position.name}>
+            {position.name}
+            <PracticePlanGroup>
+              {position.moves.map(({ name: moveName, id }) => (
+                <PracticePlanItem key={`${position.name}=${moveName}`}>
+                  {moveName}
+                  <IconButton onClick={() => removeFromPracticePlan(id)}>
+                    <CloseIcon />
+                  </IconButton>
+                </PracticePlanItem>
+              ))}
+            </PracticePlanGroup>
+          </Fragment>
+        ))}
+        bottom
+        <br />
+        {aggregateMovesByPosition(
+          findMoves(moves, practicePlan.moves)
+        ).bottom.map((position: PositionType) => (
+          <Fragment key={position.name}>
+            {position.name}
+            <PracticePlanGroup>
+              {position.moves.map(({ name: moveName, id }) => (
+                <PracticePlanItem key={`${position.name}=${moveName}`}>
+                  {moveName}
+                  <IconButton onClick={() => removeFromPracticePlan(id)}>
+                    <CloseIcon />
+                  </IconButton>
+                </PracticePlanItem>
+              ))}
+            </PracticePlanGroup>
+          </Fragment>
+        ))}
+        top
+        <br />
+        {aggregateMovesByPosition(findMoves(moves, practicePlan.moves)).top.map(
+          (position: PositionType) => (
+            <Fragment key={position.name}>
+              {position.name}
+              <PracticePlanGroup>
+                {position.moves.map(({ name: moveName, id }) => (
+                  <PracticePlanItem key={`${position.name}=${moveName}`}>
+                    {moveName}
+                    <IconButton onClick={() => removeFromPracticePlan(id)}>
+                      <CloseIcon />
+                    </IconButton>
+                  </PracticePlanItem>
+                ))}
+              </PracticePlanGroup>
+            </Fragment>
+          )
+        )}
+        <Button
+          onClick={clearPracticePlan}
+          text="Clear Practice Plan"
+          Icon={StyledTrashIcon}
+          $level="caution"
+        />
+        <Button
+          onClick={() => copyPracticePlan(moves, practicePlan.moves)}
+          text="Copy Practice Plan"
+          Icon={CopyIcon}
+        />
+        <Button
+          onClick={() => savePracticePlan(practicePlan)}
+          text="Save Practice Plan"
+          Icon={SaveIcon}
+        />
+      </aside>
+    );
+  }
+)`
   background-color: var(--primary);
   color: white;
   padding: clamp(8px, 3vw, 32px);
@@ -58,74 +230,8 @@ const IconButton = styled.button`
   justify-content: center;
   align-items: center;
 `;
-type Area = 'top' | 'bottom' | 'neutral';
 
-type PositionType = { name: string; moves: { name: string; id: string }[] };
-
-type PlanType = {
-  date: Date;
-  moves: string[];
-};
-
-type NeutralPositions =
-  | 'open'
-  | 'short offense'
-  | 'underhook'
-  | 'overhook'
-  | 'collar tie'
-  | 'high crotch - defense'
-  | 'double leg - defense'
-  | 'single leg - defense'
-  | 'single leg on feet - defense';
-type TopPositions = 'base' | 'belly' | 'on feet' | 'back';
-type Positions = NeutralPositions | TopPositions;
-
-type moves = {
-  name: string;
-  position: Positions;
-  area: Area;
-  level: 'JV' | 'Varsity' | 'State Qualifier' | 'State Placer';
-  id?: string;
-};
-
-const findMoves =
-  (moves: moves[]) =>
-  (ids: string[]): moves[] =>
-    ids.map((id) => moves.find((move) => move.id === id));
-
-const aggregateMovesByPosition = (moves: moves[]) =>
-  moves.reduce(
-    (acc, { area, position, name, id }) => ({
-      ...acc,
-      [area]: [
-        ...acc[area].filter((obj) => obj.name !== position),
-        {
-          name: position,
-          moves: [
-            ...(acc[area].find((obj) => obj.name === position)?.moves ?? []),
-            { name, id },
-          ],
-        },
-      ],
-    }),
-    { neutral: [], top: [], bottom: [] }
-  );
-
-const positionsByArea = (arr: moves[]): { name: Area; positions: Set<any> }[] =>
-  arr.reduce(
-    (acc, val) => {
-      const idx = acc.findIndex((i) => i.name === val.area);
-      acc[idx].positions.add(val.position);
-      return acc;
-    },
-    [
-      { name: 'neutral', positions: new Set() },
-      { name: 'top', positions: new Set() },
-      { name: 'bottom', positions: new Set() },
-    ]
-  );
-
-const Map = styled(({ className }) => {
+export const Map = styled(({ className }) => {
   const initialPracticePlanState = {
     date: new Date(), // TODO: update this so a user can select a date
     moves: [],
@@ -135,7 +241,7 @@ const Map = styled(({ className }) => {
   const [practicePlan, setPracticePlan] = useState<PlanType>(
     initialPracticePlanState
   );
-  const [moves, setMoves] = useState<moves[]>([]);
+  const [moves, setMoves] = useState<MoveType[]>([]);
   const panelRef = useRef<HTMLDialogElement | undefined>();
 
   const getData = () =>
@@ -144,7 +250,7 @@ const Map = styled(({ className }) => {
         ...doc.data(),
         id: doc.id,
       }));
-      setMoves(newData as moves[]);
+      setMoves(newData as MoveType[]);
     });
 
   useEffect(() => {
@@ -153,6 +259,7 @@ const Map = styled(({ className }) => {
 
   const showPanel = (content: any) => {
     setPanelContent(content);
+    console.log(panelRef.current);
     panelRef.current?.showModal();
   };
 
@@ -164,11 +271,6 @@ const Map = styled(({ className }) => {
     setPracticePlan((prev) => ({ ...prev, moves: [...prev.moves, id] }));
   };
 
-  const savePracticePlan = async () => {
-    await addDoc(collection(db, 'practice_plan'), practicePlan);
-    alert('added practice plan');
-  };
-
   const removeFromPracticePlan = (id: string) => {
     setPracticePlan((prev) => ({
       ...prev,
@@ -176,92 +278,14 @@ const Map = styled(({ className }) => {
     }));
   };
 
-  const copyPracticePlan = () =>
-    window.navigator.clipboard.writeText(
-      JSON.stringify(
-        aggregateMovesByPosition(findMoves(moves)(practicePlan.moves))
-      )
-    );
-
   return (
     <main className={className}>
-      <PracticePlanDisplay>
-        Practice Plan
-        <br />
-        neutral
-        <br />
-        {aggregateMovesByPosition(
-          findMoves(moves)(practicePlan.moves)
-        ).neutral.map((position: PositionType) => (
-          <Fragment key={position.name}>
-            {position.name}
-            <PracticePlanGroup>
-              {position.moves.map(({ name: moveName, id }) => (
-                <PracticePlanItem key={`${position.name}=${moveName}`}>
-                  {moveName}
-                  <IconButton onClick={() => removeFromPracticePlan(id)}>
-                    <CloseIcon />
-                  </IconButton>
-                </PracticePlanItem>
-              ))}
-            </PracticePlanGroup>
-          </Fragment>
-        ))}
-        bottom
-        <br />
-        {aggregateMovesByPosition(
-          findMoves(moves)(practicePlan.moves)
-        ).bottom.map((position: PositionType) => (
-          <Fragment key={position.name}>
-            {position.name}
-            <PracticePlanGroup>
-              {position.moves.map(({ name: moveName, id }) => (
-                <PracticePlanItem key={`${position.name}=${moveName}`}>
-                  {moveName}
-                  <IconButton onClick={() => removeFromPracticePlan(id)}>
-                    <CloseIcon />
-                  </IconButton>
-                </PracticePlanItem>
-              ))}
-            </PracticePlanGroup>
-          </Fragment>
-        ))}
-        top
-        <br />
-        {aggregateMovesByPosition(findMoves(moves)(practicePlan.moves)).top.map(
-          (position: PositionType) => (
-            <Fragment key={position.name}>
-              {position.name}
-              <PracticePlanGroup>
-                {position.moves.map(({ name: moveName, id }) => (
-                  <PracticePlanItem key={`${position.name}=${moveName}`}>
-                    {moveName}
-                    <IconButton onClick={() => removeFromPracticePlan(id)}>
-                      <CloseIcon />
-                    </IconButton>
-                  </PracticePlanItem>
-                ))}
-              </PracticePlanGroup>
-            </Fragment>
-          )
-        )}
-        <Button
-          onClick={clearPracticePlan}
-          text="Clear Practice Plan"
-          Icon={StyledTrashIcon}
-          $level="caution"
-        />
-        <Button
-          onClick={copyPracticePlan}
-          text="Copy Practice Plan"
-          Icon={CopyIcon}
-        />
-        <Button
-          onClick={savePracticePlan}
-          text="Save Practice Plan"
-          Icon={SaveIcon}
-        />
-      </PracticePlanDisplay>
+      <PracticePlanDisplay
+        moves={moves}
+        practicePlan={practicePlan}
+        clearPracticePlan={clearPracticePlan}
+        removeFromPracticePlan={removeFromPracticePlan}
+      />
       {/* @ts-ignore:next-line */}
       <ContentMap
         addToPracticePlan={addToPracticePlan}
@@ -298,5 +322,3 @@ const Map = styled(({ className }) => {
     box-sizing: border-box;
   }
 `;
-
-export default Map;

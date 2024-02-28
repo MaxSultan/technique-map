@@ -25,7 +25,7 @@ A way to store content related to the technique
 
 [x] connect to firebase firestore
 
-[] data migration
+[x] data migration
 
 ```js
 // old model
@@ -56,9 +56,10 @@ type moves = {
 
 [x] add moves to db
 [x] make moves request in map
-[] group practice plan by position
-[] derive practice plan UI view data from model data
-[] add save button to practice plan create
+[x] group practice plan by position
+[x] derive practice plan UI view data from model data
+[x] add save button to practice plan create
+[] make positions in practice plan details components
 
 [] practice plan index
 [] practice plan index search/scoping
@@ -67,13 +68,15 @@ type moves = {
 [] practice plan delete
 [] add most recent review to moves
 
-[] make admin interface with ability to add moves
+[] make admin interface with ability to add moves (ts types dynamically created??)
 [] make filter system for move levels in create practice plan menu
 [] differentiate moves by level in create practice plan menu (stylistically)
+[] add e2e tests
 
 Code refactor:
-[] separate react components
+[x] separate react components
 [] react components should follow the SRP principle
+[x] add map.tsx to map-items feature lib
 
 nice to have
 [] make the panel transition out of view nicely
