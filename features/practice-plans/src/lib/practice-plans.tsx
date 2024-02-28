@@ -33,7 +33,7 @@ export function PracticePlans() {
       <ul>
         {practicePlans.map((i) => (
           <li>
-            <Link to={`practice_plans/${i.id}`}>
+            <Link to={`/practice_plans/${i.id}`}>
               {new Date(i.date.seconds).toLocaleDateString()}
             </Link>
           </li>
