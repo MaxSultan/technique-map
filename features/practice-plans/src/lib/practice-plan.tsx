@@ -78,6 +78,7 @@ export const PracticePlan = styled(({ className }) => {
     });
 
   useEffect(() => {
+    // TODO: this may not be necessary
     getMovesData().then(() => {
       getPracticePlanData();
     });

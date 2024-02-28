@@ -65,6 +65,10 @@ const router = createBrowserRouter(
         path="/"
         element={<PracticePlans />}
       />
+      <Route
+      path="/practice_plans/edit/:id"
+      element={<Map />}
+      />
     </Route>
   ),
   {
