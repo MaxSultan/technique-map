@@ -10,7 +10,7 @@ import {
 } from '@technique-map/map-items';
 import { Panel, PanelList, Button, Tabs } from '@technique-map/design-system';
 import { db } from '../../../../src/app/firebase';
-import { useNavigate, useParams } from 'react-router';
+import { NavigateFunction, useNavigate, useParams } from 'react-router';
 
 type Area = 'top' | 'bottom' | 'neutral';
 
@@ -84,19 +84,24 @@ const positionsByArea = (
     ]
   );
 
-const savePracticePlan = async (practicePlan: PlanType, navigator) => {
-  await addDoc(collection(db, 'practice_plan'), practicePlan).then(res => {
-    navigator(`/practice_plans/${res.id}`)
-  });
-
-};
-
 const copyPracticePlan = (moves: MoveType[], practicePlanMoves: string[]) =>
   window.navigator.clipboard.writeText(
     JSON.stringify(
       aggregateMovesByPosition(findMoves(moves, practicePlanMoves))
     )
   );
+
+const savePracticePlan = async (practicePlan: PlanType, navigator: NavigateFunction) => {
+  await addDoc(collection(db, 'practice_plan'), practicePlan).then(res => {
+    navigator(`/practice_plans/${res.id}`)
+  });
+};
+
+const updatePracticePlan = async (id:string, practicePlan:PlanType, navigator: NavigateFunction) => {
+  const practicePlanRef = doc(db, "practice_plan", id);
+  await updateDoc(practicePlanRef, practicePlan);
+  navigator(`/practice_plans/${id}`)
+}
 
 const PracticePlanDisplay = styled(
   ({
@@ -108,12 +113,6 @@ const PracticePlanDisplay = styled(
     currentPracticePlanId
   }) => {
     const navigator = useNavigate();
-
-    const updatePracticePlan = async (id:string, practicePlan:PlanType) => {
-      const practicePlanRef = doc(db, "practice_plan", id);
-      await updateDoc(practicePlanRef, practicePlan);
-      navigator(`/practice_plans/${id}`)
-    }
 
     return (
       <aside className={className}>
@@ -188,7 +187,7 @@ const PracticePlanDisplay = styled(
           Icon={CopyIcon}
         />
         <Button
-          onClick={() => currentPracticePlanId ? updatePracticePlan(currentPracticePlanId, practicePlan) : savePracticePlan(practicePlan, navigator)}
+          onClick={() => currentPracticePlanId ? updatePracticePlan(currentPracticePlanId, practicePlan, navigator) : savePracticePlan(practicePlan, navigator)}
           text={currentPracticePlanId ? "Update Practice Plan" :"Save Practice Plan"}
           Icon={SaveIcon}
         />
@@ -242,7 +241,7 @@ const IconButton = styled.button`
   align-items: center;
 `;
 
-const useExistingPracticePlanData = (currentPracticePlanId: string) => {
+const useExistingPracticePlanData = (currentPracticePlanId: string | undefined): [PlanType, React.Dispatch<React.SetStateAction<any>>] => {
   const initialPracticePlanState = {
     date: new Date(), // TODO: update this so a user can select a date
     moves: [],
@@ -288,8 +287,6 @@ export const Map = styled(({ className }) => {
 
   const [practicePlan, setPracticePlan] = useExistingPracticePlanData(currentPracticePlanId);
 
-  // console.log(practicePlan)
-
   const getData = () =>
     getDocs(collection(db, 'moves')).then((querySnapshot) => {
       const newData = querySnapshot.docs.map((doc) => ({
@@ -313,11 +310,11 @@ export const Map = styled(({ className }) => {
   };
 
   const addToPracticePlan = (id: string) => {
-    setPracticePlan((prev) => ({ ...prev, moves: [...prev.moves, id] }));
+    setPracticePlan((prev: PlanType) => ({ ...prev, moves: [...prev.moves, id] }));
   };
 
   const removeFromPracticePlan = (id: string) => {
-    setPracticePlan((prev) => ({
+    setPracticePlan((prev: PlanType) => ({
       ...prev,
       moves: [...prev.moves].filter((i) => i !== id),
     }));
