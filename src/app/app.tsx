@@ -25,9 +25,13 @@ const GlobalStyle = createGlobalStyle`
 }
 
 html,body {
-  min-height: 100%;
+  height: 100%;
   padding: 0;
   margin: 0;
+}
+
+#root {
+  height: 100%;
 }
 
 dialog:focus {
@@ -60,6 +64,10 @@ const router = createBrowserRouter(
       <Route
         path="/"
         element={<PracticePlans />}
+      />
+      <Route
+      path="/practice_plans/edit/:id"
+      element={<Map />}
       />
     </Route>
   ),

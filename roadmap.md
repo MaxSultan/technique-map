@@ -61,12 +61,22 @@ type moves = {
 [x] add save button to practice plan create
 [] make positions in practice plan details components
 
-[] practice plan index
+[x] practice plan index
 [] practice plan index search/scoping
-[] practice plan create
-[] practice plan update
+[x] practice plan create
+[x] practice plan update
 [] practice plan delete
 [] add most recent review to moves
+
+[] fix dates in practice plan index
+
+[] consolidate duplicated functions (get moves data)
+[] prevent same move from being added twice
+[] add error handling when thing fail (error boundaries)
+[] add error handling when thing fail (error toast)
+[] add unit tests
+
+[] nx-ize the firebase config/init file
 
 [] make admin interface with ability to add moves (ts types dynamically created??)
 [] make filter system for move levels in create practice plan menu
