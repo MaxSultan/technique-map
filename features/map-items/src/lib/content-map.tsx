@@ -7,7 +7,7 @@ type ContentMapProps = {
   addToPracticePlan: (id: string) => void;
   showPanel: (arg0: Function) => void;
   content: string[];
-  className: string;
+  className?: string;
   moves: any[]; // TODO: fix this
 };
 

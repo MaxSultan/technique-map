@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, Fragment } from 'react';
+import { useState, useRef, useEffect, Fragment, useLayoutEffect } from 'react';
 import styled from 'styled-components';
 import { collection, getDocs, addDoc, doc, updateDoc, where, documentId, query } from 'firebase/firestore';
 import {
@@ -8,7 +8,7 @@ import {
   ContentMap,
   SaveIcon,
 } from '@technique-map/map-items';
-import { Panel, PanelList, Button, Tabs } from '@technique-map/design-system';
+import { Panel, PanelList, Button, Tabs, Details } from '@technique-map/design-system';
 import { db } from '../../../../src/app/firebase';
 import { NavigateFunction, useNavigate, useParams } from 'react-router';
 
@@ -68,9 +68,11 @@ export const aggregateMovesByPosition = (moves: MoveType[]) =>
     { neutral: [], top: [], bottom: [] }
   );
 
+  type PositionByAreaType = { name: Area; positions: Set<any> }
+
 const positionsByArea = (
   arr: MoveType[]
-): { name: Area; positions: Set<any> }[] =>
+): PositionByAreaType[] =>
   arr.reduce(
     (acc, val) => {
       const idx = acc.findIndex((i) => i.name === val.area);
@@ -103,6 +105,8 @@ const updatePracticePlan = async (id:string, practicePlan:PlanType, navigator: N
   navigator(`/practice_plans/${id}`)
 }
 
+const BookIcon = styled(({className}) => (<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" className={className}><path fillRule="evenodd" d="M3 5h4v1H3V5zm0 3h4V7H3v1zm0 2h4V9H3v1zm11-5h-4v1h4V5zm0 2h-4v1h4V7zm0 2h-4v1h4V9zm2-6v9c0 .55-.45 1-1 1H9.5l-1 1l-1-1H2c-.55 0-1-.45-1-1V3c0-.55.45-1 1-1h5.5l1 1l1-1H15c.55 0 1 .45 1 1zm-8 .5L7.5 3H2v9h6V3.5zm7-.5H9.5l-.5.5V12h6V3z" fill="currentColor"/></svg>))``
+
 const PracticePlanDisplay = styled(
   ({
     className,
@@ -113,19 +117,37 @@ const PracticePlanDisplay = styled(
     currentPracticePlanId
   }) => {
     const navigator = useNavigate();
+    const [transform, setTransform] = useState<boolean>(window.innerWidth > 850);
+
+    const listenForResize = () => {
+      if (window.innerWidth > 850) setTransform(true)
+    }
+
+    useLayoutEffect(() => {
+      window.addEventListener('resize', listenForResize)
+
+      return () => {
+        window.removeEventListener('resize', listenForResize)
+      }
+    }, [])
+
+    const handleShowPracticePlanClick = () => {
+      setTransform(prev => !prev)
+    }
 
     return (
-      <aside className={className}>
-        Practice Plan
-        <br />
-        neutral
-        <br />
-        {aggregateMovesByPosition(
+      <aside className={className} style={{'--transform': transform ? 'translateX(0%)': 'translateX(-100%)'}}>
+        <button aria-label='show practice plan' onClick={handleShowPracticePlanClick}><BookIcon/></button>
+        <h1>
+          Practice Plan
+        </h1>
+        {Object.entries(aggregateMovesByPosition(
           findMoves(moves, practicePlan.moves)
-        ).neutral.map((position: PositionType) => (
-          <Fragment key={position.name}>
-            {position.name}
-            <PracticePlanGroup>
+        )).map(([key, value]) => (
+          <Fragment key={key}>
+          <h2>{key}</h2>
+          {value.map((position: PositionType) => (
+            <Details title={position.name} key={position.name}>
               {position.moves.map(({ name: moveName, id }) => (
                 <PracticePlanItem key={`${position.name}=${moveName}`}>
                   {moveName}
@@ -134,47 +156,11 @@ const PracticePlanDisplay = styled(
                   </IconButton>
                 </PracticePlanItem>
               ))}
-            </PracticePlanGroup>
+            </Details>
+              ))
+            }
           </Fragment>
         ))}
-        bottom
-        <br />
-        {aggregateMovesByPosition(
-          findMoves(moves, practicePlan.moves)
-        ).bottom.map((position: PositionType) => (
-          <Fragment key={position.name}>
-            {position.name}
-            <PracticePlanGroup>
-              {position.moves.map(({ name: moveName, id }) => (
-                <PracticePlanItem key={`${position.name}=${moveName}`}>
-                  {moveName}
-                  <IconButton onClick={() => removeFromPracticePlan(id)}>
-                    <CloseIcon />
-                  </IconButton>
-                </PracticePlanItem>
-              ))}
-            </PracticePlanGroup>
-          </Fragment>
-        ))}
-        top
-        <br />
-        {aggregateMovesByPosition(findMoves(moves, practicePlan.moves)).top.map(
-          (position: PositionType) => (
-            <Fragment key={position.name}>
-              {position.name}
-              <PracticePlanGroup>
-                {position.moves.map(({ name: moveName, id }) => (
-                  <PracticePlanItem key={`${position.name}=${moveName}`}>
-                    {moveName}
-                    <IconButton onClick={() => removeFromPracticePlan(id)}>
-                      <CloseIcon />
-                    </IconButton>
-                  </PracticePlanItem>
-                ))}
-              </PracticePlanGroup>
-            </Fragment>
-          )
-        )}
         {!currentPracticePlanId && <Button
           onClick={clearPracticePlan}
           text="Clear Practice Plan"
@@ -198,22 +184,31 @@ const PracticePlanDisplay = styled(
   background-color: var(--primary);
   color: white;
   padding: clamp(8px, 3vw, 32px);
-  box-shadow: 16px 0px 16px -16px hsl(from var(--primary) h s 10%);
+  box-shadow: 16px 0px 16px -16px hsl(from var(--primary) h s calc(l * 0.1));
+  transition: transform 300ms;
+
+  &&&{
+    transform: var(--transform);
+  }
+
+  & > button[aria-label='show practice plan'] {
+    border-radius: 50%;
+    display:grid;
+    place-items:center;
+    padding: 16px;
+    position: fixed;
+    right: 0;
+    top: 154px; 
+    ${/** where does this^^ value come from? */''};
+    transform: translateX(90%);
+    @media screen and (width >= 850px) {
+      display:none;
+    }
+  }
 `;
 
 const StyledTrashIcon = styled(TrashIcon)`
   stroke: white;
-`;
-
-const PracticePlanGroup = styled.ul`
-  padding: 8px 16px;
-  display: grid;
-  grid-auto-flow: row;
-  gap: 2px;
-  background-color: var(--primary);
-  max-height: 20%;
-  overflow-y: auto;
-  scroll-snap-type: x proximity;
 `;
 
 const PracticePlanItem = styled.li`
@@ -331,12 +326,10 @@ export const Map = styled(({ className }) => {
         removeFromPracticePlan={removeFromPracticePlan}
         currentPracticePlanId={currentPracticePlanId}
       />
-      {/* @ts-ignore:next-line */}
       <ContentMap
         addToPracticePlan={addToPracticePlan}
         content={[
-          /* @ts-ignore:next-line */
-          ...positionsByArea(moves).find((i) => i.name === currentTab)
+          ...(positionsByArea(moves).find((i) => i.name === currentTab) as PositionByAreaType)
             .positions,
         ]}
         showPanel={showPanel}
@@ -355,15 +348,27 @@ export const Map = styled(({ className }) => {
   );
 })`
   display: grid;
-  grid-template-areas: 'nav nav' 'plan content';
-  grid-template-columns: min(236px, 25%) 1fr;
+  grid-template-areas: 'nav' 'content';
+  grid-template-columns: 1fr;
   grid-template-rows: fit-content 1fr;
+
+  @media screen and (width >= 850px) {
+    grid-template-areas: 'nav nav' 'plan content';
+    grid-template-columns: min(300px, 75%) 1fr;
+  }
 
   & > ${PracticePlanDisplay} {
     grid-area: plan;
     position: sticky;
     top: 0;
-    max-height: 100vh;
+    height: 100vh;
     box-sizing: border-box;
+
+    @media screen and (width <= 850px) {
+      position: fixed;
+      left:0;
+      transform: translateX(-100%);
+      width: 75vw;
+    }
   }
 `;
