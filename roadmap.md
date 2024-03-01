@@ -68,6 +68,7 @@ type moves = {
 [] practice plan delete
 [] add most recent review to moves
 
+[] add CI/CD to github actions
 [] fix dates in practice plan index
 
 [] consolidate duplicated functions (get moves data)

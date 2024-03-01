@@ -47,20 +47,20 @@ export const findMoves = (moves: MoveType[], ids: string[]): MoveType[] =>
 
 export const aggregateMovesByPosition = (moves: MoveType[]) =>
   moves.reduce(
-    (acc, { area, position, name, id }) => ({
+    (acc, move) => ({
       ...acc,
-      [area]: [
-        ...acc[area].filter((obj: { name: string }) => obj.name !== position),
+      [move?.area]: [
+        ...(acc[move?.area] ?? []).filter((obj: { name: string }) => obj.name !== move?.position),
         {
-          name: position,
+          name: move?.position,
           moves: [
             ...((
-              acc[area].find(
+              (acc[move?.area] ?? []).find(
                 (obj: { name: string; moves: MoveType[] }) =>
-                  obj.name === position
+                  obj.name === move?.position
               ) as unknown as PositionType
             )?.moves ?? []),
-            { name, id },
+            { name: move?.name, id: move?.id },
           ],
         },
       ],
@@ -266,6 +266,8 @@ const useExistingPracticePlanData = (currentPracticePlanId: string | undefined):
       });
 
       getPracticePlanData();
+    } else {
+      setPracticePlan(initialPracticePlanState)
     }
   }, [currentPracticePlanId])
 
