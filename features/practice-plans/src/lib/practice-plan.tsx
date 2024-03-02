@@ -84,8 +84,8 @@ export const PracticePlan = styled(({ className }) => {
     });
   }, []);
 
-  const editPracticePlan = (id:string) => {
-    navigate(`/practice_plans/edit/${id}`)
+  const editPracticePlan = (id: string) => {
+    navigate(`/practice_plans/edit/${id}`);
   };
 
   return (
@@ -95,20 +95,25 @@ export const PracticePlan = styled(({ className }) => {
       ).map(([key, value]) => (
         <DetailsList key={key}>
           <h2>{key}</h2>
-          {value.map((position: {name:string, moves: Pick<MoveType, "id"|"name">[]}) => (
-            <li key={position.name}>
-              <Details
-                title={position.name}
-                open
-              >
-                <ul>
-                  {position?.moves.map((move) => (
-                    <li key={`${position.name}-${move.name}`}>{move.name}</li>
-                  ))}
-                </ul>
-              </Details>
-            </li>
-          ))}
+          {value.map(
+            (position: {
+              name: string;
+              moves: Pick<MoveType, 'id' | 'name'>[];
+            }) => (
+              <li key={position.name}>
+                <Details
+                  title={position.name}
+                  open
+                >
+                  <ul>
+                    {position?.moves.map((move) => (
+                      <li key={`${position.name}-${move.name}`}>{move.name}</li>
+                    ))}
+                  </ul>
+                </Details>
+              </li>
+            )
+          )}
         </DetailsList>
       ))}
       <Button
