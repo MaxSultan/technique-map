@@ -107,6 +107,11 @@ const updatePracticePlan = async (id:string, practicePlan:PlanType, navigator: N
 
 const BookIcon = styled(({className}) => (<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" className={className}><path fillRule="evenodd" d="M3 5h4v1H3V5zm0 3h4V7H3v1zm0 2h4V9H3v1zm11-5h-4v1h4V5zm0 2h-4v1h4V7zm0 2h-4v1h4V9zm2-6v9c0 .55-.45 1-1 1H9.5l-1 1l-1-1H2c-.55 0-1-.45-1-1V3c0-.55.45-1 1-1h5.5l1 1l1-1H15c.55 0 1 .45 1 1zm-8 .5L7.5 3H2v9h6V3.5zm7-.5H9.5l-.5.5V12h6V3z" fill="currentColor"/></svg>))``
 
+const ScrollContainer = styled.div`
+  height: 100%;
+  overflow:scroll;
+`
+
 const PracticePlanDisplay = styled(
   ({
     className,
@@ -138,6 +143,7 @@ const PracticePlanDisplay = styled(
     return (
       <aside className={className} style={{'--transform': transform ? 'translateX(0%)': 'translateX(-100%)'}}>
         <button aria-label='show practice plan' onClick={handleShowPracticePlanClick}><BookIcon/></button>
+        <ScrollContainer>
         <h1>
           Practice Plan
         </h1>
@@ -166,17 +172,18 @@ const PracticePlanDisplay = styled(
           text="Clear Practice Plan"
           Icon={StyledTrashIcon}
           $level="caution"
-        />}
+          />}
         <Button
           onClick={() => copyPracticePlan(moves, practicePlan.moves)}
           text="Copy Practice Plan"
           Icon={CopyIcon}
-        />
+          />
         <Button
           onClick={() => currentPracticePlanId ? updatePracticePlan(currentPracticePlanId, practicePlan, navigator) : savePracticePlan(practicePlan, navigator)}
           text={currentPracticePlanId ? "Update Practice Plan" :"Save Practice Plan"}
           Icon={SaveIcon}
-        />
+          />
+          </ScrollContainer>
       </aside>
     );
   }
@@ -186,20 +193,23 @@ const PracticePlanDisplay = styled(
   padding: clamp(8px, 3vw, 32px);
   box-shadow: 16px 0px 16px -16px hsl(from var(--primary) h s calc(l * 0.1));
   transition: transform 300ms;
-
-  &&&{
-    transform: var(--transform);
-  }
+  transform: var(--transform);
+  display: flex;
+  flex-direction: column;
 
   & > button[aria-label='show practice plan'] {
     border-radius: 50%;
     display:grid;
     place-items:center;
-    padding: 16px;
+    padding: 32px;
     position: fixed;
     right: 0;
     top: 154px; 
-    ${/** where does this^^ value come from? */''};
+    background-color: var(--secondary);
+    color:white;
+    border:none;
+    box-shadow: 2px 0px 16px hsl(from var(--primary) h s calc(l * .6));
+    cursor: pointer;
     transform: translateX(90%);
     @media screen and (width >= 850px) {
       display:none;
@@ -367,7 +377,6 @@ export const Map = styled(({ className }) => {
     @media screen and (width <= 850px) {
       position: fixed;
       left:0;
-      transform: translateX(-100%);
       width: 75vw;
     }
   }

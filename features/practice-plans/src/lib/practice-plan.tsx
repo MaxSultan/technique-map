@@ -120,7 +120,7 @@ export const PracticePlan = styled(({ className }) => {
     </main>
   );
 })`
-  height: 100%;
+  min-height: 100%;
   background-color: var(--secondary);
   padding: 32px;
   color: white;

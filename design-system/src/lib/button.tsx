@@ -18,18 +18,19 @@ export const Button = styled(({ text, onClick, className, Icon }) => {
   --button-color: ${({ $level }) =>
     $level === 'caution' ? 'var(--caution)' : 'var(--affirmative)'};
 
-  padding-inline-start: clamp(0px, 1vw, 32px);
+  padding-inline: 32px;
+  padding-block: 8px;
   background-color: var(--button-color);
   display: grid;
   gap: clamp(2px, 2vw, 16px);
   grid-auto-flow: column;
   align-items: center;
-  padding-inline-end: 0px;
   border: none;
   border-radius: 8px;
   margin-top: 17px;
   cursor: pointer;
   color: white;
+  position: relative;
 
   &:hover,
   &:hover > div {
@@ -49,7 +50,9 @@ export const Button = styled(({ text, onClick, className, Icon }) => {
     border-left: 2px solid white;
     display: grid;
     place-items: center;
-    transform: translate(5%, -53%);
+    transform: translate(0%, -35%);
+    position: absolute;
+    right: 0;
     background-color: var(--button-color);
   }
 `;
