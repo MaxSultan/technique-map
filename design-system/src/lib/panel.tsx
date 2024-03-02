@@ -1,11 +1,6 @@
-import {
-  ReactNode,
-  forwardRef,
-  useRef,
-  MouseEvent,
-  MutableRefObject,
-} from 'react';
+import { ReactNode, MouseEvent, MutableRefObject } from 'react';
 import styled, { keyframes } from 'styled-components';
+import { CloseIcon } from './icons/close-icon';
 
 const backdropFadeIn = keyframes`
  from {
@@ -79,53 +74,60 @@ export const PanelItem = styled(
   }
 `;
 
-interface RefObject<T> {
-  // immutable
-  readonly current: T | null;
-}
+const handleClick = (
+  ref: MutableRefObject<HTMLDialogElement>,
+  e: MouseEvent
+) => {
+  const { top, bottom, left, right } = ref.current.getBoundingClientRect();
+  const clickX = e.clientX;
+  const clickY = e.clientY;
+  if (clickX < left || clickX > right || clickY < top || clickY > bottom)
+    ref.current?.close();
+};
+
+const PanelHeader = styled.hgroup`
+  border-bottom: 1px groove var(--secondary);
+  color: white;
+  padding: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`;
+
+type PanelProps = {
+  children: ReactNode;
+  className?: string;
+  passedRef: MutableRefObject<HTMLDialogElement>;
+  title: string;
+};
 
 export const Panel = styled(
-  forwardRef(
-    (
-      { children, className }: { children: ReactNode; className?: string },
-      ref
-    ) => {
-      const panelRef = (
-        ref ? ref : useRef()
-      ) as MutableRefObject<HTMLDialogElement>;
+  ({ children, className, passedRef, title }: PanelProps) => {
+    const handleCloseIconClick = () => {
+      passedRef.current.close();
+    };
 
-      const handleClick =
-        (ref: MutableRefObject<HTMLDialogElement>) => (e: MouseEvent) => {
-          const { top, bottom, left, right } =
-            ref.current.getBoundingClientRect();
-          const clickX = e.clientX;
-          const clickY = e.clientY;
-          if (
-            clickX < left ||
-            clickX > right ||
-            clickY < top ||
-            clickY > bottom
-          )
-            ref.current?.close();
-        };
-
-      return (
-        <dialog
-          ref={panelRef}
-          onClick={(e) => handleClick(panelRef)(e)}
-          className={className}
-        >
-          {children}
-        </dialog>
-      );
-    }
-  )
+    return (
+      <dialog
+        ref={passedRef}
+        onClick={(e) => handleClick(passedRef, e)}
+        className={className}
+      >
+        <PanelHeader>
+          {title}
+          <CloseIcon onClick={handleCloseIconClick} />
+        </PanelHeader>
+        {children}
+      </dialog>
+    );
+  }
 )`
   --animation-timing: 0.4s;
   --panel-width: 300px;
 
   will-change: transform;
   transform-origin: right center;
+  box-shadow: -16px 0px 16px -16px hsl(from var(--primary) h s calc(l * 0.1));
 
   border: none;
   inset: unset;

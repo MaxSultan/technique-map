@@ -9,7 +9,7 @@ const StyledPracticePlans = styled.div``;
 const DeleteButton = styled.button`
   background-color: var(--caution);
   border: none;
-`
+`;
 
 type PracticePlanType = {
   id: string;
@@ -32,10 +32,10 @@ export function PracticePlans() {
     getData();
   }, []);
 
-  const deletePracticePlan = async(id:string) => {
-    await deleteDoc(doc(db, "practice_plan", id));
-    setPracticePlans((prev) => prev.filter(plan => plan.id !== id))
-  }
+  const deletePracticePlan = async (id: string) => {
+    await deleteDoc(doc(db, 'practice_plan', id));
+    setPracticePlans((prev) => prev.filter((plan) => plan.id !== id));
+  };
 
   return (
     <StyledPracticePlans>
@@ -46,7 +46,9 @@ export function PracticePlans() {
             <Link to={`/practice_plans/${plan.id}`}>
               {new Date(Number(plan.date.seconds) * 1000).toLocaleDateString()}
             </Link>
-            <DeleteButton onClick={() => deletePracticePlan(plan.id)}>Delete Practice Plan</DeleteButton>
+            <DeleteButton onClick={() => deletePracticePlan(plan.id)}>
+              Delete Practice Plan
+            </DeleteButton>
           </li>
         ))}
       </ul>

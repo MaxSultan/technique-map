@@ -7,8 +7,9 @@ type ContentMapProps = {
   addToPracticePlan: (id: string) => void;
   showPanel: (arg0: Function) => void;
   content: string[];
-  className: string;
+  className?: string;
   moves: any[]; // TODO: fix this
+  setPanelTitle: (arg0: string) => void
 };
 
 const Line = styled.line`
@@ -23,6 +24,7 @@ export const ContentMap = styled(
     addToPracticePlan,
     area,
     moves,
+    setPanelTitle = () => {},
   }: ContentMapProps) => {
     const circleRadius = 50;
     const marginTop = 70;
@@ -57,21 +59,23 @@ export const ContentMap = styled(
               r={circleRadius}
               y={marginTop + idx * 110}
               x={mapIndexToRelativeXCoord(idx)}
-              onClick={() =>
+              onClick={() => {
+                setPanelTitle(position)
                 showPanel(() => (
                   <>
                     {moves
                       .filter((i) => i.area === area && i.position === position)
                       .map((move) => (
                         <PanelItem
-                          key={`${area}-${position}-${move.name}`}
-                          addToPracticePlan={() => addToPracticePlan(move.id)}
+                        key={`${area}-${position}-${move.name}`}
+                        addToPracticePlan={() => addToPracticePlan(move.id)}
                         >
                           {move.name}
                         </PanelItem>
                       ))}
                   </>
                 ))
+              }
               }
               text={position}
             />

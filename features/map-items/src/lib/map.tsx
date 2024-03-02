@@ -1,14 +1,29 @@
-import { useState, useRef, useEffect, Fragment } from 'react';
+import { useState, useRef, useEffect, Fragment, useLayoutEffect } from 'react';
 import styled from 'styled-components';
-import { collection, getDocs, addDoc, doc, updateDoc, where, documentId, query } from 'firebase/firestore';
 import {
+  collection,
+  getDocs,
+  addDoc,
+  doc,
+  updateDoc,
+  where,
+  documentId,
+  query,
+} from 'firebase/firestore';
+import {
+  ContentMap,
+} from '@technique-map/map-items';
+import {
+  Panel,
+  PanelList,
+  Button,
+  Tabs,
+  Details,
+  SaveIcon,
   CloseIcon,
   CopyIcon,
   TrashIcon,
-  ContentMap,
-  SaveIcon,
-} from '@technique-map/map-items';
-import { Panel, PanelList, Button, Tabs } from '@technique-map/design-system';
+} from '@technique-map/design-system';
 import { db } from '../../../../src/app/firebase';
 import { NavigateFunction, useNavigate, useParams } from 'react-router';
 
@@ -50,7 +65,9 @@ export const aggregateMovesByPosition = (moves: MoveType[]) =>
     (acc, move) => ({
       ...acc,
       [move?.area]: [
-        ...(acc[move?.area] ?? []).filter((obj: { name: string }) => obj.name !== move?.position),
+        ...(acc[move?.area] ?? []).filter(
+          (obj: { name: string }) => obj.name !== move?.position
+        ),
         {
           name: move?.position,
           moves: [
@@ -68,9 +85,9 @@ export const aggregateMovesByPosition = (moves: MoveType[]) =>
     { neutral: [], top: [], bottom: [] }
   );
 
-const positionsByArea = (
-  arr: MoveType[]
-): { name: Area; positions: Set<any> }[] =>
+type PositionByAreaType = { name: Area; positions: Set<any> };
+
+const positionsByArea = (arr: MoveType[]): PositionByAreaType[] =>
   arr.reduce(
     (acc, val) => {
       const idx = acc.findIndex((i) => i.name === val.area);
@@ -91,17 +108,45 @@ const copyPracticePlan = (moves: MoveType[], practicePlanMoves: string[]) =>
     )
   );
 
-const savePracticePlan = async (practicePlan: PlanType, navigator: NavigateFunction) => {
-  await addDoc(collection(db, 'practice_plan'), practicePlan).then(res => {
-    navigator(`/practice_plans/${res.id}`)
+const savePracticePlan = async (
+  practicePlan: PlanType,
+  navigator: NavigateFunction
+) => {
+  await addDoc(collection(db, 'practice_plan'), practicePlan).then((res) => {
+    navigator(`/practice_plans/${res.id}`);
   });
 };
 
-const updatePracticePlan = async (id:string, practicePlan:PlanType, navigator: NavigateFunction) => {
-  const practicePlanRef = doc(db, "practice_plan", id);
+const updatePracticePlan = async (
+  id: string,
+  practicePlan: PlanType,
+  navigator: NavigateFunction
+) => {
+  const practicePlanRef = doc(db, 'practice_plan', id);
   await updateDoc(practicePlanRef, practicePlan);
-  navigator(`/practice_plans/${id}`)
-}
+  navigator(`/practice_plans/${id}`);
+};
+
+const BookIcon = styled(({ className }) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="16"
+    height="16"
+    viewBox="0 0 16 16"
+    className={className}
+  >
+    <path
+      fillRule="evenodd"
+      d="M3 5h4v1H3V5zm0 3h4V7H3v1zm0 2h4V9H3v1zm11-5h-4v1h4V5zm0 2h-4v1h4V7zm0 2h-4v1h4V9zm2-6v9c0 .55-.45 1-1 1H9.5l-1 1l-1-1H2c-.55 0-1-.45-1-1V3c0-.55.45-1 1-1h5.5l1 1l1-1H15c.55 0 1 .45 1 1zm-8 .5L7.5 3H2v9h6V3.5zm7-.5H9.5l-.5.5V12h6V3z"
+      fill="currentColor"
+    />
+  </svg>
+))``;
+
+const ScrollContainer = styled.div`
+  height: 100%;
+  overflow: scroll;
+`;
 
 const PracticePlanDisplay = styled(
   ({
@@ -110,87 +155,98 @@ const PracticePlanDisplay = styled(
     practicePlan,
     removeFromPracticePlan,
     clearPracticePlan,
-    currentPracticePlanId
+    currentPracticePlanId,
   }) => {
     const navigator = useNavigate();
+    const [transform, setTransform] = useState<boolean>(
+      window.innerWidth > 850
+    );
+
+    const listenForResize = () => {
+      if (window.innerWidth > 850) setTransform(true);
+    };
+
+    useLayoutEffect(() => {
+      window.addEventListener('resize', listenForResize);
+
+      return () => {
+        window.removeEventListener('resize', listenForResize);
+      };
+    }, []);
+
+    const handleShowPracticePlanClick = () => {
+      setTransform((prev) => !prev);
+    };
 
     return (
-      <aside className={className}>
-        Practice Plan
-        <br />
-        neutral
-        <br />
-        {aggregateMovesByPosition(
-          findMoves(moves, practicePlan.moves)
-        ).neutral.map((position: PositionType) => (
-          <Fragment key={position.name}>
-            {position.name}
-            <PracticePlanGroup>
-              {position.moves.map(({ name: moveName, id }) => (
-                <PracticePlanItem key={`${position.name}=${moveName}`}>
-                  {moveName}
-                  <IconButton onClick={() => removeFromPracticePlan(id)}>
-                    <CloseIcon />
-                  </IconButton>
-                </PracticePlanItem>
+      <aside
+        className={className}
+        style={{
+          /* @ts-ignore:next-line */
+          '--transform': transform ? 'translateX(0%)' : 'translateX(-100%)',
+        }}
+      >
+        <button
+          aria-label="show practice plan"
+          onClick={handleShowPracticePlanClick}
+        >
+          <BookIcon />
+        </button>
+        <ScrollContainer>
+          <h1>Practice Plan</h1>
+          {Object.entries(
+            aggregateMovesByPosition(findMoves(moves, practicePlan.moves))
+          ).map(([key, value]) => (
+            <Fragment key={key}>
+              <h2>{key}</h2>
+              {value.map((position: PositionType) => (
+                <Details
+                  title={position.name}
+                  key={position.name}
+                >
+                  {position.moves.map(({ name: moveName, id }) => (
+                    <PracticePlanItem key={`${position.name}=${moveName}`}>
+                      {moveName}
+                      <IconButton onClick={() => removeFromPracticePlan(id)}>
+                        <CloseIcon />
+                      </IconButton>
+                    </PracticePlanItem>
+                  ))}
+                </Details>
               ))}
-            </PracticePlanGroup>
-          </Fragment>
-        ))}
-        bottom
-        <br />
-        {aggregateMovesByPosition(
-          findMoves(moves, practicePlan.moves)
-        ).bottom.map((position: PositionType) => (
-          <Fragment key={position.name}>
-            {position.name}
-            <PracticePlanGroup>
-              {position.moves.map(({ name: moveName, id }) => (
-                <PracticePlanItem key={`${position.name}=${moveName}`}>
-                  {moveName}
-                  <IconButton onClick={() => removeFromPracticePlan(id)}>
-                    <CloseIcon />
-                  </IconButton>
-                </PracticePlanItem>
-              ))}
-            </PracticePlanGroup>
-          </Fragment>
-        ))}
-        top
-        <br />
-        {aggregateMovesByPosition(findMoves(moves, practicePlan.moves)).top.map(
-          (position: PositionType) => (
-            <Fragment key={position.name}>
-              {position.name}
-              <PracticePlanGroup>
-                {position.moves.map(({ name: moveName, id }) => (
-                  <PracticePlanItem key={`${position.name}=${moveName}`}>
-                    {moveName}
-                    <IconButton onClick={() => removeFromPracticePlan(id)}>
-                      <CloseIcon />
-                    </IconButton>
-                  </PracticePlanItem>
-                ))}
-              </PracticePlanGroup>
             </Fragment>
-          )
-        )}
-        {!currentPracticePlanId && <Button
-          onClick={clearPracticePlan}
-          text="Clear Practice Plan"
-          Icon={StyledTrashIcon}
-          $level="caution"
-        />}
-        <Button
-          onClick={() => copyPracticePlan(moves, practicePlan.moves)}
-          text="Copy Practice Plan"
-          Icon={CopyIcon}
-        />
-        <Button
-          onClick={() => currentPracticePlanId ? updatePracticePlan(currentPracticePlanId, practicePlan, navigator) : savePracticePlan(practicePlan, navigator)}
-          text={currentPracticePlanId ? "Update Practice Plan" :"Save Practice Plan"}
-          Icon={SaveIcon}
-        />
+          ))}
+          {!currentPracticePlanId && (
+            <Button
+              onClick={clearPracticePlan}
+              text="Clear Practice Plan"
+              Icon={StyledTrashIcon}
+              $level="caution"
+            />
+          )}
+          <Button
+            onClick={() => copyPracticePlan(moves, practicePlan.moves)}
+            text="Copy Practice Plan"
+            Icon={CopyIcon}
+          />
+          <Button
+            onClick={() =>
+              currentPracticePlanId
+                ? updatePracticePlan(
+                    currentPracticePlanId,
+                    practicePlan,
+                    navigator
+                  )
+                : savePracticePlan(practicePlan, navigator)
+            }
+            text={
+              currentPracticePlanId
+                ? 'Update Practice Plan'
+                : 'Save Practice Plan'
+            }
+            Icon={SaveIcon}
+          />
+        </ScrollContainer>
       </aside>
     );
   }
@@ -198,22 +254,34 @@ const PracticePlanDisplay = styled(
   background-color: var(--primary);
   color: white;
   padding: clamp(8px, 3vw, 32px);
-  box-shadow: 16px 0px 16px -16px hsl(from var(--primary) h s 10%);
+  box-shadow: 16px 0px 16px -16px hsl(from var(--primary) h s calc(l * 0.1));
+  transition: transform 300ms;
+  transform: var(--transform);
+  display: flex;
+  flex-direction: column;
+
+  & > button[aria-label='show practice plan'] {
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    padding: 32px;
+    position: fixed;
+    right: 0;
+    top: 154px;
+    background-color: var(--secondary);
+    color: white;
+    border: none;
+    box-shadow: 2px 0px 16px hsl(from var(--primary) h s calc(l * 0.6));
+    cursor: pointer;
+    transform: translateX(90%);
+    @media screen and (width >= 850px) {
+      display: none;
+    }
+  }
 `;
 
 const StyledTrashIcon = styled(TrashIcon)`
   stroke: white;
-`;
-
-const PracticePlanGroup = styled.ul`
-  padding: 8px 16px;
-  display: grid;
-  grid-auto-flow: row;
-  gap: 2px;
-  background-color: var(--primary);
-  max-height: 20%;
-  overflow-y: auto;
-  scroll-snap-type: x proximity;
 `;
 
 const PracticePlanItem = styled.li`
@@ -241,39 +309,42 @@ const IconButton = styled.button`
   align-items: center;
 `;
 
-const useExistingPracticePlanData = (currentPracticePlanId: string | undefined): [PlanType, React.Dispatch<React.SetStateAction<any>>] => {
+const useExistingPracticePlanData = (
+  currentPracticePlanId: string | undefined
+): [PlanType, React.Dispatch<React.SetStateAction<any>>] => {
   const initialPracticePlanState = {
     date: new Date(), // TODO: update this so a user can select a date
     moves: [],
   };
-  const [practicePlan,setPracticePlan] = useState<PlanType>(initialPracticePlanState);
+  const [practicePlan, setPracticePlan] = useState<PlanType>(
+    initialPracticePlanState
+  );
   useEffect(() => {
-    if(currentPracticePlanId) {
+    if (currentPracticePlanId) {
       const q = query(
         collection(db, 'practice_plan'),
         where(documentId(), '==', currentPracticePlanId)
       );
-    
+
       const getPracticePlanData = () =>
-      getDocs(q).then((querySnapshot) => {
-        const newData = querySnapshot.docs.map((doc) => ({
-          ...doc.data(),
-          id: doc.id,
-        }));
-        const [plan] = newData;
-        setPracticePlan(plan as unknown as PlanType);
-        console.log(newData)
-      });
+        getDocs(q).then((querySnapshot) => {
+          const newData = querySnapshot.docs.map((doc) => ({
+            ...doc.data(),
+            id: doc.id,
+          }));
+          const [plan] = newData;
+          setPracticePlan(plan as unknown as PlanType);
+          console.log(newData);
+        });
 
       getPracticePlanData();
     } else {
-      setPracticePlan(initialPracticePlanState)
+      setPracticePlan(initialPracticePlanState);
     }
-  }, [currentPracticePlanId])
+  }, [currentPracticePlanId]);
 
   return [practicePlan, setPracticePlan];
-}
-
+};
 
 export const Map = styled(({ className }) => {
   const initialPracticePlanState = {
@@ -284,10 +355,13 @@ export const Map = styled(({ className }) => {
   const [currentTab, setCurrentTab] = useState<Area>('neutral');
   const [moves, setMoves] = useState<MoveType[]>([]);
   const panelRef = useRef<HTMLDialogElement | undefined>();
-  
+  const [title, setPanelTitle] = useState<string>('')
+
   let { id: currentPracticePlanId } = useParams();
 
-  const [practicePlan, setPracticePlan] = useExistingPracticePlanData(currentPracticePlanId);
+  const [practicePlan, setPracticePlan] = useExistingPracticePlanData(
+    currentPracticePlanId
+  );
 
   const getData = () =>
     getDocs(collection(db, 'moves')).then((querySnapshot) => {
@@ -312,7 +386,10 @@ export const Map = styled(({ className }) => {
   };
 
   const addToPracticePlan = (id: string) => {
-    setPracticePlan((prev: PlanType) => ({ ...prev, moves: [...prev.moves, id] }));
+    setPracticePlan((prev: PlanType) => ({
+      ...prev,
+      moves: [...prev.moves, id],
+    }));
   };
 
   const removeFromPracticePlan = (id: string) => {
@@ -331,19 +408,22 @@ export const Map = styled(({ className }) => {
         removeFromPracticePlan={removeFromPracticePlan}
         currentPracticePlanId={currentPracticePlanId}
       />
-      {/* @ts-ignore:next-line */}
       <ContentMap
+      setPanelTitle={setPanelTitle}
         addToPracticePlan={addToPracticePlan}
         content={[
-          /* @ts-ignore:next-line */
-          ...positionsByArea(moves).find((i) => i.name === currentTab)
-            .positions,
+          ...(
+            positionsByArea(moves).find(
+              (i) => i.name === currentTab
+            ) as PositionByAreaType
+          ).positions,
         ]}
         showPanel={showPanel}
         area={currentTab}
         moves={moves}
       />
-      <Panel ref={panelRef}>
+      {/* @ts-ignore:next-line */}
+      <Panel passedRef={panelRef} title={title}>
         <PanelList>{panelContent}</PanelList>
       </Panel>
       <Tabs
@@ -355,15 +435,26 @@ export const Map = styled(({ className }) => {
   );
 })`
   display: grid;
-  grid-template-areas: 'nav nav' 'plan content';
-  grid-template-columns: min(236px, 25%) 1fr;
+  grid-template-areas: 'nav' 'content';
+  grid-template-columns: 1fr;
   grid-template-rows: fit-content 1fr;
+
+  @media screen and (width >= 850px) {
+    grid-template-areas: 'nav nav' 'plan content';
+    grid-template-columns: min(300px, 75%) 1fr;
+  }
 
   & > ${PracticePlanDisplay} {
     grid-area: plan;
     position: sticky;
     top: 0;
-    max-height: 100vh;
+    height: 100vh;
     box-sizing: border-box;
+
+    @media screen and (width <= 850px) {
+      position: fixed;
+      left: 0;
+      width: 75vw;
+    }
   }
 `;
