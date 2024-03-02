@@ -1,6 +1,6 @@
 import { ReactNode, MouseEvent, MutableRefObject } from 'react';
 import styled, { keyframes } from 'styled-components';
-import { CloseIcon } from '@technique-map/map-items';
+import { CloseIcon } from './icons/close-icon';
 
 const backdropFadeIn = keyframes`
  from {
@@ -86,8 +86,12 @@ const handleClick = (
 };
 
 const PanelHeader = styled.hgroup`
-  height: 51px;
   border-bottom: 1px groove var(--secondary);
+  color: white;
+  padding: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 `;
 
 type PanelProps = {
@@ -144,11 +148,5 @@ export const Panel = styled(
     ::backdrop {
       animation: ${backdropFadeIn} var(--animation-timing) ease-out forwards;
     }
-  }
-
-  & > ${PanelHeader} > ${CloseIcon} {
-    position: absolute;
-    top: 8px;
-    right: 8px;
   }
 `;

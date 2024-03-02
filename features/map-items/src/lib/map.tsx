@@ -11,11 +11,7 @@ import {
   query,
 } from 'firebase/firestore';
 import {
-  CloseIcon,
-  CopyIcon,
-  TrashIcon,
   ContentMap,
-  SaveIcon,
 } from '@technique-map/map-items';
 import {
   Panel,
@@ -23,6 +19,10 @@ import {
   Button,
   Tabs,
   Details,
+  SaveIcon,
+  CloseIcon,
+  CopyIcon,
+  TrashIcon,
 } from '@technique-map/design-system';
 import { db } from '../../../../src/app/firebase';
 import { NavigateFunction, useNavigate, useParams } from 'react-router';
@@ -182,6 +182,7 @@ const PracticePlanDisplay = styled(
       <aside
         className={className}
         style={{
+          /* @ts-ignore:next-line */
           '--transform': transform ? 'translateX(0%)' : 'translateX(-100%)',
         }}
       >
@@ -354,6 +355,7 @@ export const Map = styled(({ className }) => {
   const [currentTab, setCurrentTab] = useState<Area>('neutral');
   const [moves, setMoves] = useState<MoveType[]>([]);
   const panelRef = useRef<HTMLDialogElement | undefined>();
+  const [title, setPanelTitle] = useState<string>('')
 
   let { id: currentPracticePlanId } = useParams();
 
@@ -407,6 +409,7 @@ export const Map = styled(({ className }) => {
         currentPracticePlanId={currentPracticePlanId}
       />
       <ContentMap
+      setPanelTitle={setPanelTitle}
         addToPracticePlan={addToPracticePlan}
         content={[
           ...(
@@ -419,7 +422,8 @@ export const Map = styled(({ className }) => {
         area={currentTab}
         moves={moves}
       />
-      <Panel passedRef={panelRef}>
+      {/* @ts-ignore:next-line */}
+      <Panel passedRef={panelRef} title={title}>
         <PanelList>{panelContent}</PanelList>
       </Panel>
       <Tabs
