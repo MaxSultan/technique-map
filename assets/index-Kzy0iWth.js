@@ -2502,7 +2502,7 @@ This typically indicates that your device does not have a healthy Internet conne
   border-radius: 8px;
   padding: 4px 16px 4px 16px;
   cursor: pointer;
-`,y0=Ce(({className:t})=>{const[e,n]=A.useState([]),r=eh(),i=()=>{r("/create")},o=()=>wa(bo(Gr,"practice_plan")).then(a=>{const l=a.docs.map(u=>({...u.data(),id:u.id}));n(l)});A.useEffect(()=>{o()},[]);const s=async a=>{await rN(Lm(Gr,"practice_plan",a)),n(l=>l.filter(u=>u.id!==a))};return D.jsxs("main",{className:t,children:[D.jsxs(W4,{children:[D.jsx("h1",{children:"Practice plans"}),D.jsx(So,{onClick:i,text:"Add Practice Plan"})]}),D.jsx("ul",{children:e.map(a=>D.jsxs("li",{children:[D.jsx(pS,{to:`/practice_plans/${a.id}`,children:new Date(Number(a.date.seconds)*1e3).toLocaleDateString()}),D.jsx(K4,{onClick:()=>s(a.id),children:"Delete Practice Plan"})]},a.id))})]})})`
+`,y0=Ce(({className:t})=>{const[e,n]=A.useState([]),r=eh(),i=()=>{r("/create")},o=()=>wa(bo(Gr,"practice_plan")).then(a=>{const l=a.docs.map(u=>({...u.data(),id:u.id}));n(l)});A.useEffect(()=>{o()},[]);const s=async a=>{await rN(Lm(Gr,"practice_plan",a)),n(l=>l.filter(u=>u.id!==a))};return D.jsxs("main",{className:t,children:[new Date().toLocaleDateString(),D.jsxs(W4,{children:[D.jsx("h1",{children:"Practice plans"}),D.jsx(So,{onClick:i,text:"Add Practice Plan"})]}),D.jsx("ul",{children:e.map(a=>D.jsxs("li",{children:[D.jsx(pS,{to:`/practice_plans/${a.id}`,children:new Date(Number(a.date.seconds)*1e3).toLocaleDateString()}),D.jsx(K4,{onClick:()=>s(a.id),children:"Delete Practice Plan"})]},a.id))})]})})`
   padding: 16px 15% 16px 15%;
   background-color: var(--primary);
   color: white;
