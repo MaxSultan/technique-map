@@ -56,6 +56,7 @@ export const PracticePlans = styled(({ className }: { className?: string }) => {
 
   return (
     <main className={className}>
+      {new Date().toLocaleDateString()}
       <Title>
         <h1>Practice plans</h1>
         <Button
