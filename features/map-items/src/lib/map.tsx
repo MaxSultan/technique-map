@@ -10,9 +10,7 @@ import {
   documentId,
   query,
 } from 'firebase/firestore';
-import {
-  ContentMap,
-} from '@technique-map/map-items';
+import { ContentMap } from '@technique-map/map-items';
 import {
   Panel,
   PanelList,
@@ -148,6 +146,12 @@ const ScrollContainer = styled.div`
   overflow: scroll;
 `;
 
+const Actions = styled.div`
+  display: grid;
+  grid-auto-flow: row;
+  gap: 20px;
+`;
+
 const PracticePlanDisplay = styled(
   ({
     className,
@@ -216,36 +220,38 @@ const PracticePlanDisplay = styled(
               ))}
             </Fragment>
           ))}
-          {!currentPracticePlanId && (
+          <Actions>
+            {!currentPracticePlanId && (
+              <Button
+                onClick={clearPracticePlan}
+                text="Clear Practice Plan"
+                Icon={StyledTrashIcon}
+                $level="caution"
+              />
+            )}
             <Button
-              onClick={clearPracticePlan}
-              text="Clear Practice Plan"
-              Icon={StyledTrashIcon}
-              $level="caution"
+              onClick={() => copyPracticePlan(moves, practicePlan.moves)}
+              text="Copy Practice Plan"
+              Icon={CopyIcon}
             />
-          )}
-          <Button
-            onClick={() => copyPracticePlan(moves, practicePlan.moves)}
-            text="Copy Practice Plan"
-            Icon={CopyIcon}
-          />
-          <Button
-            onClick={() =>
-              currentPracticePlanId
-                ? updatePracticePlan(
-                    currentPracticePlanId,
-                    practicePlan,
-                    navigator
-                  )
-                : savePracticePlan(practicePlan, navigator)
-            }
-            text={
-              currentPracticePlanId
-                ? 'Update Practice Plan'
-                : 'Save Practice Plan'
-            }
-            Icon={SaveIcon}
-          />
+            <Button
+              onClick={() =>
+                currentPracticePlanId
+                  ? updatePracticePlan(
+                      currentPracticePlanId,
+                      practicePlan,
+                      navigator
+                    )
+                  : savePracticePlan(practicePlan, navigator)
+              }
+              text={
+                currentPracticePlanId
+                  ? 'Update Practice Plan'
+                  : 'Save Practice Plan'
+              }
+              Icon={SaveIcon}
+            />
+          </Actions>
         </ScrollContainer>
       </aside>
     );
@@ -334,7 +340,6 @@ const useExistingPracticePlanData = (
           }));
           const [plan] = newData;
           setPracticePlan(plan as unknown as PlanType);
-          console.log(newData);
         });
 
       getPracticePlanData();
@@ -347,15 +352,11 @@ const useExistingPracticePlanData = (
 };
 
 export const Map = styled(({ className }) => {
-  const initialPracticePlanState = {
-    date: new Date(), // TODO: update this so a user can select a date
-    moves: [],
-  };
   const [panelContent, setPanelContent] = useState('');
   const [currentTab, setCurrentTab] = useState<Area>('neutral');
   const [moves, setMoves] = useState<MoveType[]>([]);
   const panelRef = useRef<HTMLDialogElement | undefined>();
-  const [title, setPanelTitle] = useState<string>('')
+  const [title, setPanelTitle] = useState<string>('');
 
   let { id: currentPracticePlanId } = useParams();
 
@@ -382,7 +383,10 @@ export const Map = styled(({ className }) => {
   };
 
   const clearPracticePlan = () => {
-    setPracticePlan(initialPracticePlanState);
+    setPracticePlan({
+      date: new Date(),
+      moves: [],
+    });
   };
 
   const addToPracticePlan = (id: string) => {
@@ -409,7 +413,7 @@ export const Map = styled(({ className }) => {
         currentPracticePlanId={currentPracticePlanId}
       />
       <ContentMap
-      setPanelTitle={setPanelTitle}
+        setPanelTitle={setPanelTitle}
         addToPracticePlan={addToPracticePlan}
         content={[
           ...(
@@ -423,7 +427,10 @@ export const Map = styled(({ className }) => {
         moves={moves}
       />
       {/* @ts-ignore:next-line */}
-      <Panel passedRef={panelRef} title={title}>
+      <Panel
+        passedRef={panelRef}
+        title={title}
+      >
         <PanelList>{panelContent}</PanelList>
       </Panel>
       <Tabs

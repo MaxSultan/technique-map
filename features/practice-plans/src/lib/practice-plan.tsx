@@ -62,10 +62,8 @@ export const PracticePlan = styled(({ className }) => {
     });
 
   useEffect(() => {
-    // TODO: this may not be necessary
-    getMovesData().then(() => {
-      getPracticePlanData();
-    });
+    getMovesData();
+    getPracticePlanData();
   }, []);
 
   const editPracticePlan = (id: string) => {
@@ -113,4 +111,11 @@ export const PracticePlan = styled(({ className }) => {
   background-color: var(--secondary);
   padding: 32px;
   color: white;
+  display: grid;
+  grid-auto-flow: row;
+  gap: 20px;
+
+  & > ${Button} {
+    align-self: start;
+  }
 `;
