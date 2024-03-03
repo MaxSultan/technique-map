@@ -16,9 +16,19 @@ export const NavBar = styled(({ className }) => (
     <Outlet />
   </>
 ))`
+  border-bottom: 1px groove var(--secondary);
+  background-color: var(--primary);
+  padding: 16px;
+
+  & a {
+    color: white;
+  }
+
   & > ul {
     list-style: none;
     display: flex;
     gap: 32px;
+    padding: 0;
+    margin: 0;
   }
 `;

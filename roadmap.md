@@ -8,24 +8,23 @@ A way to quickly create practice plans
 A way to visualize the hight level technique plan
 A way to store content related to the technique
 
-[x] Type map.tsx
-[x] Add click on overlay to the panel component
-[x] Make practice plan boxed a fixed height for different areas
-[x] add a print/copy practice plan feature
-[x] make usable on mobile
-[x] deploy
-[x] stop the same item from the same position being added more than once to a practice plan
-[x] nx-ize the code
-[x] styling
-[x] make content adjust on resize
-[x] create github repo
-[] Add curved lines between svg circles
-[x] remove from practice plan button
-[] add error handling
+- [x] Type map.tsx
+- [x] Add click on overlay to the panel component
+- [x] Make practice plan boxed a fixed height for different areas
+- [x] add a print/copy practice plan feature
+- [x] make usable on mobile
+- [x] deploy
+- [x] stop the same item from the same position being added more than once to a practice plan
+- [x] nx-ize the code
+- [x] styling
+- [x] make content adjust on resize
+- [x] create github repo
+- [x] remove from practice plan button
+- [ ] add error handling
 
-[x] connect to firebase firestore
+- [x] connect to firebase firestore
 
-[x] data migration
+- [x] data migration
 
 ```js
 // old model
@@ -54,43 +53,59 @@ type moves = {
 };
 ```
 
-[x] add moves to db
-[x] make moves request in map
-[x] group practice plan by position
-[x] derive practice plan UI view data from model data
-[x] add save button to practice plan create
-[] make positions in practice plan details components
+- [x] add moves to db
+- [x] make moves request in map
+- [x] group practice plan by position
+- [x] derive practice plan UI view data from model data
+- [x] add save button to practice plan create
+- [x] make positions in practice plan details components
+- [x] practice plan index
+- [x] practice plan create
+- [x] practice plan update
+- [x] practice plan delete
+- [x] fix dates in practice plan index
 
-[x] practice plan index
-[] practice plan index search/scoping
-[x] practice plan create
-[x] practice plan update
-[] practice plan delete
-[] add most recent review to moves
+---
 
-[] add CI/CD to github actions
-[] fix dates in practice plan index
+# V2
 
-[] consolidate duplicated functions (get moves data)
-[] prevent same move from being added twice
-[] add error handling when thing fail (error boundaries)
-[] add error handling when thing fail (error toast)
-[] add unit tests
+- [ ] update styling on practice plan page
+- [ ] add ability to set date on practice plan create/update
+- [ ] prevent same move from being added twice
+- [ ] add a toast component that appears and tells user of following errors/events:
 
-[] nx-ize the firebase config/init file
+- adding a move that already exists to a practice plan
+- deleting a practice plan
+- creating a practice plan
 
-[] make admin interface with ability to add moves (ts types dynamically created??)
-[] make filter system for move levels in create practice plan menu
-[] differentiate moves by level in create practice plan menu (stylistically)
-[] add e2e tests
+- [ ] practice plan index search/scoping/filtering
+- [ ] add most recent review to moves (number of days since last reviewed)
+
+- [ ] add CI/CD to github actions
+
+- [ ] consolidate duplicated functions (get moves data)
+- [ ] add unit tests
+
+- [ ] nx-ize the firebase config/init file
+
+- [ ] make admin interface with ability to add moves (ts types dynamically created??)
+- [ ] make filter system for move levels in create practice plan menu
+- [ ] differentiate moves by level in create practice plan menu (stylistically)
+- [ ] add e2e tests
 
 Code refactor:
-[x] separate react components
-[] react components should follow the SRP principle
-[x] add map.tsx to map-items feature lib
+
+- [x] separate react components
+- [ ] react components should follow the SRP principle
+- [x] add map.tsx to map-items feature lib
+- [ ] code should follow a functional paradigm
 
 nice to have
-[] make the panel transition out of view nicely
+
+- [ ] make the panel transition out of view nicely
+- [ ] Add curved lines between svg circles
+
+---
 
 # Modeling Wrestling Skill Aquisition
 
@@ -108,7 +123,7 @@ when someone doesnt know the move they have no technique in that area
 someone good at wrestling understands the following things in a position
 
 1. what moves they have available
-2. what the opponent has available
+2. what options the opponent has available
 3. what "look" they need for a certain move to be effective
 4. How to defend the opponents moves from this position
 5. What comes next from a certain move and all previous for what comes next

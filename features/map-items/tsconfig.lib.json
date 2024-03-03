@@ -19,5 +19,15 @@
     "**/*.spec.jsx",
     "**/*.test.jsx"
   ],
-  "include": ["src/**/*.js", "src/**/*.jsx", "src/**/*.ts", "src/**/*.tsx", "../../design-system/src/lib/icons/close-icon.tsx", "../../design-system/src/lib/icons/save-icon.tsx", "src/lib/svg-circle.tsx", "../../design-system/src/lib/icons/trash-icon.tsx", "../../design-system/src/lib/icons/copy-icon.tsx"]
+  "include": [
+    "src/**/*.js",
+    "src/**/*.jsx",
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "../../design-system/src/lib/icons/close-icon.tsx",
+    "../../design-system/src/lib/icons/save-icon.tsx",
+    "src/lib/svg-circle.tsx",
+    "../../design-system/src/lib/icons/trash-icon.tsx",
+    "../../design-system/src/lib/icons/copy-icon.tsx"
+  ]
 }

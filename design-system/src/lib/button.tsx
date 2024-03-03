@@ -27,7 +27,6 @@ export const Button = styled(({ text, onClick, className, Icon }) => {
   align-items: center;
   border: none;
   border-radius: 8px;
-  margin-top: 17px;
   cursor: pointer;
   color: white;
   position: relative;
