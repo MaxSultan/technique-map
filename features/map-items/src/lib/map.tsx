@@ -426,8 +426,8 @@ export const Map = styled(({ className }) => {
         area={currentTab}
         moves={moves}
       />
-      {/* @ts-ignore:next-line */}
       <Panel
+        /* @ts-ignore:next-line */
         passedRef={panelRef}
         title={title}
       >
