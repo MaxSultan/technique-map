@@ -2502,7 +2502,7 @@ This typically indicates that your device does not have a healthy Internet conne
   border-radius: 8px;
   padding: 4px 16px 4px 16px;
   cursor: pointer;
-`,y0=Ce(({className:t})=>{const[e,n]=A.useState([]),r=eh(),i=()=>{r("/create")},o=()=>wa(bo(Gr,"practice_plan")).then(a=>{const l=a.docs.map(u=>({...u.data(),id:u.id}));n(l)});A.useEffect(()=>{o()},[]);const s=async a=>{await rN(Lm(Gr,"practice_plan",a)),n(l=>l.filter(u=>u.id!==a))};return D.jsxs("main",{className:t,children:[D.jsxs(W4,{children:[D.jsx("h1",{children:"Practice plans"}),D.jsx(So,{onClick:i,text:"Add Practice Plan"})]}),D.jsx("ul",{children:e.map(a=>D.jsxs("li",{children:[D.jsx(pS,{to:`/practice_plans/${a.id}`,children:new Date(Number(a.date.seconds)*1e3).toLocaleDateString()}),D.jsx(K4,{onClick:()=>s(a.id),children:"Delete Practice Plan"})]},a.id))})]})})`
+`,y0=Ce(({className:t})=>{const[e,n]=A.useState([]),r=eh(),i=()=>{r("/create")},o=()=>wa(bo(Gr,"practice_plan")).then(a=>{const l=a.docs.map(u=>({...u.data(),id:u.id}));n(l)});A.useEffect(()=>{o()},[]);const s=async a=>{await rN(Lm(Gr,"practice_plan",a)),n(l=>l.filter(u=>u.id!==a))};return D.jsxs("main",{className:t,children:[D.jsxs(W4,{children:[D.jsx("h1",{children:"Practice plans"}),D.jsx(So,{onClick:i,text:"Add Practice Plan"})]}),D.jsx("button",{children:"button"}),D.jsx("ul",{children:e.map(a=>D.jsxs("li",{children:[D.jsx(pS,{to:`/practice_plans/${a.id}`,children:new Date(Number(a.date.seconds)*1e3).toLocaleDateString()}),D.jsx(K4,{onClick:()=>s(a.id),children:"Delete Practice Plan"})]},a.id))})]})})`
   padding: 16px 15% 16px 15%;
   background-color: var(--primary);
   color: white;
@@ -2529,7 +2529,7 @@ This typically indicates that your device does not have a healthy Internet conne
       justify-content: space-between;
     }
   }
-`,G4=Ce(({className:t,text:e,x:n,y:r,r:i,onClick:o,index:s})=>D.jsxs("g",{onClick:o,className:t,children:[D.jsx("circle",{r:i+5,cy:r,cx:n}),D.jsx("circle",{className:t,r:i,cy:r,cx:n}),D.jsx("text",{x:n,y:r,dominantBaseline:"middle",textAnchor:"middle",children:e})]}))`
+`,G4=Ce(({className:t,text:e,x:n,y:r,r:i,onClick:o})=>D.jsxs("g",{onClick:o,className:t,children:[D.jsx("circle",{r:i+5,cy:r,cx:n}),D.jsx("circle",{className:t,r:i,cy:r,cx:n}),D.jsx("text",{x:n,y:r,dominantBaseline:"middle",textAnchor:"middle",children:e})]}))`
   & > circle {
     fill: var(--orange);
     stroke-width: 2px;
@@ -2549,7 +2549,7 @@ This typically indicates that your device does not have a healthy Internet conne
   }
 `,Q4=Ce.line`
   stroke: var(--orange);
-`,Y4=Ce(({className:t,content:e,showPanel:n,addToPracticePlan:r,area:i,moves:o,setPanelTitle:s=()=>{}})=>{const u=c=>{const h="50%",d="25%",m="75%";return c%3===1||c===0?h:c%6===2||c%6===3?d:m};return D.jsx("svg",{height:Math.max(110*(e.length+2),window.innerHeight-52),width:"100%",className:t,children:e.map((c,h)=>D.jsxs("g",{children:[D.jsx(Q4,{x1:u(h),y1:70+h*110,x2:u(h+1),y2:70+(h+1)*110}),D.jsx(G4,{index:h,r:50,y:70+h*110,x:u(h),onClick:()=>{s(c),n(()=>D.jsx(D.Fragment,{children:o.filter(d=>d.area===i&&d.position===c).map(d=>D.jsx(O4,{addToPracticePlan:()=>r(d.id),children:d.name},`${i}-${c}-${d.name}`))}))},text:c},`${h}-svgRect`)]},c))})})`
+`,Y4=Ce(({className:t,content:e,showPanel:n,addToPracticePlan:r,area:i,moves:o,setPanelTitle:s=()=>{}})=>{const u=c=>{const h="50%",d="25%",m="75%";return c%3===1||c===0?h:c%6===2||c%6===3?d:m};return D.jsx("svg",{height:Math.max(110*(e.length+2),window.innerHeight-52),width:"100%",className:t,children:e.map((c,h)=>D.jsxs("g",{children:[D.jsx(Q4,{x1:u(h),y1:70+h*110,x2:u(h+1),y2:70+(h+1)*110}),D.jsx(G4,{r:50,y:70+h*110,x:u(h),onClick:()=>{s(c),n(()=>D.jsx(D.Fragment,{children:o.filter(d=>d.area===i&&d.position===c).map(d=>D.jsx(O4,{addToPracticePlan:()=>r(d.id),children:d.name},`${i}-${c}-${d.name}`))}))},text:c},`${h}-svgRect`)]},c))})})`
   background-color: var(--primary);
 `,lg=(t,e)=>e.map(n=>t.find(r=>r.id===n)),ug=t=>t.reduce((e,n)=>{var r;return{...e,[n==null?void 0:n.area]:[...(e[n==null?void 0:n.area]??[]).filter(i=>i.name!==(n==null?void 0:n.position)),{name:n==null?void 0:n.position,moves:[...((r=(e[n==null?void 0:n.area]??[]).find(i=>i.name===(n==null?void 0:n.position)))==null?void 0:r.moves)??[],{name:n==null?void 0:n.name,id:n==null?void 0:n.id}]}]}},{neutral:[],top:[],bottom:[]}),v0=t=>t.reduce((e,n)=>{const r=e.findIndex(i=>i.name===n.area);return e[r].positions.add(n.position),e},[{name:"neutral",positions:new Set},{name:"top",positions:new Set},{name:"bottom",positions:new Set}]),X4=(t,e)=>window.navigator.clipboard.writeText(JSON.stringify(ug(lg(t,e)))),J4=async(t,e)=>{await iN(bo(Gr,"practice_plan"),t).then(n=>{e(`/practice_plans/${n.id}`)})},Z4=async(t,e,n)=>{const r=Lm(Gr,"practice_plan",t);await nN(r,e),n(`/practice_plans/${t}`)},eL=Ce(({className:t})=>D.jsx("svg",{xmlns:"http://www.w3.org/2000/svg",width:"16",height:"16",viewBox:"0 0 16 16",className:t,children:D.jsx("path",{fillRule:"evenodd",d:"M3 5h4v1H3V5zm0 3h4V7H3v1zm0 2h4V9H3v1zm11-5h-4v1h4V5zm0 2h-4v1h4V7zm0 2h-4v1h4V9zm2-6v9c0 .55-.45 1-1 1H9.5l-1 1l-1-1H2c-.55 0-1-.45-1-1V3c0-.55.45-1 1-1h5.5l1 1l1-1H15c.55 0 1 .45 1 1zm-8 .5L7.5 3H2v9h6V3.5zm7-.5H9.5l-.5.5V12h6V3z",fill:"currentColor"})}))``,tL=Ce.div`
   height: 100%;
