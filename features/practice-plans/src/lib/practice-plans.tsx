@@ -63,6 +63,7 @@ export const PracticePlans = styled(({ className }: { className?: string }) => {
           text="Add Practice Plan"
         />
       </Title>
+      <button>button</button>
       <ul>
         {practicePlans.map((plan) => (
           <li key={plan.id}>
