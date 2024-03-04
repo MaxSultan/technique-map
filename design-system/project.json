@@ -25,13 +25,6 @@
         }
       }
     },
-    "test": {
-      "executor": "@nx/vite:test",
-      "outputs": ["{options.reportsDirectory}"],
-      "options": {
-        "reportsDirectory": "../coverage/design-system"
-      }
-    },
     "storybook": {
       "executor": "@nx/storybook:storybook",
       "options": {

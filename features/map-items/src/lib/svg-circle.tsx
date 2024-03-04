@@ -6,12 +6,11 @@ type SVGCircleProps = {
   x: string;
   y: number;
   onClick: () => void;
-  index: number;
   r: number;
 };
 
 export const SVGCircle = styled(
-  ({ className, text, x, y, r, onClick, index }: SVGCircleProps) => {
+  ({ className, text, x, y, r, onClick }: SVGCircleProps) => {
     return (
       <g
         onClick={onClick}

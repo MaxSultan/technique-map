@@ -29,7 +29,8 @@
       "executor": "@nx/vite:test",
       "outputs": ["{options.reportsDirectory}"],
       "options": {
-        "reportsDirectory": "../coverage/features"
+        "reportsDirectory": "../coverage/features",
+        "passWithNoTests": true
       }
     }
   }

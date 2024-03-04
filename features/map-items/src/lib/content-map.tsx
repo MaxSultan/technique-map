@@ -56,7 +56,6 @@ export const ContentMap = styled(
             ></Line>
             <SVGCircle
               key={`${idx}-svgRect`}
-              index={idx}
               r={circleRadius}
               y={marginTop + idx * 110}
               x={mapIndexToRelativeXCoord(idx)}

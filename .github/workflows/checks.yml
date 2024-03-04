@@ -1,0 +1,40 @@
+name: Checks
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  format:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [20.x]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+
+      - name: clean install
+        run: npm ci
+
+      - name: npx nx format
+        run: npx nx run-many -t test
+
+  test:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [20.x]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+
+      - name: clean install
+        run: npm ci
+
+      - name: npx nx format
+        run: npx nx format:check

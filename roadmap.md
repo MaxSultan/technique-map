@@ -81,7 +81,8 @@ type moves = {
 - [ ] practice plan index search/scoping/filtering
 - [ ] add most recent review to moves (number of days since last reviewed)
 
-- [ ] add CI/CD to github actions
+- [x] add CD to github actions
+- [] add CI checks to github actions
 
 - [ ] consolidate duplicated functions (get moves data)
 - [ ] add unit tests
