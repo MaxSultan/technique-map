@@ -101,7 +101,8 @@ const PracticePlanItem = styled(
         </DeleteButton>
         <DeleteModal passedRef={modalRef}>
           Are you sure you want to delete Practice Plan from{' '}
-          {dayMonthYearFromUnixTime(unixTime)}? <br/> This action cannot be undone{' '}
+          {dayMonthYearFromUnixTime(unixTime)}? <br /> This action cannot be
+          undone{' '}
           <div>
             <button onClick={() => modalRef.current?.close()}>Cancel</button>
             <button onClick={() => deletePracticePlan(id)}>Delete</button>
