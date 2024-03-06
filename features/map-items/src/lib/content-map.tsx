@@ -84,5 +84,6 @@ export const ContentMap = styled(
     );
   }
 )`
+  min-height: 100%;
   background-color: var(--primary);
 `;

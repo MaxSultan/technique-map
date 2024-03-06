@@ -21,7 +21,7 @@ import {
   CloseIcon,
   CopyIcon,
   TrashIcon,
-  BookIcon
+  BookIcon,
 } from '@technique-map/design-system';
 import { db } from '../../../../src/app/firebase';
 import { NavigateFunction, useNavigate, useParams } from 'react-router';
@@ -89,8 +89,8 @@ type PositionByAreaType = { name: Area; positions: Set<any> };
 const positionsByArea = (arr: MoveType[]): PositionByAreaType[] =>
   arr.reduce(
     (acc, val) => {
-      const idx = acc.findIndex((i) => i.name === val.area);
-      acc[idx].positions.add(val.position);
+      const index = acc.findIndex((i) => i.name === val.area);
+      acc[index].positions.add(val.position);
       return acc;
     },
     [

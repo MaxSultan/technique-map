@@ -9,16 +9,16 @@ const root = ReactDOM.createRoot(
 
 async function enableMocking() {
   if (!['development', 'test'].includes(String(process.env.NODE_ENV))) {
-    return
+    return;
   }
- 
-  const { worker } = await import('./mocks/browser')
 
-  
- 
+  const { worker } = await import('./mocks/browser');
+
   // `worker.start()` returns a Promise that resolves
   // once the Service Worker is up and ready to intercept requests.
-  return worker.start({serviceWorker:{ url: '/technique-map/mockServiceWorker.js'}})
+  return worker.start({
+    serviceWorker: { url: '/technique-map/mockServiceWorker.js' },
+  });
 }
 
 enableMocking().then(() => {
@@ -27,4 +27,4 @@ enableMocking().then(() => {
       <App />
     </StrictMode>
   );
-})
+});
