@@ -6,8 +6,25 @@ import App from './app/app';
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
-root.render(
-  <StrictMode>
-    <App />
-  </StrictMode>
-);
+
+async function enableMocking() {
+  if (!['development', 'test'].includes(String(process.env.NODE_ENV))) {
+    return;
+  }
+
+  const { worker } = await import('./mocks/browser');
+
+  // `worker.start()` returns a Promise that resolves
+  // once the Service Worker is up and ready to intercept requests.
+  return worker.start({
+    serviceWorker: { url: '/technique-map/mockServiceWorker.js' },
+  });
+}
+
+enableMocking().then(() => {
+  root.render(
+    <StrictMode>
+      <App />
+    </StrictMode>
+  );
+});
