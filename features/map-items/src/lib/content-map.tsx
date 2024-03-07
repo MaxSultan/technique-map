@@ -13,10 +13,6 @@ type ContentMapProps = {
   setPanelTitle: (arg0: string) => void;
 };
 
-const Line = styled.line`
-  stroke: var(--orange);
-`;
-
 export const ContentMap = styled(
   ({
     className,
@@ -46,19 +42,18 @@ export const ContentMap = styled(
         width="100%"
         className={className}
       >
-        {content.map((position: string, idx: number) => (
+        {content.map((position: string, index: number) => (
           <g key={position}>
-            <Line
-              x1={mapIndexToRelativeXCoord(idx)}
-              y1={marginTop + idx * 110}
-              x2={mapIndexToRelativeXCoord(idx + 1)}
-              y2={marginTop + (idx + 1) * 110}
-            ></Line>
+            <line
+              x1={mapIndexToRelativeXCoord(index)}
+              y1={marginTop + index * 110}
+              x2={mapIndexToRelativeXCoord(index + 1)}
+              y2={marginTop + (index + 1) * 110}
+            ></line>
             <SVGCircle
-              key={`${idx}-svgRect`}
               r={circleRadius}
-              y={marginTop + idx * 110}
-              x={mapIndexToRelativeXCoord(idx)}
+              y={marginTop + index * 110}
+              x={mapIndexToRelativeXCoord(index)}
               onClick={() => {
                 setPanelTitle(position);
                 showPanel(() => (
@@ -86,4 +81,8 @@ export const ContentMap = styled(
 )`
   min-height: 100%;
   background-color: var(--primary);
+
+  & > g > line {
+    stroke: var(--orange);
+  }
 `;
