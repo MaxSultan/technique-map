@@ -9,9 +9,9 @@ const preview: Preview = {
     (Story) => (
       <>
         <Styles />
-          <Story/>
+        <Story />
       </>
-  )
+    ),
   ],
 };
 

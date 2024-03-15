@@ -9,7 +9,13 @@ const meta: Meta<typeof Button> = {
 export default meta;
 type Story = StoryObj<typeof Button>;
 
-export const BasicButton = (args) => <Button Icon={BookIcon} text="A Button" {...args}/>
+export const BasicButton = (args) => (
+  <Button
+    Icon={BookIcon}
+    text="A Button"
+    {...args}
+  />
+);
 
 export const Primary = {
   args: {},
