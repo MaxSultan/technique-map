@@ -69,7 +69,7 @@ type moves = {
 
 # V2
 
-- [ ] update styling on practice plan page
+- [x] update styling on practice plan page
 - [ ] add ability to set date on practice plan create/update
 - [ ] prevent same move from being added twice
 - [ ] add a toast component that appears and tells user of following errors/events:
@@ -84,7 +84,7 @@ type moves = {
 - [x] add CD to github actions
 - [x] add CI checks to github actions
 
-- [ ] consolidate duplicated functions (get moves data)
+- [ ] consolidate duplicated functions (get moves data) (data fetching functions)
 - [ ] add unit tests
 
 - [ ] nx-ize the firebase config/init file
@@ -92,7 +92,9 @@ type moves = {
 - [ ] make admin interface with ability to add moves (ts types dynamically created??)
 - [ ] make filter system for move levels in create practice plan menu
 - [ ] differentiate moves by level in create practice plan menu (stylistically)
+- [ ] finish building out move levels
 - [ ] add e2e tests
+- [ ] add msw mock handlers for e2e tests
 
 Code refactor:
 
@@ -100,15 +102,24 @@ Code refactor:
 - [ ] react components should follow the SRP principle
 - [x] add map.tsx to map-items feature lib
 - [ ] code should follow a functional paradigm
+- [ ] code should follow dependency injection
+- [ ] all functions should be pure
+
+- content-map.tsx
+- map.tsx
+- svg-circle.tsx
+- practice-plan.tsx
 
 nice to have
 
 - [ ] make the panel transition out of view nicely
 - [ ] Add curved lines between svg circles
+- [ ] panel animation
+- [ ] modal animation
 
 ---
 
-# Modeling Wrestling Skill Aquisition
+# Modeling Wrestling Skill Acquisition
 
 How do we model the skills, positions, knowledge, competencies,etc that you need to be good at for wrestling
 How do we then turn that into a system?

@@ -10,3 +10,6 @@ export { TrashIcon } from './lib/icons/trash-icon';
 export { EditIcon } from './lib/icons/edit-icon';
 export { BookIcon } from './lib/icons/book-icon';
 export { Loader, PageLoader } from './lib/loader';
+export { GlobalStyle } from './lib/global-style';
+export { CalendarIcon } from './lib/icons/calendar-icon';
+export { DatePicker } from './lib/date-picker';

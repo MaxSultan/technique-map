@@ -22,6 +22,7 @@ import {
   CopyIcon,
   TrashIcon,
   BookIcon,
+  DatePicker,
 } from '@technique-map/design-system';
 import { db } from '../../../../src/app/firebase';
 import { NavigateFunction, useNavigate, useParams } from 'react-router';
@@ -145,6 +146,8 @@ const PracticePlanDisplay = styled(
     removeFromPracticePlan,
     clearPracticePlan,
     currentPracticePlanId,
+    updatePracticePlanDate,
+    practicePlanDate,
   }) => {
     const navigator = useNavigate();
     const [transform, setTransform] = useState<boolean>(
@@ -182,6 +185,13 @@ const PracticePlanDisplay = styled(
           <BookIcon />
         </button>
         <ScrollContainer>
+          Date:
+          <DatePicker
+            value={practicePlan.date
+              .toLocaleDateString('en-US')
+              .replaceAll('/', '-')}
+            setValue={(newDate) => updatePracticePlanDate(new Date(newDate))}
+          />
           <h1>Practice Plan</h1>
           {Object.entries(
             aggregateMovesByPosition(findMoves(moves, practicePlan.moves))
@@ -304,7 +314,7 @@ const useExistingPracticePlanData = (
   currentPracticePlanId: string | undefined
 ): [PlanType, React.Dispatch<React.SetStateAction<any>>] => {
   const initialPracticePlanState = {
-    date: new Date(), // TODO: update this so a user can select a date
+    date: new Date(),
     moves: [],
   };
   const [practicePlan, setPracticePlan] = useState<PlanType>(
@@ -324,7 +334,10 @@ const useExistingPracticePlanData = (
             id: doc.id,
           }));
           const [plan] = newData;
-          setPracticePlan(plan as unknown as PlanType);
+          setPracticePlan({
+            ...plan,
+            date: new Date(Number(plan.date.seconds) * 1000),
+          } as unknown as PlanType);
         });
 
       getPracticePlanData();
@@ -388,6 +401,13 @@ export const Map = styled(({ className }) => {
     }));
   };
 
+  const updatePracticePlanDate = (date: Date) => {
+    setPracticePlan((prev: PlanType) => ({
+      ...prev,
+      date,
+    }));
+  };
+
   return (
     <main className={className}>
       <PracticePlanDisplay
@@ -396,6 +416,7 @@ export const Map = styled(({ className }) => {
         clearPracticePlan={clearPracticePlan}
         removeFromPracticePlan={removeFromPracticePlan}
         currentPracticePlanId={currentPracticePlanId}
+        updatePracticePlanDate={updatePracticePlanDate}
       />
       <ContentMap
         setPanelTitle={setPanelTitle}
