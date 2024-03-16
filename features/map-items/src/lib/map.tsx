@@ -338,7 +338,11 @@ const useExistingPracticePlanData = (
           const [plan] = newData;
           setPracticePlan({
             ...plan,
-            date: new Date(Number(plan.date.seconds) * 1000),
+            date: new Date(
+              Number(
+                (plan as { id: string; date: { seconds: string } }).date.seconds
+              ) * 1000
+            ),
           } as unknown as PlanType);
         });
 
