@@ -190,7 +190,9 @@ const PracticePlanDisplay = styled(
             value={practicePlan.date
               .toLocaleDateString('en-US')
               .replaceAll('/', '-')}
-            setValue={(newDate) => updatePracticePlanDate(new Date(newDate))}
+            setValue={(newDate: string) =>
+              updatePracticePlanDate(new Date(newDate))
+            }
           />
           <h1>Practice Plan</h1>
           {Object.entries(
