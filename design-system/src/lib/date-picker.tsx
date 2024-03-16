@@ -2,6 +2,10 @@ import { MouseEvent, RefObject, useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { CalendarIcon } from './icons/calendar-icon';
 
+interface DetailedHTMLProps {
+  popover: boolean;
+}
+
 const DateInput = styled.input`
   border: 1px solid black;
   padding: 8px;
@@ -26,19 +30,15 @@ const firstDayOfMonth = (year: number, month: number) =>
 
 const useOnClickOutside = (
   ref: RefObject<HTMLDivElement | undefined>,
-  callback: (
-    event: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>
-  ) => void
+  callback: (event: Event) => void
 ) => {
   const clickOutside =
     (
       ref: RefObject<HTMLDivElement | undefined>,
-      callback: {
-        (event: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>): void;
-        (arg0: any): any;
-      }
+      callback: (event: Event) => any
     ) =>
-    (event: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => {
+    (event: Event) => {
+      //@ts-ignore:next-line
       if (ref.current?.contains(event.target)) return;
       typeof callback === 'function' ? callback(event) : null;
     };
@@ -46,8 +46,13 @@ const useOnClickOutside = (
   const clickEventCallback = clickOutside(ref, callback);
 
   useEffect(() => {
-    document.addEventListener('click', clickEventCallback);
-    return () => document.removeEventListener('click', clickEventCallback);
+    document.addEventListener('click', (event: Event) =>
+      clickEventCallback(event)
+    );
+    return () =>
+      document.removeEventListener('click', (event: Event) =>
+        clickEventCallback(event)
+      );
   }, []);
 };
 
@@ -90,7 +95,7 @@ const DayHeader = styled.div`
   text-align: center;
 `;
 
-const DayButton = styled.button`
+const DayButton = styled.button<{ $selected: boolean }>`
   aspect-ratio: 1/1;
   background-color: transparent;
   border: transparent;
@@ -103,7 +108,7 @@ const useCalendarDaysByMonth = (
   selectedMonth: number,
   selectedYear: number
 ) => {
-  const [calendarDays, setCalendarDays] = useState([]);
+  const [calendarDays, setCalendarDays] = useState<(null | number)[]>([]);
 
   const daysInCurrentMonth = numDays(selectedYear, selectedMonth + 1);
   let offset = firstDayOfMonth(selectedYear, selectedMonth).getDay() - 1;
@@ -163,6 +168,7 @@ const Calendar = styled(
       <div
         ref={passedRef}
         className={className}
+        // @ts-ignore:next-line
         popover="true"
       >
         <CalendarHeader>
@@ -241,20 +247,18 @@ const Calendar = styled(
 // #endregion calendar
 
 export const DatePicker = styled(({ className, value, setValue }) => {
-  const buttonRef = useRef<HTMLButtonElement | undefined>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
   const calendarDisplayRef = useRef<HTMLDivElement | undefined>(null);
 
   const toggleCalendar = () => {
     calendarDisplayRef.current?.togglePopover();
   };
 
-  useOnClickOutside(
-    calendarDisplayRef,
-    (event: MouseEvent<HTMLButtonElement>) => {
-      if (buttonRef.current?.contains(event.target)) return;
-      calendarDisplayRef.current?.hidePopover();
-    }
-  );
+  useOnClickOutside(calendarDisplayRef, (event: Event) => {
+    //@ts-ignore:next-line
+    if (buttonRef.current?.contains(event.target)) return;
+    calendarDisplayRef.current?.hidePopover();
+  });
 
   return (
     <div className={className}>
