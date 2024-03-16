@@ -110,14 +110,14 @@ const useCalendarDaysByMonth = (
 ) => {
   const [calendarDays, setCalendarDays] = useState<(null | number)[]>([]);
 
-  const daysInCurrentMonth = numDays(selectedYear, selectedMonth + 1);
-  let offset = firstDayOfMonth(selectedYear, selectedMonth).getDay() - 1;
+  const daysInCurrentMonth = numDays(selectedYear, selectedMonth + 1) || 0;
+  let offset = firstDayOfMonth(selectedYear, selectedMonth).getDay() - 1 || 0;
   if (offset === -1) offset = 6;
 
   useEffect(() => {
     const newDays = [
-      ...[...Array(offset).keys()].map(() => null),
-      ...[...Array(daysInCurrentMonth).keys()].map((_, index) => index + 1),
+      ...new Array(offset).fill(null),
+      ...[...Array(daysInCurrentMonth)].map((_, index) => index + 1),
     ];
     setCalendarDays(newDays);
   }, [selectedMonth, selectedYear]);
@@ -202,7 +202,7 @@ const Calendar = styled(
           {DAY_ABBREVIATIONS.map((day) => (
             <DayHeader key={`${day}-header`}>{day}</DayHeader>
           ))}
-          {calendarDays.map((day) =>
+          {calendarDays.map((day, index) =>
             typeof day === 'number' ? (
               <DayButton
                 key={`${day}-${selectedMonth}-${selectedYear}`}
@@ -216,7 +216,7 @@ const Calendar = styled(
                 {day}
               </DayButton>
             ) : (
-              <span></span>
+              <span key={`blank-day-${index}`}></span>
             )
           )}
         </CalendarGrid>
