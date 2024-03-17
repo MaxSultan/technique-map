@@ -110,8 +110,8 @@ const useCalendarDaysByMonth = (
 ) => {
   const [calendarDays, setCalendarDays] = useState<(null | number)[]>([]);
 
-  const daysInCurrentMonth = numDays(selectedYear, selectedMonth + 1) || 0;
-  let offset = firstDayOfMonth(selectedYear, selectedMonth).getDay() - 1 || 0;
+  const daysInCurrentMonth = numDays(selectedYear, selectedMonth + 1);
+  let offset = firstDayOfMonth(selectedYear, selectedMonth).getDay() - 1;
   if (offset === -1) offset = 6;
 
   useEffect(() => {
@@ -127,17 +127,15 @@ const useCalendarDaysByMonth = (
 
 const Calendar = styled(
   ({ className, passedRef, setSelectedDate, toggleCalendar, value }) => {
+    console.log(value);
+    // const [selectedMonth, selectedDay, selectedYear] = value.split('-');
     const currentYear = new Date(value).getFullYear();
     const currentMonth = new Date(value).getMonth();
-    const [selectedMonthYear, setSelectedMonthYear] = useState<string>(
-      `${currentMonth}/${currentYear}`
-    );
+    const [selectedMonth, setSelectedMonth] = useState<number>(currentMonth);
+    const [selectedYear, setSelectedYear] = useState<number>(currentYear);
 
-    const [selectedMonth, selectedYear] = selectedMonthYear
-      .split('/')
-      .map((item: string) => Number(item));
     const calendarDays = useCalendarDaysByMonth(selectedMonth, selectedYear);
-    const yearsInScope = getYearsInRange(currentYear, 5);
+    const yearsInScope = getYearsInRange(new Date(value).getFullYear(), 5);
 
     const handleDayButtonClick = (day: number) => {
       toggleCalendar();
@@ -150,18 +148,20 @@ const Calendar = styled(
     };
 
     const handleLeftButtonClick = () => {
-      setSelectedMonthYear((prev) => {
-        const [month, year] = prev.split('/');
-        if (Number(month) === 0) return `${11}/${Number(year) - 1}`;
-        return `${Number(month) - 1}/${year}`;
+      setSelectedMonth((prevMonth) => {
+        if (Number(prevMonth) === 0) {
+          setSelectedYear((prevYear) => prevYear - 1);
+          return 11;
+        } else return prevMonth - 1;
       });
     };
 
     const handleRightButtonClick = () =>
-      setSelectedMonthYear((prev) => {
-        const [month, year] = prev.split('/');
-        if (Number(month) === 11) return `${0}/${Number(year) + 1}`;
-        return `${Number(month) + 1}/${year}`;
+      setSelectedMonth((prevMonth) => {
+        if (Number(prevMonth) === 11) {
+          setSelectedYear((prevYear) => prevYear + 1);
+          return 11;
+        } else return prevMonth + 1;
       });
 
     return (
@@ -173,8 +173,12 @@ const Calendar = styled(
       >
         <CalendarHeader>
           <select
-            value={selectedMonthYear}
-            onChange={(e) => setSelectedMonthYear(e.target.value)}
+            value={`${selectedMonth}/${selectedYear}`}
+            onChange={(e) => {
+              const [month, year] = e.target.value.split('/');
+              setSelectedMonth(Number(month));
+              setSelectedYear(Number(year));
+            }}
           >
             {yearsInScope.map((year) =>
               MONTHS.map((month, index) => (

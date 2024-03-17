@@ -22,7 +22,6 @@ import {
   CopyIcon,
   TrashIcon,
   BookIcon,
-  DatePicker,
 } from '@technique-map/design-system';
 import { db } from '../../../../src/app/firebase';
 import { NavigateFunction, useNavigate, useParams } from 'react-router';
@@ -34,6 +33,7 @@ type PositionType = { name: string; moves: { name: string; id: string }[] };
 export type PlanType = {
   date: Date;
   moves: string[];
+  id: string;
 };
 
 type NeutralPositions =
@@ -109,7 +109,7 @@ const copyPracticePlan = (moves: MoveType[], practicePlanMoves: string[]) =>
   );
 
 const savePracticePlan = async (
-  practicePlan: PlanType,
+  practicePlan: Pick<PlanType, 'date' | 'moves'>,
   navigator: NavigateFunction
 ) => {
   await addDoc(collection(db, 'practice_plan'), practicePlan).then((res) => {
@@ -138,16 +138,18 @@ const Actions = styled.div`
   gap: 20px;
 `;
 
+const DatePicker = styled.input``;
+
 const PracticePlanDisplay = styled(
   ({
     className,
     moves,
-    practicePlan,
+    practicePlanMoves,
+    practicePlanDate,
     removeFromPracticePlan,
     clearPracticePlan,
     currentPracticePlanId,
     updatePracticePlanDate,
-    practicePlanDate,
   }) => {
     const navigator = useNavigate();
     const [transform, setTransform] = useState<boolean>(
@@ -170,6 +172,20 @@ const PracticePlanDisplay = styled(
       setTransform((prev) => !prev);
     };
 
+    const normalizePracticePlanDate = (date: string) => {
+      const [month, day, year] = new Date(date)
+        .toLocaleDateString('en-US')
+        .split('/');
+      return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+    };
+
+    const formatPracticePlanDate = (date: string) => {
+      const [year, month, day] = date.split('-');
+      return new Date(`${month}/${day}/${year}`);
+    };
+
+    console.log('practicePlanDate ', practicePlanDate); // date is invalid when loading from existing practice plan
+
     return (
       <aside
         className={className}
@@ -187,16 +203,15 @@ const PracticePlanDisplay = styled(
         <ScrollContainer>
           Date:
           <DatePicker
-            value={practicePlan.date
-              .toLocaleDateString('en-US')
-              .replaceAll('/', '-')}
-            setValue={(newDate: string) =>
-              updatePracticePlanDate(new Date(newDate))
+            type="date"
+            value={normalizePracticePlanDate(practicePlanDate)}
+            onChange={(event) =>
+              updatePracticePlanDate(formatPracticePlanDate(event.target.value))
             }
           />
           <h1>Practice Plan</h1>
           {Object.entries(
-            aggregateMovesByPosition(findMoves(moves, practicePlan.moves))
+            aggregateMovesByPosition(findMoves(moves, practicePlanMoves))
           ).map(([key, value]) => (
             <Fragment key={key}>
               <h2>{key}</h2>
@@ -227,7 +242,7 @@ const PracticePlanDisplay = styled(
               />
             )}
             <Button
-              onClick={() => copyPracticePlan(moves, practicePlan.moves)}
+              onClick={() => copyPracticePlan(moves, practicePlanMoves)}
               text="Copy Practice Plan"
               Icon={CopyIcon}
             />
@@ -236,10 +251,17 @@ const PracticePlanDisplay = styled(
                 currentPracticePlanId
                   ? updatePracticePlan(
                       currentPracticePlanId,
-                      practicePlan,
+                      {
+                        moves: practicePlanMoves,
+                        date: practicePlanDate,
+                        id: currentPracticePlanId,
+                      },
                       navigator
                     )
-                  : savePracticePlan(practicePlan, navigator)
+                  : savePracticePlan(
+                      { moves: practicePlanMoves, date: practicePlanDate },
+                      navigator
+                    )
               }
               text={
                 currentPracticePlanId
@@ -314,14 +336,15 @@ const IconButton = styled.button`
 
 const useExistingPracticePlanData = (
   currentPracticePlanId: string | undefined
-): [PlanType, React.Dispatch<React.SetStateAction<any>>] => {
-  const initialPracticePlanState = {
-    date: new Date(),
-    moves: [],
-  };
-  const [practicePlan, setPracticePlan] = useState<PlanType>(
-    initialPracticePlanState
-  );
+): [
+  string[],
+  React.Dispatch<React.SetStateAction<any>>,
+  Date,
+  React.Dispatch<React.SetStateAction<any>>
+] => {
+  const [practicePlanMoves, setPracticePlanMoves] = useState<string[]>([]);
+  const [practicePlanDate, setPracticePlanDate] = useState<Date>(new Date());
+
   useEffect(() => {
     if (currentPracticePlanId) {
       const q = query(
@@ -336,23 +359,26 @@ const useExistingPracticePlanData = (
             id: doc.id,
           }));
           const [plan] = newData;
-          setPracticePlan({
-            ...plan,
-            date: new Date(
+          setPracticePlanDate(
+            new Date(
               Number(
                 (plan as { id: string; date: { seconds: string } }).date.seconds
               ) * 1000
-            ),
-          } as unknown as PlanType);
+            )
+          );
+          setPracticePlanMoves((plan as PlanType).moves);
         });
 
       getPracticePlanData();
-    } else {
-      setPracticePlan(initialPracticePlanState);
     }
   }, [currentPracticePlanId]);
 
-  return [practicePlan, setPracticePlan];
+  return [
+    practicePlanMoves,
+    setPracticePlanMoves,
+    practicePlanDate,
+    setPracticePlanDate,
+  ];
 };
 
 export const Map = styled(({ className }) => {
@@ -364,9 +390,12 @@ export const Map = styled(({ className }) => {
 
   let { id: currentPracticePlanId } = useParams();
 
-  const [practicePlan, setPracticePlan] = useExistingPracticePlanData(
-    currentPracticePlanId
-  );
+  const [
+    practicePlanMoves,
+    setPracticePlanMoves,
+    practicePlanDate,
+    setPracticePlanDate,
+  ] = useExistingPracticePlanData(currentPracticePlanId);
 
   const getData = () =>
     getDocs(collection(db, 'moves')).then((querySnapshot) => {
@@ -387,38 +416,28 @@ export const Map = styled(({ className }) => {
   };
 
   const clearPracticePlan = () => {
-    setPracticePlan({
-      date: new Date(),
-      moves: [],
-    });
+    setPracticePlanDate(new Date());
+    setPracticePlanMoves([]);
   };
 
   const addToPracticePlan = (id: string) => {
-    setPracticePlan((prev: PlanType) => ({
-      ...prev,
-      moves: [...prev.moves, id],
-    }));
+    setPracticePlanMoves((prev: string[]) => [...prev, id]);
   };
 
   const removeFromPracticePlan = (id: string) => {
-    setPracticePlan((prev: PlanType) => ({
-      ...prev,
-      moves: [...prev.moves].filter((i) => i !== id),
-    }));
+    setPracticePlanMoves((prev: string[]) => [...prev].filter((i) => i !== id));
   };
 
   const updatePracticePlanDate = (date: Date) => {
-    setPracticePlan((prev: PlanType) => ({
-      ...prev,
-      date,
-    }));
+    setPracticePlanDate(date);
   };
 
   return (
     <main className={className}>
       <PracticePlanDisplay
         moves={moves}
-        practicePlan={practicePlan}
+        practicePlanMoves={practicePlanMoves}
+        practicePlanDate={practicePlanDate}
         clearPracticePlan={clearPracticePlan}
         removeFromPracticePlan={removeFromPracticePlan}
         currentPracticePlanId={currentPracticePlanId}
