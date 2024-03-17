@@ -30,6 +30,7 @@ export const PracticePlan = styled(({ className }) => {
   const [practicePlan, setPracticePlan] = useState<PlanType>({
     date: new Date(),
     moves: [],
+    id: '',
   });
   const [moves, setMoves] = useState<MoveType[]>([]);
   const location = useLocation();
