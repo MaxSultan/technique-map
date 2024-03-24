@@ -8,7 +8,7 @@ describe('e2e', () => {
     getAddButton().click();
     cy.url().should('include', '/technique-map/create');
     cy.get('input').type('1995-05-22');
-    
+
     cy.get('button').contains('Save Practice Plan').click();
     cy.url().should('include', 'technique-map/practice_plans/');
     cy.get('a').contains('Practice Plans').click();
@@ -26,10 +26,16 @@ describe('e2e', () => {
     cy.url().should('include', 'technique-map/practice_plans');
 
     cy.get('a').contains('5/22/1995').should('not.exist');
-    cy.get('a').contains('5/23/1995').siblings('button').contains('Delete Practice Plan').click();
+    cy.get('a')
+      .contains('5/23/1995')
+      .siblings('button')
+      .contains('Delete Practice Plan')
+      .click();
     cy.get('dialog[open]').within(() => {
-      cy.get('button').contains(/^Delete$/).click();
-    })
-    cy.get('a').contains('5/23/1995').should('not.exist')
+      cy.get('button')
+        .contains(/^Delete$/)
+        .click();
+    });
+    cy.get('a').contains('5/23/1995').should('not.exist');
   });
 });
