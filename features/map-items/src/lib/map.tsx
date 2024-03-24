@@ -57,6 +57,8 @@ export type MoveType = {
   id: string;
 };
 
+const isValidDate = (date: string | Date) => !isNaN(date as unknown as number);
+
 export const findMoves = (moves: MoveType[], ids: string[]): MoveType[] =>
   ids.map((id) => moves.find((move) => move.id === id) as unknown as MoveType);
 
@@ -112,6 +114,10 @@ const savePracticePlan = async (
   practicePlan: Pick<PlanType, 'date' | 'moves'>,
   navigator: NavigateFunction
 ) => {
+  if (!isValidDate(practicePlan.date)) {
+    alert('please submit a valid date');
+    return;
+  }
   await addDoc(collection(db, 'practice_plan'), practicePlan).then((res) => {
     navigator(`/practice_plans/${res.id}`);
   });
@@ -123,6 +129,10 @@ const updatePracticePlan = async (
   navigator: NavigateFunction
 ) => {
   const practicePlanRef = doc(db, 'practice_plan', id);
+  if (!isValidDate(practicePlan.date)) {
+    alert('please submit a valid date');
+    return;
+  }
   await updateDoc(practicePlanRef, practicePlan);
   navigator(`/practice_plans/${id}`);
 };
@@ -172,19 +182,10 @@ const PracticePlanDisplay = styled(
       setTransform((prev) => !prev);
     };
 
-    const normalizePracticePlanDate = (date: string) => {
-      const [month, day, year] = new Date(date)
-        .toLocaleDateString('en-US')
-        .split('/');
-      return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
-    };
-
     const formatPracticePlanDate = (date: string) => {
       const [year, month, day] = date.split('-');
       return new Date(`${month}/${day}/${year}`);
     };
-
-    console.log('practicePlanDate ', practicePlanDate); // date is invalid when loading from existing practice plan
 
     return (
       <aside
@@ -204,10 +205,8 @@ const PracticePlanDisplay = styled(
           Date:
           <DatePicker
             type="date"
-            value={normalizePracticePlanDate(practicePlanDate)}
-            onChange={(event) =>
-              updatePracticePlanDate(formatPracticePlanDate(event.target.value))
-            }
+            value={practicePlanDate}
+            onChange={(event) => updatePracticePlanDate(event.target.value)}
           />
           <h1>Practice Plan</h1>
           {Object.entries(
@@ -253,13 +252,16 @@ const PracticePlanDisplay = styled(
                       currentPracticePlanId,
                       {
                         moves: practicePlanMoves,
-                        date: practicePlanDate,
+                        date: formatPracticePlanDate(practicePlanDate),
                         id: currentPracticePlanId,
                       },
                       navigator
                     )
                   : savePracticePlan(
-                      { moves: practicePlanMoves, date: practicePlanDate },
+                      {
+                        moves: practicePlanMoves,
+                        date: formatPracticePlanDate(practicePlanDate),
+                      },
                       navigator
                     )
               }
@@ -334,16 +336,25 @@ const IconButton = styled.button`
   align-items: center;
 `;
 
+const normalizePracticePlanDate = (date: Date) => {
+  const [month, day, year] = new Date(date)
+    .toLocaleDateString('en-US')
+    .split('/');
+  return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+};
+
 const useExistingPracticePlanData = (
   currentPracticePlanId: string | undefined
 ): [
   string[],
   React.Dispatch<React.SetStateAction<any>>,
-  Date,
+  Date | string,
   React.Dispatch<React.SetStateAction<any>>
 ] => {
   const [practicePlanMoves, setPracticePlanMoves] = useState<string[]>([]);
-  const [practicePlanDate, setPracticePlanDate] = useState<Date>(new Date());
+  const [practicePlanDate, setPracticePlanDate] = useState<string | Date>(
+    normalizePracticePlanDate(new Date())
+  );
 
   useEffect(() => {
     if (currentPracticePlanId) {
@@ -360,10 +371,13 @@ const useExistingPracticePlanData = (
           }));
           const [plan] = newData;
           setPracticePlanDate(
-            new Date(
-              Number(
-                (plan as { id: string; date: { seconds: string } }).date.seconds
-              ) * 1000
+            normalizePracticePlanDate(
+              new Date(
+                Number(
+                  (plan as { id: string; date: { seconds: string } }).date
+                    .seconds
+                ) * 1000
+              )
             )
           );
           setPracticePlanMoves((plan as PlanType).moves);
@@ -486,7 +500,7 @@ export const Map = styled(({ className }) => {
     grid-area: plan;
     position: sticky;
     top: 0;
-    height: 100vh;
+    height: 100svh;
     box-sizing: border-box;
 
     @media screen and (width <= 850px) {
