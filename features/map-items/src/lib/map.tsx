@@ -57,7 +57,7 @@ export type MoveType = {
   id: string;
 };
 
-const isValidDate = (date: Date) => !isNaN(date);
+const isValidDate = (date: string|Date) => !isNaN(date as unknown as number);
 
 export const findMoves = (moves: MoveType[], ids: string[]): MoveType[] =>
   ids.map((id) => moves.find((move) => move.id === id) as unknown as MoveType);
@@ -114,9 +114,10 @@ const savePracticePlan = async (
   practicePlan: Pick<PlanType, 'date' | 'moves'>,
   navigator: NavigateFunction
 ) => {
+  
   if (!isValidDate(practicePlan.date)) {
-    alert('please submit a valid date');
-    return;
+    alert('please submit a valid date')
+    return 
   }
   await addDoc(collection(db, 'practice_plan'), practicePlan).then((res) => {
     navigator(`/practice_plans/${res.id}`);
@@ -130,8 +131,8 @@ const updatePracticePlan = async (
 ) => {
   const practicePlanRef = doc(db, 'practice_plan', id);
   if (!isValidDate(practicePlan.date)) {
-    alert('please submit a valid date');
-    return;
+    alert('please submit a valid date')
+    return 
   }
   await updateDoc(practicePlanRef, practicePlan);
   navigator(`/practice_plans/${id}`);
@@ -258,10 +259,7 @@ const PracticePlanDisplay = styled(
                       navigator
                     )
                   : savePracticePlan(
-                      {
-                        moves: practicePlanMoves,
-                        date: formatPracticePlanDate(practicePlanDate),
-                      },
+                      { moves: practicePlanMoves, date: formatPracticePlanDate(practicePlanDate) },
                       navigator
                     )
               }
@@ -348,13 +346,11 @@ const useExistingPracticePlanData = (
 ): [
   string[],
   React.Dispatch<React.SetStateAction<any>>,
-  Date,
+  Date|string,
   React.Dispatch<React.SetStateAction<any>>
 ] => {
   const [practicePlanMoves, setPracticePlanMoves] = useState<string[]>([]);
-  const [practicePlanDate, setPracticePlanDate] = useState<string>(
-    normalizePracticePlanDate(new Date())
-  );
+  const [practicePlanDate, setPracticePlanDate] = useState<string|Date>(normalizePracticePlanDate(new Date()));
 
   useEffect(() => {
     if (currentPracticePlanId) {
@@ -374,10 +370,9 @@ const useExistingPracticePlanData = (
             normalizePracticePlanDate(
               new Date(
                 Number(
-                  (plan as { id: string; date: { seconds: string } }).date
-                    .seconds
-                ) * 1000
-              )
+                  (plan as { id: string; date: { seconds: string } }).date.seconds
+              ) * 1000
+            )
             )
           );
           setPracticePlanMoves((plan as PlanType).moves);
