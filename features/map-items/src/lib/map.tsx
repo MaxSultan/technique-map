@@ -1,4 +1,12 @@
-import { useState, useRef, useEffect, Fragment, useLayoutEffect } from 'react';
+import {
+  useState,
+  useRef,
+  useEffect,
+  Fragment,
+  useLayoutEffect,
+  useId,
+  useContext,
+} from 'react';
 import styled from 'styled-components';
 import {
   collection,
@@ -22,6 +30,10 @@ import {
   CopyIcon,
   TrashIcon,
   BookIcon,
+  Toast,
+  ToastContext,
+  ToastContextType,
+  PanelContext,
 } from '@technique-map/design-system';
 import { db } from '../../../../src/app/firebase';
 import { NavigateFunction, useNavigate, useParams } from 'react-router';
@@ -396,11 +408,10 @@ const useExistingPracticePlanData = (
 };
 
 export const Map = styled(({ className }) => {
-  const [panelContent, setPanelContent] = useState('');
   const [currentTab, setCurrentTab] = useState<Area>('neutral');
   const [moves, setMoves] = useState<MoveType[]>([]);
-  const panelRef = useRef<HTMLDialogElement | undefined>();
-  const [title, setPanelTitle] = useState<string>('');
+  const {addToast, removeToast} = useContext(ToastContext) as ToastContextType;
+
 
   let { id: currentPracticePlanId } = useParams();
 
@@ -424,30 +435,68 @@ export const Map = styled(({ className }) => {
     getData();
   }, []);
 
-  const showPanel = (content: any) => {
-    setPanelContent(content);
-    panelRef.current?.showModal();
-  };
-
   const clearPracticePlan = () => {
     setPracticePlanDate(new Date());
     setPracticePlanMoves([]);
+    addToast(
+      {
+        variant: 'success',
+        message: 'practice plan cleared',
+        onClose: () => removeToast('practice plan cleared'),
+      },
+    );
   };
 
   const addToPracticePlan = (id: string) => {
+    console.log(id, practicePlanMoves);
+    if (practicePlanMoves.includes(id)) {
+      addToast(
+        {
+          variant: 'success',
+          message: 'move already exists',
+          onClose: () => removeToast('move already exists'),
+        },
+      );
+      return;
+    }
     setPracticePlanMoves((prev: string[]) => [...prev, id]);
+    addToast(
+      {
+        variant: 'success',
+        message: 'move was successfully added',
+        onClose: () => removeToast('move was successfully added'),
+      },
+    );
   };
 
   const removeFromPracticePlan = (id: string) => {
     setPracticePlanMoves((prev: string[]) => [...prev].filter((i) => i !== id));
+    addToast(
+      {
+        variant: 'success',
+        message: 'move was successfully removed',
+        onClose: () => removeToast('move was successfully removed'),
+      },
+    );
   };
 
   const updatePracticePlanDate = (date: Date) => {
     setPracticePlanDate(date);
+    addToast({
+        variant: 'success',
+        message: 'practice plan date updated',
+        onClose: () => removeToast('practice plan date updated'),
+      },
+    );
   };
 
   return (
     <main className={className}>
+      <Tabs
+        tabs={positionsByArea(moves).map((i) => i.name)}
+        currentTab={currentTab}
+        setCurrentTab={setCurrentTab}
+      />
       <PracticePlanDisplay
         moves={moves}
         practicePlanMoves={practicePlanMoves}
@@ -458,7 +507,6 @@ export const Map = styled(({ className }) => {
         updatePracticePlanDate={updatePracticePlanDate}
       />
       <ContentMap
-        setPanelTitle={setPanelTitle}
         addToPracticePlan={addToPracticePlan}
         content={[
           ...(
@@ -467,21 +515,8 @@ export const Map = styled(({ className }) => {
             ) as PositionByAreaType
           ).positions,
         ]}
-        showPanel={showPanel}
         area={currentTab}
         moves={moves}
-      />
-      <Panel
-        /* @ts-ignore:next-line */
-        passedRef={panelRef}
-        title={title}
-      >
-        <PanelList>{panelContent}</PanelList>
-      </Panel>
-      <Tabs
-        tabs={positionsByArea(moves).map((i) => i.name)}
-        currentTab={currentTab}
-        setCurrentTab={setCurrentTab}
       />
     </main>
   );

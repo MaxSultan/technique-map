@@ -1,28 +1,26 @@
 import styled from 'styled-components';
 import { SVGCircle } from './svg-circle';
-import { PanelItem } from '@technique-map/design-system';
+import { PanelContext, PanelItem, PanelContextType } from '@technique-map/design-system';
 import { MoveType } from './map';
+import { ReactNode, useContext } from 'react';
 
 type ContentMapProps = {
   area: 'top' | 'bottom' | 'neutral';
   addToPracticePlan: (id: string) => void;
-  showPanel: (arg0: Function) => void;
   content: string[];
   className?: string;
   moves: MoveType[];
-  setPanelTitle: (arg0: string) => void;
 };
 
 export const ContentMap = styled(
   ({
     className,
     content,
-    showPanel,
     addToPracticePlan,
     area,
     moves,
-    setPanelTitle = () => {},
   }: ContentMapProps) => {
+    const {showPanel, setPanelContent, setPanelTitle} = useContext(PanelContext) as PanelContextType;
     const circleRadius = 50;
     const marginTop = 70;
 
@@ -35,6 +33,11 @@ export const ContentMap = styled(
       else if (index % 6 === 2 || index % 6 === 3) return left;
       else return right;
     };
+
+    const displayPanelContent = (content: () => JSX.Element) => {
+      setPanelContent(content as unknown as any);
+      showPanel();
+    }
 
     return (
       <svg
@@ -56,7 +59,7 @@ export const ContentMap = styled(
               x={mapIndexToRelativeXCoord(index)}
               onClick={() => {
                 setPanelTitle(position);
-                showPanel(() => (
+                displayPanelContent(() => (
                   <>
                     {moves
                       .filter((i) => i.area === area && i.position === position)

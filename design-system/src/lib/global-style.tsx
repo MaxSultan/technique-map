@@ -29,6 +29,7 @@ dialog:focus {
 }
 
  * {
-  font-family: 'Lobster Two', sans-serif;
+  font-family: 'Rubik', sans-serif;
+  font-weight: 400;
  }
 `;

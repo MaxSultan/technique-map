@@ -109,7 +109,7 @@ export const PracticePlan = styled(({ className }) => {
   );
 })`
   min-height: 100%;
-  background-color: var(--secondary);
+  background-color: var(--primary);
   padding: 32px;
   color: white;
   display: grid;
@@ -118,5 +118,9 @@ export const PracticePlan = styled(({ className }) => {
 
   & > ${Button} {
     align-self: start;
+  }
+
+  & ${Details} {
+    background-color: var(--secondary);
   }
 `;

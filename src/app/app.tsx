@@ -1,5 +1,5 @@
 import './firebase';
-import { GlobalStyle } from '@technique-map/design-system';
+import { GlobalStyle, PanelProvider, ToastProvider, ToastDisplay } from '@technique-map/design-system';
 import {
   createBrowserRouter,
   RouterProvider,
@@ -9,6 +9,7 @@ import {
 import { NavBar } from '@technique-map/design-system';
 import { PracticePlan, PracticePlans } from '@technique-map/practice-plans';
 import { Map } from '@technique-map/map-items';
+import styled from 'styled-components';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -43,13 +44,32 @@ const router = createBrowserRouter(
   }
 );
 
-export function App() {
-  return (
-    <>
-      <RouterProvider router={router} />
-      <GlobalStyle />
-    </>
-  );
+export const App = styled(({className}) => (
+    <div className={className}>
+    <ToastProvider>
+      <PanelProvider>
+        <RouterProvider router={router} />
+        <GlobalStyle />
+      </PanelProvider>
+    </ToastProvider>
+    </div>
+  )
+)`
+height: 100%;
+
+& > ${ToastDisplay} {
+  position: fixed;
+  bottom: 16px;
+  right: 50%;
+  transform: translateX(50%);
 }
+
+@media screen and (width > 850px) {
+  & > ${ToastDisplay} {
+    right: 32px;
+    transform: translateX(0%);
+  }
+}
+`
 
 export default App;
