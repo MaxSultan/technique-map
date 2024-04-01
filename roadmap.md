@@ -70,9 +70,9 @@ type moves = {
 # V2
 
 - [x] update styling on practice plan page
-- [ ] add ability to set date on practice plan create/update
+- [x] add ability to set date on practice plan create/update
 - [ ] prevent same move from being added twice
-- [ ] add a toast component that appears and tells user of following errors/events:
+- [x] add a toast component that appears and tells user of following errors/events:
 
 - adding a move that already exists to a practice plan
 - deleting a practice plan
@@ -93,7 +93,7 @@ type moves = {
 - [ ] make filter system for move levels in create practice plan menu
 - [ ] differentiate moves by level in create practice plan menu (stylistically)
 - [ ] finish building out move levels
-- [ ] add e2e tests
+- [x] add e2e tests
 - [ ] add msw mock handlers for e2e tests
 
 Code refactor:
@@ -230,3 +230,7 @@ bottom
 - not get lifted
 
 top:
+
+## Icons
+
+https://icones.js.org/collection/octicon

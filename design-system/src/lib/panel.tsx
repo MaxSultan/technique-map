@@ -1,4 +1,14 @@
-import { ReactNode, MouseEvent, MutableRefObject } from 'react';
+import {
+  ReactNode,
+  MouseEvent,
+  MutableRefObject,
+  createContext,
+  useState,
+  useRef,
+  Dispatch,
+  SetStateAction,
+  Ref,
+} from 'react';
 import styled, { keyframes } from 'styled-components';
 import { CloseIcon } from './icons/close-icon';
 
@@ -150,3 +160,57 @@ export const Panel = styled(
     }
   }
 `;
+
+export type PanelContextType = {
+  panelContent: ReactNode | ReactNode[];
+  setPanelContent: Dispatch<SetStateAction<undefined>>;
+  panelTitle: string;
+  setPanelTitle: Dispatch<SetStateAction<string>>;
+  panelRef: MutableRefObject<MutableRefObject<HTMLDialogElement> | undefined>;
+  showPanel: () => void;
+  closePanel: () => void;
+};
+
+export const PanelContext = createContext<PanelContextType | null>(null);
+export const PanelProvider = ({
+  children,
+}: {
+  children: ReactNode | ReactNode[];
+}) => {
+  const [panelContent, setPanelContent] = useState<any>();
+  const [panelTitle, setPanelTitle] = useState<string>('');
+  const panelRef = useRef<MutableRefObject<HTMLDialogElement> | undefined>();
+
+  const closePanel = () => {
+    // @ts-ignore:next-line -- function does exist on dialog elements
+    panelRef.current?.close();
+  };
+
+  const showPanel = () => {
+    // @ts-ignore:next-line -- function does exist on dialog elements
+    panelRef.current?.show();
+  };
+
+  return (
+    <PanelContext.Provider
+      value={{
+        panelContent,
+        setPanelContent,
+        panelTitle,
+        setPanelTitle,
+        panelRef,
+        showPanel,
+        closePanel,
+      }}
+    >
+      {children}
+      <Panel
+        title={panelTitle}
+        /* @ts-ignore:next-line */
+        passedRef={panelRef}
+      >
+        <PanelList>{panelContent}</PanelList>
+      </Panel>
+    </PanelContext.Provider>
+  );
+};
