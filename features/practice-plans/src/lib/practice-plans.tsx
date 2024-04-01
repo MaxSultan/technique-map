@@ -10,7 +10,13 @@ import styled from 'styled-components';
 import { collection, getDocs, doc, deleteDoc } from 'firebase/firestore';
 import { db } from '../../../../src/app/firebase';
 import { Link, NavigateFunction, useNavigate } from 'react-router-dom';
-import { Button, Loader, PageLoader, ToastContext, ToastContextType } from '@technique-map/design-system';
+import {
+  Button,
+  Loader,
+  PageLoader,
+  ToastContext,
+  ToastContextType,
+} from '@technique-map/design-system';
 import { ErrorBoundary } from 'react-error-boundary';
 
 type PracticePlanType = {
@@ -192,12 +198,18 @@ const PracticePlansContent = styled(
 export const PracticePlans = () => {
   const [practicePlans, setPracticePlans] = useState<PracticePlanType[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
-  const { addToast, removeToast } =  useContext(ToastContext) as ToastContextType;
+  const { addToast, removeToast } = useContext(
+    ToastContext
+  ) as ToastContextType;
 
   const deletePracticePlan = async (id: string) => {
     await deleteDoc(doc(db, 'practice_plan', id));
     setPracticePlans((prev) => prev.filter((plan) => plan.id !== id));
-    addToast({variant: 'success', message: "Practice Plan Successfully Deleted", onClose: () => removeToast("Practice Plan Successfully Deleted")})
+    addToast({
+      variant: 'success',
+      message: 'Practice Plan Successfully Deleted',
+      onClose: () => removeToast('Practice Plan Successfully Deleted'),
+    });
   };
 
   const getData = () => {

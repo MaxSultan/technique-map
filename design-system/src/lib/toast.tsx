@@ -1,9 +1,14 @@
 import styled from 'styled-components';
 import { CheckIcon } from './icons/check-icon';
-import { ReactNode, createContext, useEffect, useId, useRef, useState } from 'react';
+import {
+  ReactNode,
+  createContext,
+  useEffect,
+  useId,
+  useRef,
+  useState,
+} from 'react';
 import { CloseIcon } from './icons/close-icon';
-
-
 
 const ICON_VARIANTS = {
   success: CheckIcon,
@@ -12,38 +17,43 @@ const VARIANT_COLORS = {
   success: 'var(--affirmative)',
 };
 
-
 type ToastComponentTypes = {
-    variant: keyof typeof ICON_VARIANTS;
-    className?: string;
-    onClose: () => void;
-    children: ReactNode | ReactNode[];
-}
+  variant: keyof typeof ICON_VARIANTS;
+  className?: string;
+  onClose: () => void;
+  children: ReactNode | ReactNode[];
+};
 
-export const Toast = styled(({ className, variant, children, onClose }: ToastComponentTypes) => {
-  const ref = useRef<HTMLDivElement>();
-  const Icon = ICON_VARIANTS[variant];
+export const Toast = styled(
+  ({ className, variant, children, onClose }: ToastComponentTypes) => {
+    const ref = useRef<HTMLDivElement>();
+    const Icon = ICON_VARIANTS[variant];
 
-  // Use the popover API to make this appear on top of the dialog
-  useEffect(() => {
+    // Use the popover API to make this appear on top of the dialog
+    useEffect(() => {
       if (ref.current) ref.current.showPopover();
       const timer = setTimeout(() => {
-        onClose()
-      }, 4000)
-      return () => clearTimeout(timer)
-  },[])
+        onClose();
+      }, 4000);
+      return () => clearTimeout(timer);
+    }, []);
 
-  return (
-      /* @ts-ignore: next-line -- popover does not exist on DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>*/
-    <div className={className} popover="true" manual>
-      <Icon style={{ color: VARIANT_COLORS[variant] }} />
-      <div>{children}</div>
-      <button onClick={onClose}>
-        <CloseIcon />
-      </button>
-    </div>
-  );
-})`
+    return (
+      <div
+        className={className}
+        /* @ts-ignore: next-line -- popover does not exist on DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>*/
+        popover="true"
+        manual
+      >
+        <Icon style={{ color: VARIANT_COLORS[variant] }} />
+        <div>{children}</div>
+        <button onClick={onClose}>
+          <CloseIcon />
+        </button>
+      </div>
+    );
+  }
+)`
   border-radius: 16px;
   box-shadow: 0px 2px 4px var(--primary);
   padding: 16px;
@@ -69,18 +79,21 @@ export const Toast = styled(({ className, variant, children, onClose }: ToastCom
   }
 `;
 
-export type ToastDataType = Pick<ToastComponentTypes, "variant" | "onClose"> & {message: string | ReactNode}
+export type ToastDataType = Pick<ToastComponentTypes, 'variant' | 'onClose'> & {
+  message: string | ReactNode;
+};
 
 type ToastDisplayTypes = {
-    toasts: ToastDataType[];
-    className?: string;
-}
+  toasts: ToastDataType[];
+  className?: string;
+};
 
-export const ToastDisplay = styled(({ toasts, className }: ToastDisplayTypes) => {
+export const ToastDisplay = styled(
+  ({ toasts, className }: ToastDisplayTypes) => {
     const id = useId(); // TODO: come up with a better plan for this
     return (
       <ul className={className}>
-        {toasts.map(({variant, onClose, message}) => (
+        {toasts.map(({ variant, onClose, message }) => (
           <li key={id}>
             <Toast
               variant={variant}
@@ -92,43 +105,52 @@ export const ToastDisplay = styled(({ toasts, className }: ToastDisplayTypes) =>
         ))}
       </ul>
     );
-  })`
-    list-style: none;
-    display: grid;
-    gap: 16px;
-    margin: 0;
-    justify-items: start;
+  }
+)`
+  list-style: none;
+  display: grid;
+  gap: 16px;
+  margin: 0;
+  justify-items: start;
 
-    & > li > ${Toast} {
-      background-color: var(--secondary);
-      color: white;
-    }
-  `;
-
-
+  & > li > ${Toast} {
+    background-color: var(--secondary);
+    color: white;
+  }
+`;
 
 export type ToastContextType = {
-    removeToast: (arg: string) => void;
-    addToast:(arg: ToastDataType) => void
-}
+  removeToast: (arg: string) => void;
+  addToast: (arg: ToastDataType) => void;
+};
 
 export const ToastContext = createContext<ToastContextType | null>(null);
-export const ToastProvider = ({children}: {children: ReactNode | ReactNode[]}) => {
-    const [toasts, setToasts] = useState<ToastDataType[]>([]);
+export const ToastProvider = ({
+  children,
+}: {
+  children: ReactNode | ReactNode[];
+}) => {
+  const [toasts, setToasts] = useState<ToastDataType[]>([]);
 
-    const addToast = (toast: ToastDataType) => {
-        setToasts(prev => [...prev, toast])
-    }
+  const addToast = (toast: ToastDataType) => {
+    setToasts((prev) => [...prev, toast]);
+  };
 
-    const removeToast = (deleteMessage: string) => {
-        setToasts(prev => prev.filter(toast => toast.message !== deleteMessage))
-    }
+  const removeToast = (deleteMessage: string) => {
+    setToasts((prev) =>
+      prev.filter((toast) => toast.message !== deleteMessage)
+    );
+  };
 
-    return (<ToastContext.Provider value={{
+  return (
+    <ToastContext.Provider
+      value={{
         removeToast,
-        addToast
-    }}>
-        {children}
-        <ToastDisplay toasts={toasts} />
-    </ToastContext.Provider>)
-}
+        addToast,
+      }}
+    >
+      {children}
+      <ToastDisplay toasts={toasts} />
+    </ToastContext.Provider>
+  );
+};

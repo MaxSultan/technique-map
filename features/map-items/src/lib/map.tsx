@@ -410,8 +410,9 @@ const useExistingPracticePlanData = (
 export const Map = styled(({ className }) => {
   const [currentTab, setCurrentTab] = useState<Area>('neutral');
   const [moves, setMoves] = useState<MoveType[]>([]);
-  const {addToast, removeToast} = useContext(ToastContext) as ToastContextType;
-
+  const { addToast, removeToast } = useContext(
+    ToastContext
+  ) as ToastContextType;
 
   let { id: currentPracticePlanId } = useParams();
 
@@ -438,56 +439,47 @@ export const Map = styled(({ className }) => {
   const clearPracticePlan = () => {
     setPracticePlanDate(new Date());
     setPracticePlanMoves([]);
-    addToast(
-      {
-        variant: 'success',
-        message: 'practice plan cleared',
-        onClose: () => removeToast('practice plan cleared'),
-      },
-    );
+    addToast({
+      variant: 'success',
+      message: 'practice plan cleared',
+      onClose: () => removeToast('practice plan cleared'),
+    });
   };
 
   const addToPracticePlan = (id: string) => {
     console.log(id, practicePlanMoves);
     if (practicePlanMoves.includes(id)) {
-      addToast(
-        {
-          variant: 'success',
-          message: 'move already exists',
-          onClose: () => removeToast('move already exists'),
-        },
-      );
+      addToast({
+        variant: 'success',
+        message: 'move already exists',
+        onClose: () => removeToast('move already exists'),
+      });
       return;
     }
     setPracticePlanMoves((prev: string[]) => [...prev, id]);
-    addToast(
-      {
-        variant: 'success',
-        message: 'move was successfully added',
-        onClose: () => removeToast('move was successfully added'),
-      },
-    );
+    addToast({
+      variant: 'success',
+      message: 'move was successfully added',
+      onClose: () => removeToast('move was successfully added'),
+    });
   };
 
   const removeFromPracticePlan = (id: string) => {
     setPracticePlanMoves((prev: string[]) => [...prev].filter((i) => i !== id));
-    addToast(
-      {
-        variant: 'success',
-        message: 'move was successfully removed',
-        onClose: () => removeToast('move was successfully removed'),
-      },
-    );
+    addToast({
+      variant: 'success',
+      message: 'move was successfully removed',
+      onClose: () => removeToast('move was successfully removed'),
+    });
   };
 
   const updatePracticePlanDate = (date: Date) => {
     setPracticePlanDate(date);
     addToast({
-        variant: 'success',
-        message: 'practice plan date updated',
-        onClose: () => removeToast('practice plan date updated'),
-      },
-    );
+      variant: 'success',
+      message: 'practice plan date updated',
+      onClose: () => removeToast('practice plan date updated'),
+    });
   };
 
   return (

@@ -1,5 +1,10 @@
 import './firebase';
-import { GlobalStyle, PanelProvider, ToastProvider, ToastDisplay } from '@technique-map/design-system';
+import {
+  GlobalStyle,
+  PanelProvider,
+  ToastProvider,
+  ToastDisplay,
+} from '@technique-map/design-system';
 import {
   createBrowserRouter,
   RouterProvider,
@@ -44,32 +49,31 @@ const router = createBrowserRouter(
   }
 );
 
-export const App = styled(({className}) => (
-    <div className={className}>
+export const App = styled(({ className }) => (
+  <div className={className}>
     <ToastProvider>
       <PanelProvider>
         <RouterProvider router={router} />
         <GlobalStyle />
       </PanelProvider>
     </ToastProvider>
-    </div>
-  )
-)`
-height: 100%;
+  </div>
+))`
+  height: 100%;
 
-& > ${ToastDisplay} {
-  position: fixed;
-  bottom: 16px;
-  right: 50%;
-  transform: translateX(50%);
-}
-
-@media screen and (width > 850px) {
   & > ${ToastDisplay} {
-    right: 32px;
-    transform: translateX(0%);
+    position: fixed;
+    bottom: 16px;
+    right: 50%;
+    transform: translateX(50%);
   }
-}
-`
+
+  @media screen and (width > 850px) {
+    & > ${ToastDisplay} {
+      right: 32px;
+      transform: translateX(0%);
+    }
+  }
+`;
 
 export default App;

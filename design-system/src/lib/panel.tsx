@@ -163,16 +163,20 @@ export const Panel = styled(
 
 export type PanelContextType = {
   panelContent: ReactNode | ReactNode[];
-        setPanelContent: Dispatch<SetStateAction<undefined>>;
-        panelTitle: string;
-        setPanelTitle: Dispatch<SetStateAction<string>>;
-        panelRef: MutableRefObject<MutableRefObject<HTMLDialogElement> | undefined>;
-        showPanel: () => void;
-        closePanel: () => void;
-}
+  setPanelContent: Dispatch<SetStateAction<undefined>>;
+  panelTitle: string;
+  setPanelTitle: Dispatch<SetStateAction<string>>;
+  panelRef: MutableRefObject<MutableRefObject<HTMLDialogElement> | undefined>;
+  showPanel: () => void;
+  closePanel: () => void;
+};
 
 export const PanelContext = createContext<PanelContextType | null>(null);
-export const PanelProvider = ({ children }: {children: ReactNode | ReactNode[]}) => {
+export const PanelProvider = ({
+  children,
+}: {
+  children: ReactNode | ReactNode[];
+}) => {
   const [panelContent, setPanelContent] = useState<any>();
   const [panelTitle, setPanelTitle] = useState<string>('');
   const panelRef = useRef<MutableRefObject<HTMLDialogElement> | undefined>();
@@ -196,13 +200,13 @@ export const PanelProvider = ({ children }: {children: ReactNode | ReactNode[]})
         setPanelTitle,
         panelRef,
         showPanel,
-        closePanel
+        closePanel,
       }}
     >
       {children}
       <Panel
         title={panelTitle}
-         /* @ts-ignore:next-line */
+        /* @ts-ignore:next-line */
         passedRef={panelRef}
       >
         <PanelList>{panelContent}</PanelList>

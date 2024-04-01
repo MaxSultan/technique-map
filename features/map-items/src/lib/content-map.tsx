@@ -1,6 +1,10 @@
 import styled from 'styled-components';
 import { SVGCircle } from './svg-circle';
-import { PanelContext, PanelItem, PanelContextType } from '@technique-map/design-system';
+import {
+  PanelContext,
+  PanelItem,
+  PanelContextType,
+} from '@technique-map/design-system';
 import { MoveType } from './map';
 import { ReactNode, useContext } from 'react';
 
@@ -13,14 +17,10 @@ type ContentMapProps = {
 };
 
 export const ContentMap = styled(
-  ({
-    className,
-    content,
-    addToPracticePlan,
-    area,
-    moves,
-  }: ContentMapProps) => {
-    const {showPanel, setPanelContent, setPanelTitle} = useContext(PanelContext) as PanelContextType;
+  ({ className, content, addToPracticePlan, area, moves }: ContentMapProps) => {
+    const { showPanel, setPanelContent, setPanelTitle } = useContext(
+      PanelContext
+    ) as PanelContextType;
     const circleRadius = 50;
     const marginTop = 70;
 
@@ -37,7 +37,7 @@ export const ContentMap = styled(
     const displayPanelContent = (content: () => JSX.Element) => {
       setPanelContent(content as unknown as any);
       showPanel();
-    }
+    };
 
     return (
       <svg
