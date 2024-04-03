@@ -211,7 +211,7 @@ export const PanelProvider = ({
     // @ts-ignore:next-line -- style exists on ref
     panelRef.current.style.animationName = 'slide-in';
     // @ts-ignore:next-line -- function does exist on dialog elements
-    panelRef.current?.showModal();
+    panelRef.current?.show();
   };
 
   return (
