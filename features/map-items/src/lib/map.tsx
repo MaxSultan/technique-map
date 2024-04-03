@@ -20,8 +20,6 @@ import {
 } from 'firebase/firestore';
 import { ContentMap } from '@technique-map/map-items';
 import {
-  Panel,
-  PanelList,
   Button,
   Tabs,
   Details,
@@ -33,7 +31,6 @@ import {
   Toast,
   ToastContext,
   ToastContextType,
-  PanelContext,
 } from '@technique-map/design-system';
 import { db } from '../../../../src/app/firebase';
 import { NavigateFunction, useNavigate, useParams } from 'react-router';

@@ -7,32 +7,13 @@ import {
   useRef,
   Dispatch,
   SetStateAction,
-  Ref,
 } from 'react';
 import styled, { keyframes } from 'styled-components';
 import { CloseIcon } from './icons/close-icon';
 
 const backdropFadeIn = keyframes`
- from {
-     display:none;
-     background-color: rgb(0 0 0 / 0);
-  }
-  
   to {
-     display:block;
-     background-color: rgb(0 0 0 / 0.25);
-  }
-`;
-
-const slideIn = keyframes`
-  from {
-    opacity: 0;
-    transform: translateX(0%);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateX(-100%);
+     backdrop-filter: blur(3px);
   }
 `;
 
@@ -86,13 +67,14 @@ export const PanelItem = styled(
 
 const handleClick = (
   ref: MutableRefObject<HTMLDialogElement>,
-  e: MouseEvent
+  e: MouseEvent,
+  callback: () => void
 ) => {
   const { top, bottom, left, right } = ref.current.getBoundingClientRect();
   const clickX = e.clientX;
   const clickY = e.clientY;
   if (clickX < left || clickX > right || clickY < top || clickY > bottom)
-    ref.current?.close();
+    callback();
 };
 
 const PanelHeader = styled.hgroup`
@@ -109,33 +91,38 @@ type PanelProps = {
   className?: string;
   passedRef: MutableRefObject<HTMLDialogElement>;
   title: string;
+  onClose: () => void;
 };
 
 export const Panel = styled(
-  ({ children, className, passedRef, title }: PanelProps) => {
+  ({ children, className, passedRef, title, onClose }: PanelProps) => {
     const handleCloseIconClick = () => {
-      passedRef.current.close();
+      if (passedRef.current) {
+        passedRef.current.style.animationName = 'slide-out';
+        setTimeout(() => {
+          passedRef.current.close();
+        }, 1500);
+      }
     };
 
     return (
       <dialog
         ref={passedRef}
-        onClick={(e) => handleClick(passedRef, e)}
+        onClick={(e) => handleClick(passedRef, e, onClose)}
         className={className}
       >
         <PanelHeader>
           {title}
-          <CloseIcon onClick={handleCloseIconClick} />
+          <CloseIcon onClick={onClose} />
         </PanelHeader>
         {children}
       </dialog>
     );
   }
 )`
-  --animation-timing: 0.4s;
+  --animation-timing: 0.3s;
   --panel-width: 300px;
 
-  will-change: transform;
   transform-origin: right center;
   box-shadow: -16px 0px 16px -16px hsl(from var(--primary) h s calc(l * 0.1));
 
@@ -151,12 +138,40 @@ export const Panel = styled(
   padding: 0;
 
   background-color: var(--primary);
+  animation-duration: var(--animation-timing);
+  animation-delay: 300ms;
+  animation-timing-function: ease-out;
+  animation-fill-mode: both;
 
   &[open] {
-    animation: ${slideIn} var(--animation-timing) ease-out forwards;
+    animation-name: slide-in;
 
-    ::backdrop {
-      animation: ${backdropFadeIn} var(--animation-timing) ease-out forwards;
+    &::backdrop {
+      animation-name: ${backdropFadeIn};
+      animation-duration: var(--animation-timing);
+      animation-fill-mode: forwards;
+    }
+  }
+
+  @keyframes slide-out {
+    from {
+      opacity: 1;
+      transform: translateX(-100%);
+    }
+    to {
+      opacity: 0;
+      transform: translateX(0%);
+    }
+  }
+
+  @keyframes slide-in {
+    from {
+      opacity: 0;
+      transform: translateX(0%);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(-100%);
     }
   }
 `;
@@ -182,13 +197,21 @@ export const PanelProvider = ({
   const panelRef = useRef<MutableRefObject<HTMLDialogElement> | undefined>();
 
   const closePanel = () => {
-    // @ts-ignore:next-line -- function does exist on dialog elements
-    panelRef.current?.close();
+    if (panelRef.current) {
+      // @ts-ignore:next-line -- style exists on ref
+      panelRef.current.style.animationName = 'slide-out';
+      setTimeout(() => {
+        // @ts-ignore:next-line -- function does exist on dialog elements
+        panelRef.current.close();
+      }, 600);
+    }
   };
 
   const showPanel = () => {
+    // @ts-ignore:next-line -- style exists on ref
+    panelRef.current.style.animationName = 'slide-in';
     // @ts-ignore:next-line -- function does exist on dialog elements
-    panelRef.current?.show();
+    panelRef.current?.showModal();
   };
 
   return (
@@ -208,6 +231,7 @@ export const PanelProvider = ({
         title={panelTitle}
         /* @ts-ignore:next-line */
         passedRef={panelRef}
+        onClose={closePanel}
       >
         <PanelList>{panelContent}</PanelList>
       </Panel>
