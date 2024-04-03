@@ -86,6 +86,7 @@ type moves = {
 
 - [ ] consolidate duplicated functions (get moves data) (data fetching functions)
 - [ ] add unit tests
+- [ ] copy router to 404.html in build step so github pages can figure out where to route you or use hashRouter
 
 - [ ] nx-ize the firebase config/init file
 
@@ -116,6 +117,7 @@ nice to have
 - [ ] Add curved lines between svg circles
 - [ ] panel animation
 - [ ] modal animation
+- [ ] toast animate in and out
 
 ---
 
