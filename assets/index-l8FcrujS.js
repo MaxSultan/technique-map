@@ -2393,7 +2393,7 @@ This typically indicates that your device does not have a healthy Internet conne
       transform: translateX(-100%);
     }
   }
-`,aS=A.createContext(null),TV=({children:t})=>{const[e,n]=A.useState(),[r,i]=A.useState(""),o=A.useRef(),s=()=>{o.current&&(o.current.style.animationName="slide-out",setTimeout(()=>{o.current.close()},600))},a=()=>{var l;o.current.style.animationName="slide-in",(l=o.current)==null||l.showModal()};return S.jsxs(aS.Provider,{value:{panelContent:e,setPanelContent:n,panelTitle:r,setPanelTitle:i,panelRef:o,showPanel:a,closePanel:s},children:[t,S.jsx(EV,{title:r,passedRef:o,onClose:s,children:S.jsx(yV,{children:e})})]})},So=re(({text:t,onClick:e,className:n,Icon:r})=>S.jsxs("button",{className:n,onClick:e,children:[S.jsx("span",{children:t}),!!r&&S.jsx("div",{children:S.jsx(r,{})})]}))`
+`,aS=A.createContext(null),TV=({children:t})=>{const[e,n]=A.useState(),[r,i]=A.useState(""),o=A.useRef(),s=()=>{o.current&&(o.current.style.animationName="slide-out",setTimeout(()=>{o.current.close()},600))},a=()=>{var l;o.current.style.animationName="slide-in",(l=o.current)==null||l.show()};return S.jsxs(aS.Provider,{value:{panelContent:e,setPanelContent:n,panelTitle:r,setPanelTitle:i,panelRef:o,showPanel:a,closePanel:s},children:[t,S.jsx(EV,{title:r,passedRef:o,onClose:s,children:S.jsx(yV,{children:e})})]})},So=re(({text:t,onClick:e,className:n,Icon:r})=>S.jsxs("button",{className:n,onClick:e,children:[S.jsx("span",{children:t}),!!r&&S.jsx("div",{children:S.jsx(r,{})})]}))`
   --button-color: ${({$level:t})=>t==="caution"?"var(--caution)":"var(--affirmative)"};
 
   padding-inline: 32px;
@@ -2597,7 +2597,7 @@ dialog:focus {
   display: flex;
   justify-content: center;
   position: relative;
-`;const SL=t=>S.jsx("svg",{xmlns:"http://www.w3.org/2000/svg",width:"32",height:"32",viewBox:"0 0 16 16",...t,children:S.jsx("path",{fill:"currentColor",d:"M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m1.5 0a6.5 6.5 0 1 0 13 0a6.5 6.5 0 0 0-13 0m10.28-1.72l-4.5 4.5a.75.75 0 0 1-1.06 0l-2-2a.751.751 0 0 1 .018-1.042a.751.751 0 0 1 1.042-.018l1.47 1.47l3.97-3.97a.751.751 0 0 1 1.042.018a.751.751 0 0 1 .018 1.042"})}),IL={success:SL},AL={success:"var(--affirmative)"},S0=re(({className:t,variant:e,children:n,onClose:r})=>{const i=A.useRef(),o=IL[e];return A.useEffect(()=>{i.current&&i.current.showPopover();const s=setTimeout(()=>{r()},4e3);return()=>clearTimeout(s)},[]),S.jsxs("div",{className:t,popover:"true",manual:!0,children:[S.jsx(o,{style:{color:AL[e]}}),S.jsx("div",{children:n}),S.jsx("button",{onClick:r,children:S.jsx(sg,{})})]})})`
+`;const SL=t=>S.jsx("svg",{xmlns:"http://www.w3.org/2000/svg",width:"32",height:"32",viewBox:"0 0 16 16",...t,children:S.jsx("path",{fill:"currentColor",d:"M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m1.5 0a6.5 6.5 0 1 0 13 0a6.5 6.5 0 0 0-13 0m10.28-1.72l-4.5 4.5a.75.75 0 0 1-1.06 0l-2-2a.751.751 0 0 1 .018-1.042a.751.751 0 0 1 1.042-.018l1.47 1.47l3.97-3.97a.751.751 0 0 1 1.042.018a.751.751 0 0 1 .018 1.042"})}),IL={success:SL},AL={success:"var(--affirmative)"},S0=re(({className:t,variant:e,children:n,onClose:r})=>{const i=A.useRef(),o=IL[e];return A.useEffect(()=>{i.current&&i.current.showPopover();const s=setTimeout(()=>{r()},4e3);return()=>clearTimeout(s)},[]),S.jsxs("div",{className:t,popover:"auto",children:[S.jsx(o,{style:{color:AL[e]}}),S.jsx("div",{children:n}),S.jsx("button",{onClick:r,children:S.jsx(sg,{})})]})})`
   border-radius: 16px;
   box-shadow: 0px 2px 4px var(--primary);
   padding: 16px;
