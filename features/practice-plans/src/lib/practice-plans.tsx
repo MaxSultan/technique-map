@@ -19,9 +19,10 @@ import {
 } from '@technique-map/design-system';
 import { ErrorBoundary } from 'react-error-boundary';
 
-type PracticePlanType = {
+export type PracticePlanType = {
   id: string;
   date: { seconds: string; milliseconds: string };
+  moves: string[];
 };
 
 const Title = styled.hgroup`
@@ -216,10 +217,16 @@ export const PracticePlans = () => {
     setLoading(true);
     return getDocs(collection(db, 'practice_plan'))
       .then((querySnapshot) => {
-        const newData = querySnapshot.docs.map((doc) => ({
-          ...doc.data(),
-          id: doc.id,
-        }));
+        const newData = querySnapshot.docs
+          .map((doc) => ({
+            ...doc.data(),
+            id: doc.id,
+          }))
+          .sort(
+            (a, b) =>
+              Number((b as PracticePlanType).date.seconds) -
+              Number((a as PracticePlanType).date.seconds)
+          );
         setPracticePlans(newData as PracticePlanType[]);
       })
       .catch((err) => {
