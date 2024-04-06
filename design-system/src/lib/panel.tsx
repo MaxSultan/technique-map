@@ -60,6 +60,10 @@ export const PanelItem = styled(
     border-bottom: 2px solid var(--primary);
   }
 
+  & > button {
+    border-bottom: 2px solid transparent;
+  }
+
   &:hover > button {
     border-bottom: 2px solid var(--highlight);
   }
@@ -92,24 +96,33 @@ type PanelProps = {
   passedRef: MutableRefObject<HTMLDialogElement>;
   title: string;
   onClose: () => void;
+  animationDirection: boolean;
 };
 
 export const Panel = styled(
-  ({ children, className, passedRef, title, onClose }: PanelProps) => {
-    const handleCloseIconClick = () => {
-      if (passedRef.current) {
-        passedRef.current.style.animationName = 'slide-out';
-        setTimeout(() => {
-          passedRef.current.close();
-        }, 1500);
-      }
-    };
-
+  ({
+    children,
+    className,
+    passedRef,
+    title,
+    onClose,
+    animationDirection,
+  }: PanelProps) => {
     return (
       <dialog
         ref={passedRef}
         onClick={(e) => handleClick(passedRef, e, onClose)}
         className={className}
+        style={{
+          animation: animationDirection
+            ? 'slide-in var(--animation-timing) ease-in both'
+            : 'slide-out 300ms ease-out both',
+        }}
+        onAnimationEnd={() => {
+          if (!animationDirection) {
+            passedRef.current.close();
+          }
+        }}
       >
         <PanelHeader>
           {title}
@@ -122,30 +135,19 @@ export const Panel = styled(
 )`
   --animation-timing: 0.3s;
   --panel-width: 300px;
-
   transform-origin: right center;
   box-shadow: -16px 0px 16px -16px hsl(from var(--primary) h s calc(l * 0.1));
-
   border: none;
   inset: unset;
-
   min-height: 100%;
   width: var(--panel-width);
-
   position: fixed;
   top: 0;
   right: calc(-1 * var(--panel-width));
   padding: 0;
-
   background-color: var(--primary);
-  animation-duration: var(--animation-timing);
-  animation-delay: 300ms;
-  animation-timing-function: ease-out;
-  animation-fill-mode: both;
 
   &[open] {
-    animation-name: slide-in;
-
     &::backdrop {
       animation-name: ${backdropFadeIn};
       animation-duration: var(--animation-timing);
@@ -155,22 +157,18 @@ export const Panel = styled(
 
   @keyframes slide-out {
     from {
-      opacity: 1;
       transform: translateX(-100%);
     }
     to {
-      opacity: 0;
       transform: translateX(0%);
     }
   }
 
   @keyframes slide-in {
     from {
-      opacity: 0;
       transform: translateX(0%);
     }
     to {
-      opacity: 1;
       transform: translateX(-100%);
     }
   }
@@ -195,23 +193,18 @@ export const PanelProvider = ({
   const [panelContent, setPanelContent] = useState<any>();
   const [panelTitle, setPanelTitle] = useState<string>('');
   const panelRef = useRef<MutableRefObject<HTMLDialogElement> | undefined>();
+  const [animationDirection, setAnimationDirection] = useState<boolean>(false);
 
   const closePanel = () => {
     if (panelRef.current) {
-      // @ts-ignore:next-line -- style exists on ref
-      panelRef.current.style.animationName = 'slide-out';
-      setTimeout(() => {
-        // @ts-ignore:next-line -- function does exist on dialog elements
-        panelRef.current.close();
-      }, 600);
+      setAnimationDirection(false);
     }
   };
 
   const showPanel = () => {
-    // @ts-ignore:next-line -- style exists on ref
-    panelRef.current.style.animationName = 'slide-in';
-    // @ts-ignore:next-line -- function does exist on dialog elements
+    // @ts-ignore:next-line -- function exists on dialog elements
     panelRef.current?.show();
+    setAnimationDirection(true);
   };
 
   return (
@@ -232,6 +225,7 @@ export const PanelProvider = ({
         /* @ts-ignore:next-line */
         passedRef={panelRef}
         onClose={closePanel}
+        animationDirection={animationDirection}
       >
         <PanelList>{panelContent}</PanelList>
       </Panel>

@@ -4,7 +4,6 @@ import {
   useEffect,
   Fragment,
   useLayoutEffect,
-  useId,
   useContext,
 } from 'react';
 import styled from 'styled-components';
@@ -28,9 +27,10 @@ import {
   CopyIcon,
   TrashIcon,
   BookIcon,
-  Toast,
   ToastContext,
   ToastContextType,
+  PanelContext,
+  PanelContextType,
 } from '@technique-map/design-system';
 import { db } from '../../../../src/app/firebase';
 import { NavigateFunction, useNavigate, useParams } from 'react-router';
@@ -124,7 +124,7 @@ const savePracticePlan = async (
   navigator: NavigateFunction
 ) => {
   if (!isValidDate(practicePlan.date)) {
-    alert('please submit a valid date');
+    alert('please submit a valid date'); // TODO: make this a toast
     return;
   }
   await addDoc(collection(db, 'practice_plan'), practicePlan).then((res) => {
@@ -174,6 +174,11 @@ const PracticePlanDisplay = styled(
     const [transform, setTransform] = useState<boolean>(
       window.innerWidth > 850
     );
+    const { closePanel } = useContext(PanelContext) as PanelContextType;
+
+    useEffect(() => {
+      return () => closePanel();
+    }, []);
 
     const listenForResize = () => {
       if (window.innerWidth > 850) setTransform(true);
@@ -255,7 +260,7 @@ const PracticePlanDisplay = styled(
               Icon={CopyIcon}
             />
             <Button
-              onClick={() =>
+              onClick={() => {
                 currentPracticePlanId
                   ? updatePracticePlan(
                       currentPracticePlanId,
@@ -272,8 +277,8 @@ const PracticePlanDisplay = styled(
                         date: formatPracticePlanDate(practicePlanDate),
                       },
                       navigator
-                    )
-              }
+                    );
+              }}
               text={
                 currentPracticePlanId
                   ? 'Update Practice Plan'
