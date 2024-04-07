@@ -178,7 +178,7 @@ const PracticePlansContent = styled(
     );
   }
 )`
-  background-color: var(--primary);
+  background: linear-gradient(var(--blue100), var(--blue900));
   color: white;
   min-height: 100%;
   display: flex;
@@ -204,7 +204,7 @@ const PracticePlansContent = styled(
   }
 `;
 
-export const PracticePlans = () => {
+export const PracticePlans = styled(({ className }) => {
   const [practicePlans, setPracticePlans] = useState<PracticePlanType[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const { addToast, removeToast } = useContext(
@@ -251,16 +251,21 @@ export const PracticePlans = () => {
 
   return (
     <ErrorBoundary fallback={<p>⚠️ Something went wrong</p>}>
-      {loading ? (
-        <PageLoader>
-          <Loader />
-        </PageLoader>
-      ) : (
-        <PracticePlansContent
-          practicePlans={practicePlans}
-          deletePracticePlan={deletePracticePlan}
-        />
-      )}
+      <div className={className}>
+        {loading ? (
+          <PageLoader>
+            <Loader />
+          </PageLoader>
+        ) : (
+          <PracticePlansContent
+            practicePlans={practicePlans}
+            deletePracticePlan={deletePracticePlan}
+          />
+        )}
+      </div>
     </ErrorBoundary>
   );
-};
+})`
+  background: linear-gradient(var(--blue100), var(--blue900));
+  height: calc(100% - 51px);
+`;

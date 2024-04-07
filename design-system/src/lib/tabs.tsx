@@ -9,17 +9,17 @@ type TabsProps = {
 
 export const Tabs = styled(
   ({ tabs, currentTab, setCurrentTab, className }: TabsProps) => (
-    <div className={className}>
+    <ul className={className}>
       {tabs.map((i) => (
-        <div
+        <li
           onClick={() => setCurrentTab(i)}
           aria-selected={currentTab === i}
           key={i}
         >
           {i}
-        </div>
+        </li>
       ))}
-    </div>
+    </ul>
   )
 )`
   grid-area: nav;
@@ -28,15 +28,26 @@ export const Tabs = styled(
   background-color: var(--primary);
   border-bottom: 1px groove var(--secondary);
   color: white;
+  list-style: none;
+  margin: 0;
+  padding: 0;
 
-  & > div[aria-selected='true'] {
+  & > li[aria-selected='true'] {
     border-bottom: 2px solid var(--highlight);
     cursor: not-allowed;
   }
 
-  & > div {
+  & > li {
     cursor: pointer;
     padding: 16px 32px;
     text-transform: capitalize;
+    position: relative;
+  }
+
+  & > li:not(:last-of-type)::after {
+    content: '|';
+    color: rgba(255, 255, 255, 0.25);
+    position: absolute;
+    right: 0;
   }
 `;

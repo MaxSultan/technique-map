@@ -4,6 +4,7 @@ import {
   PanelProvider,
   ToastProvider,
   ToastDisplay,
+  Panel,
 } from '@technique-map/design-system';
 import {
   RouterProvider,
@@ -63,6 +64,10 @@ export const App = styled(({ className }) => (
     bottom: 16px;
     right: 50%;
     transform: translateX(50%);
+  }
+
+  & > ${Panel} {
+    background: linear-gradient(var(--blue100), var(--blue900));
   }
 
   @media screen and (width > 850px) {

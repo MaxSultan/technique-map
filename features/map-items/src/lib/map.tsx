@@ -292,7 +292,7 @@ const PracticePlanDisplay = styled(
     );
   }
 )`
-  background-color: var(--primary);
+  background: linear-gradient(var(--blue100), var(--blue900));
   color: white;
   padding: clamp(8px, 3vw, 32px);
   box-shadow: 16px 0px 16px -16px hsl(from var(--primary) h s calc(l * 0.1));
@@ -537,5 +537,9 @@ export const Map = styled(({ className }) => {
       left: 0;
       width: 75vw;
     }
+  }
+
+  & > ${Tabs} {
+    background-color: var(--blue100);
   }
 `;

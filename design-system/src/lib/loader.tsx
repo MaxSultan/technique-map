@@ -10,6 +10,9 @@ export const PageLoader = styled(
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+  & > div {
+    border-top: 2px solid white;
+  }
 `;
 
 const spin = keyframes`
