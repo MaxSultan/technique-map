@@ -204,7 +204,7 @@ const PracticePlansContent = styled(
   }
 `;
 
-export const PracticePlans = () => {
+export const PracticePlans = styled(({ className }) => {
   const [practicePlans, setPracticePlans] = useState<PracticePlanType[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const { addToast, removeToast } = useContext(
@@ -251,16 +251,21 @@ export const PracticePlans = () => {
 
   return (
     <ErrorBoundary fallback={<p>⚠️ Something went wrong</p>}>
-      {loading ? (
-        <PageLoader>
-          <Loader />
-        </PageLoader>
-      ) : (
-        <PracticePlansContent
-          practicePlans={practicePlans}
-          deletePracticePlan={deletePracticePlan}
-        />
-      )}
+      <div className={className}>
+        {loading ? (
+          <PageLoader>
+            <Loader />
+          </PageLoader>
+        ) : (
+          <PracticePlansContent
+            practicePlans={practicePlans}
+            deletePracticePlan={deletePracticePlan}
+          />
+        )}
+      </div>
     </ErrorBoundary>
   );
-};
+})`
+  background-color: var(--primary);
+  height: calc(100% - 51px);
+`;
