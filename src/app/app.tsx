@@ -6,24 +6,24 @@ import {
   ToastDisplay,
 } from '@technique-map/design-system';
 import {
-  createBrowserRouter,
   RouterProvider,
   Route,
   createRoutesFromElements,
+  createHashRouter,
 } from 'react-router-dom';
 import { NavBar } from '@technique-map/design-system';
 import { PracticePlan, PracticePlans } from '@technique-map/practice-plans';
 import { Map } from '@technique-map/map-items';
 import styled from 'styled-components';
 
-const router = createBrowserRouter(
+const router = createHashRouter(
   createRoutesFromElements(
     <Route
       path="/"
       element={<NavBar />}
     >
       <Route
-        path="create"
+        path="/create"
         element={<Map />}
       />
       <Route
@@ -43,10 +43,7 @@ const router = createBrowserRouter(
         element={<Map />}
       />
     </Route>
-  ),
-  {
-    basename: '/technique-map/',
-  }
+  )
 );
 
 export const App = styled(({ className }) => (

@@ -77,9 +77,11 @@ type moves = {
 - adding a move that already exists to a practice plan
 - deleting a practice plan
 - creating a practice plan
+- copying practice plan
 
 - [ ] practice plan index search/scoping/filtering
-- [ ] add most recent review to moves (number of days since last reviewed)
+- [x] add most recent review to moves (number of days since last reviewed)
+- [ ] Quick add for moves that haven't been reviewed in x number of days
 
 - [x] add CD to github actions
 - [x] add CI checks to github actions
@@ -113,9 +115,9 @@ Code refactor:
 
 nice to have
 
-- [ ] make the panel transition out of view nicely
+- [x] make the panel transition out of view nicely
 - [ ] Add curved lines between svg circles
-- [ ] panel animation
+- [x] panel animation
 - [ ] modal animation
 - [ ] toast animate in and out
 
