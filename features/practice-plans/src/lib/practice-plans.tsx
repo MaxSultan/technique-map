@@ -125,6 +125,8 @@ const PracticePlanItem = styled(
   background-color: var(--secondary);
   display: flex;
   justify-content: space-between;
+  align-items: center;
+  gap: 8px;
 
   & > ${DeleteModal} {
     & > div > div {
@@ -176,20 +178,26 @@ const PracticePlansContent = styled(
     );
   }
 )`
-  padding: 16px 15% 16px 15%;
   background-color: var(--primary);
   color: white;
   min-height: 100%;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
+  align-items: center;
   gap: 32px;
+
+  & > * {
+    width: 70%;
+  }
 
   & a {
     color: white;
   }
 
   & > ul {
+    margin: 0;
+    padding: 0;
     display: grid;
     grid-auto-flow: row;
     gap: 4px;
