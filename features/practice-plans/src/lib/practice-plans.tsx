@@ -42,6 +42,7 @@ const DeleteButton = styled.button`
   border-radius: 8px;
   padding: 4px 16px 4px 16px;
   cursor: pointer;
+  color: white;
 `;
 
 const DeleteModal = styled(
