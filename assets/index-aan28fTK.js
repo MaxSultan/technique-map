@@ -2660,6 +2660,7 @@ to {
   border-radius: 8px;
   padding: 4px 16px 4px 16px;
   cursor: pointer;
+  color: white;
 `,R0=Z(({children:t,passedRef:e,className:n})=>S.jsx("dialog",{ref:e,className:n,children:S.jsx("div",{children:t})}))`
   @media screen and (width > 800px) {
     width: 50%;
