@@ -1,6 +1,5 @@
 import {
   useState,
-  useRef,
   useEffect,
   Fragment,
   useLayoutEffect,
@@ -409,6 +408,14 @@ const useExistingPracticePlanData = (
   ];
 };
 
+const getData = () =>
+  getDocs(collection(db, 'moves')).then((querySnapshot) =>
+    querySnapshot.docs.map((doc) => ({
+      ...doc.data(),
+      id: doc.id,
+    }))
+  );
+
 export const Map = styled(({ className }) => {
   const [currentTab, setCurrentTab] = useState<Area>('neutral');
   const [moves, setMoves] = useState<MoveType[]>([]);
@@ -425,17 +432,8 @@ export const Map = styled(({ className }) => {
     setPracticePlanDate,
   ] = useExistingPracticePlanData(currentPracticePlanId);
 
-  const getData = () =>
-    getDocs(collection(db, 'moves')).then((querySnapshot) => {
-      const newData = querySnapshot.docs.map((doc) => ({
-        ...doc.data(),
-        id: doc.id,
-      }));
-      setMoves(newData as MoveType[]);
-    });
-
   useEffect(() => {
-    getData();
+    getData().then((newData) => setMoves(newData as unknown as MoveType[]));
   }, []);
 
   const clearPracticePlan = () => {
@@ -449,20 +447,21 @@ export const Map = styled(({ className }) => {
   };
 
   const addToPracticePlan = (id: string) => {
-    console.log(id, practicePlanMoves);
-    if (practicePlanMoves.includes(id)) {
+    setPracticePlanMoves((prev: string[]) => {
+      if (prev.includes(id)) {
+        addToast({
+          variant: 'success',
+          message: 'move already exists',
+          onClose: () => removeToast('move already exists'),
+        });
+        return prev;
+      }
       addToast({
         variant: 'success',
-        message: 'move already exists',
-        onClose: () => removeToast('move already exists'),
+        message: 'move was successfully added',
+        onClose: () => removeToast('move was successfully added'),
       });
-      return;
-    }
-    setPracticePlanMoves((prev: string[]) => [...prev, id]);
-    addToast({
-      variant: 'success',
-      message: 'move was successfully added',
-      onClose: () => removeToast('move was successfully added'),
+      return [...prev, id];
     });
   };
 
