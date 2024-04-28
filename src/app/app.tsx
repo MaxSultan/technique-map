@@ -1,4 +1,5 @@
 import './firebase';
+import { getAuth } from 'firebase/auth';
 import {
   GlobalStyle,
   PanelProvider,
@@ -6,6 +7,7 @@ import {
   ToastDisplay,
   Panel,
 } from '@technique-map/design-system';
+import { SignInPage, SignUpPage } from '@technique-map/auth';
 import {
   RouterProvider,
   Route,
@@ -16,6 +18,7 @@ import { NavBar } from '@technique-map/design-system';
 import { PracticePlan, PracticePlans } from '@technique-map/practice-plans';
 import { Map } from '@technique-map/map-items';
 import styled from 'styled-components';
+import { createContext, useState } from 'react';
 
 const router = createHashRouter(
   createRoutesFromElements(
@@ -43,20 +46,49 @@ const router = createHashRouter(
         path="/practice_plans/edit/:id"
         element={<Map />}
       />
+      <Route
+        path="/sign_in"
+        element={<SignInPage />}
+      />
+      <Route
+        path="/sign_up"
+        element={<SignUpPage />}
+      />
     </Route>
   )
 );
 
-export const App = styled(({ className }) => (
-  <div className={className}>
-    <ToastProvider>
-      <PanelProvider>
-        <RouterProvider router={router} />
-        <GlobalStyle />
-      </PanelProvider>
-    </ToastProvider>
-  </div>
-))`
+export const UserContext = createContext(null);
+
+const UserProvider = ({ children }) => {
+  const [user, setUser] = useState();
+
+  if (!user && window.location.pathname !== '/technique-map/#/sign_in') {
+    window.location.href = '/technique-map/#/sign_in';
+  }
+
+  getAuth().onAuthStateChanged((user) => {
+    console.log(user);
+    setUser(user);
+  });
+
+  return <UserContext.Provider value={user}>{children}</UserContext.Provider>;
+};
+
+export const App = styled(({ className }) => {
+  return (
+    <div className={className}>
+      <UserProvider>
+        <ToastProvider>
+          <PanelProvider>
+            <RouterProvider router={router} />
+            <GlobalStyle />
+          </PanelProvider>
+        </ToastProvider>
+      </UserProvider>
+    </div>
+  );
+})`
   height: 100%;
 
   & > ${ToastDisplay} {
