@@ -1,5 +1,4 @@
 import './firebase';
-import { getAuth } from 'firebase/auth';
 import {
   GlobalStyle,
   PanelProvider,
@@ -7,7 +6,7 @@ import {
   ToastDisplay,
   Panel,
 } from '@technique-map/design-system';
-import { SignInPage, SignUpPage } from '@technique-map/auth';
+import { SignInPage, SignUpPage, UserProvider } from '@technique-map/auth';
 import {
   RouterProvider,
   Route,
@@ -18,7 +17,7 @@ import { NavBar } from '@technique-map/design-system';
 import { PracticePlan, PracticePlans } from '@technique-map/practice-plans';
 import { Map } from '@technique-map/map-items';
 import styled from 'styled-components';
-import { createContext, useState } from 'react';
+import { Team, TeamsIndex } from '@technique-map/teams';
 
 const router = createHashRouter(
   createRoutesFromElements(
@@ -27,7 +26,7 @@ const router = createHashRouter(
       element={<NavBar />}
     >
       <Route
-        path="/create"
+        path="teams/:id/practice_plans/create"
         element={<Map />}
       />
       <Route
@@ -35,15 +34,19 @@ const router = createHashRouter(
         element={<PracticePlans />}
       />
       <Route
-        path="/practice_plans/:id"
+        path="teams/:id/practice_plans/:practice_plan_id"
         element={<PracticePlan />}
       />
       <Route
-        path="/"
-        element={<PracticePlans />}
+        path="/teams"
+        element={<TeamsIndex />}
       />
       <Route
-        path="/practice_plans/edit/:id"
+        path="/teams/:id"
+        element={<Team />}
+      />
+      <Route
+        path="teams/:id/practice_plans/:practice_plan_id/edit"
         element={<Map />}
       />
       <Route
@@ -57,23 +60,6 @@ const router = createHashRouter(
     </Route>
   )
 );
-
-export const UserContext = createContext(null);
-
-const UserProvider = ({ children }) => {
-  const [user, setUser] = useState();
-
-  if (!user && window.location.pathname !== '/technique-map/#/sign_in') {
-    window.location.href = '/technique-map/#/sign_in';
-  }
-
-  getAuth().onAuthStateChanged((user) => {
-    console.log(user);
-    setUser(user);
-  });
-
-  return <UserContext.Provider value={user}>{children}</UserContext.Provider>;
-};
 
 export const App = styled(({ className }) => {
   return (

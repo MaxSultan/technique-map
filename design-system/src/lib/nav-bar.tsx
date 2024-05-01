@@ -1,12 +1,12 @@
 import styled from 'styled-components';
 import { NavLink, Outlet } from 'react-router-dom';
 import { useContext } from 'react';
-// eslint-disable-next-line @nx/enforce-module-boundaries
-import { UserContext } from '../../../src/app/app';
 import { getAuth } from 'firebase/auth';
+// eslint-disable-next-line @nx/enforce-module-boundaries
+import { UserContext } from '@technique-map/auth';
 
 export const NavBar = styled(({ className }) => {
-  const user = useContext(UserContext);
+  const user = useContext(UserContext) as unknown as { email: string };
 
   return (
     <>
@@ -15,10 +15,7 @@ export const NavBar = styled(({ className }) => {
           {user ? (
             <>
               <li>
-                <NavLink to="/practice_plans">Practice Plans</NavLink>
-              </li>
-              <li>
-                <NavLink to="/create">Create</NavLink>
+                <NavLink to="/teams">Teams</NavLink>
               </li>
 
               <li>{user.email}</li>
@@ -67,7 +64,7 @@ export const NavBar = styled(({ className }) => {
       padding-right: 16px;
     }
 
-    & > li:nth-of-type(3) {
+    & > li:nth-of-type(2) {
       margin-left: auto;
     }
   }

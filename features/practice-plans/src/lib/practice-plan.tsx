@@ -68,7 +68,7 @@ export const PracticePlan = styled(({ className }) => {
   }, []);
 
   const editPracticePlan = (id: string) => {
-    navigate(`/practice_plans/edit/${id}`);
+    navigate(`edit`);
   };
 
   return (
