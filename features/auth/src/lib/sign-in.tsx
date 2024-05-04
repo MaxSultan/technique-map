@@ -1,4 +1,5 @@
 import React from 'react';
+// eslint-disable-next-line @nx/enforce-module-boundaries
 import { EmailIcon, KeyIcon } from '@technique-map/design-system';
 import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';

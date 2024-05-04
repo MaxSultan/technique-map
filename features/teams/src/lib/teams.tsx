@@ -1,26 +1,27 @@
 import styled from 'styled-components';
-import { addDoc, arrayUnion, collection, doc, getDocs, query, updateDoc, where } from 'firebase/firestore';
+import {
+  addDoc,
+  arrayUnion,
+  collection,
+  doc,
+  getDocs,
+  query,
+  updateDoc,
+  where,
+} from 'firebase/firestore';
+// eslint-disable-next-line @nx/enforce-module-boundaries
 import { db } from '../../../../src/app/firebase';
 import { useContext, useEffect, useRef, useState } from 'react';
-import { UserContext } from '@technique-map/auth';
-import { CloseIcon, Details, ToastContext, ToastContextType } from '@technique-map/design-system';
+import { UserContext, UserContextType } from '@technique-map/auth';
+import {
+  Details,
+  FormModal,
+  ToastContext,
+  ToastContextType,
+} from '@technique-map/design-system';
 import { Link } from 'react-router-dom';
+import { TeamType } from './types';
 
-/**
- *
- * We have authentication with a team system implemented
- * The concept of my team (team I have permission on) exists
- *
- * still need:
- * a way to separate other views in the app (practice plans, practice plan, create, update) by team
- * a way to view and change team member permissions
- * create team member join request action
- * accept team member join request action
- * create team action
- *
- */
-
-/* eslint-disable-next-line */
 export interface TeamsProps {
   className?: string;
 }
@@ -101,63 +102,49 @@ const getMyTeams = (userId: string) => {
   });
 };
 
-const FormModal = styled(({ passedRef, className, children, onClose }) => {
-  return (
-    <dialog
-      ref={passedRef}
-      className={className}
-    >
-      <button
-        onClick={onClose}
-        formNoValidate
-      >
-        <CloseIcon />
-      </button>
-      {children}
-    </dialog>
-  );
-})`
-  border: none;
-  border-radius: 16px;
-  --shadow-color: var(--blue900);
-  filter: drop-shadow(1px 2px 8px var(--shadow-color));
-  position: relative;
-  overflow: visible;
-
-  & > button:has(> svg) {
-    position: absolute;
-    top: 0;
-    right: 0;
-    border-radius: 50%;
-    display: grid;
-    place-items: center;
-    transform: translate(50%, -50%);
-    aspect-ratio: 1/1;
-  }
-`;
-
 export const TeamsIndex = styled(({ className }: TeamsProps) => {
-  const [teams, setTeams] = useState([]);
-  const [myTeams, setMyTeams] = useState([]);
-  const user = useContext(UserContext);
-  const { addToast, removeToast } = useContext(ToastContext) as ToastContextType;
+  const [teams, setTeams] = useState<TeamType[]>([]);
+  const [myTeams, setMyTeams] = useState<TeamType[]>([]);
+
+  const user = useContext(UserContext) as unknown as UserContextType;
+
+  const { addToast, removeToast } = useContext(
+    ToastContext
+  ) as ToastContextType;
+
   const createTeamModalRef = useRef();
   const searchTeamsModalRef = useRef();
 
   const showCreateTeamForm = () => {
-    createTeamModalRef.current.showModal();
+    if (createTeamModalRef.current) {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore:next-line
+      createTeamModalRef.current.showModal();
+    }
   };
 
   const hideCreateTeamForm = () => {
-    createTeamModalRef.current.close();
+    if (createTeamModalRef.current) {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore:next-line
+      createTeamModalRef.current.close();
+    }
   };
 
   const showTeamsSearch = () => {
-    searchTeamsModalRef.current.showModal();
+    if (searchTeamsModalRef.current) {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore:next-line
+      searchTeamsModalRef.current.showModal();
+    }
   };
 
   const hideTeamsSearch = () => {
-    searchTeamsModalRef.current.close();
+    if (searchTeamsModalRef.current) {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore:next-line
+      searchTeamsModalRef.current.close();
+    }
   };
 
   const handleCreateTeamSubmit = (
@@ -167,26 +154,34 @@ export const TeamsIndex = styled(({ className }: TeamsProps) => {
     const formData = new FormData(event.currentTarget);
 
     const newTeam = {
-      name: formData.get('teamName'),
-      state: formData.get('stateLocation'),
+      name: formData.get('teamName') as string,
+      state: formData.get('stateLocation') as string,
       joinRequests: [],
       userIds: [user.uid],
       users: [{ role: 'admin', uid: user.uid }],
-    }
+    } as unknown as TeamType;
 
     addDoc(teamsRef, newTeam).then((team) => {
-      console.log(team)
-      setMyTeams(prev => [...prev, {...newTeam, id: team.id}])
+      console.log(team);
+      setMyTeams((prev) => [...prev, { ...newTeam, id: team.id }]);
       hideCreateTeamForm();
     });
   };
 
-  const handleTeamJoinRequestSubmit = (event) => {
+  const handleTeamJoinRequestSubmit = (
+    event: React.SyntheticEvent<HTMLFormElement>
+  ) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
 
-    updateDoc(doc(db, "teams", formData.get('teamToJoin')), {
-      joinRequests: arrayUnion({ userEmail: user.email, uid: user.uid, role: formData.get('requestedRole')})
+    // TODO: stop users from adding Join requests multiple times
+
+    updateDoc(doc(db, 'teams', formData.get('teamToJoin') as string), {
+      joinRequests: arrayUnion({
+        userEmail: user.email,
+        uid: user.uid,
+        role: formData.get('requestedRole'),
+      }),
     }).then(() => {
       hideTeamsSearch();
       addToast({
@@ -194,13 +189,13 @@ export const TeamsIndex = styled(({ className }: TeamsProps) => {
         message: 'Request Successfully Submitted',
         onClose: () => removeToast('Request Successfully Submitted'),
       });
-    })
-  }
+    });
+  };
 
   useEffect(() => {
+    getAllTeams().then((teams) => setTeams(teams as TeamType[]));
     if (user?.uid) {
-      getAllTeams().then(setTeams);
-      getMyTeams(user.uid).then(setMyTeams);
+      getMyTeams(user.uid).then((myTeams) => setMyTeams(myTeams as TeamType[]));
     }
   }, [user]);
 
@@ -216,13 +211,7 @@ export const TeamsIndex = styled(({ className }: TeamsProps) => {
                   {team.name} ({team.state})
                 </Link>
               }
-            >
-              {JSON.stringify(team)}
-              {/* TODO: Map users with roles to user emails in DB */}
-              {team.users.map((user) => (
-                <div>{JSON.stringify(user)}</div>
-              ))}
-            </Details>
+            ></Details>
           </li>
         ))}
       </ul>
@@ -304,7 +293,7 @@ export const TeamsIndex = styled(({ className }: TeamsProps) => {
   );
 })`
   height: 100%;
-  background-color: var(--blue100);
+  background: linear-gradient(var(--blue100), var(--blue900));
   color: white;
 
   & a {
@@ -313,6 +302,11 @@ export const TeamsIndex = styled(({ className }: TeamsProps) => {
 
   & > ul {
     list-style: none;
+    margin: 0;
+    padding-left: 16px;
+    padding-right: 16px;
+    display: grid;
+    gap: 8px;
   }
 
   & > h1 {

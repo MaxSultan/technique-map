@@ -1,6 +1,8 @@
 import { getAuth } from 'firebase/auth';
 import { ReactNode, createContext, useState } from 'react';
 
+export type UserContextType = { uid: string; email: string };
+
 export const UserContext = createContext(null);
 
 export const UserProvider = ({

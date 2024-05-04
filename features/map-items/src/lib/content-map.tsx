@@ -7,9 +7,10 @@ import {
 } from '@technique-map/design-system';
 import { MoveType } from './map';
 import { useContext, useEffect, useState } from 'react';
-import { collection, getDocs } from 'firebase/firestore';
+import { collection, getDocs, query, where } from 'firebase/firestore';
 import { db } from '../../../../src/app/firebase';
 import { PracticePlanType } from '@technique-map/practice-plans';
+import { useParams } from 'react-router';
 
 type ContentMapProps = {
   area: 'top' | 'bottom' | 'neutral';
@@ -106,8 +107,12 @@ export const ContentMap = styled(
     ) as PanelContextType;
     const [practicePlans, setPracticePlans] = useState<PracticePlanType[]>([]);
 
-    const getPracticePlanData = () => {
-      return getDocs(collection(db, 'practice_plan'))
+    const { id: teamId = '' } = useParams();
+
+    const getPracticePlanData = (teamId: string) => {
+      return getDocs(
+        query(collection(db, 'practice_plan'), where('teamId', '==', teamId))
+      )
         .then((querySnapshot) => {
           const newData = querySnapshot.docs
             .map((doc) => ({
@@ -127,7 +132,7 @@ export const ContentMap = styled(
     };
 
     useEffect(() => {
-      getPracticePlanData();
+      getPracticePlanData(teamId);
     }, []);
 
     const circleRadius = 50;

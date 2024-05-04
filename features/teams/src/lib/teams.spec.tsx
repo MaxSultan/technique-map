@@ -1,10 +1,15 @@
 import { render } from '@testing-library/react';
+import { ToastProvider } from '@technique-map/design-system';
+import { ReactElement } from 'react';
 
-import Teams from './teams';
+import { TeamsIndex } from './teams';
+
+const RenderWithContext = (element: ReactElement<any, any>) =>
+  render(<ToastProvider>{element}</ToastProvider>);
 
 describe('Teams', () => {
   it('should render successfully', () => {
-    const { baseElement } = render(<Teams />);
+    const { baseElement } = RenderWithContext(<TeamsIndex />);
     expect(baseElement).toBeTruthy();
   });
 });
