@@ -42,6 +42,7 @@ export type PlanType = {
   date: Date;
   moves: string[];
   id: string;
+  teamId?: string;
 };
 
 type NeutralPositions =
@@ -119,7 +120,7 @@ const copyPracticePlan = (moves: MoveType[], practicePlanMoves: string[]) =>
   );
 
 const savePracticePlan = async (
-  practicePlan: Pick<PlanType, 'date' | 'moves'>,
+  practicePlan: Pick<PlanType, 'date' | 'moves' | 'teamId'>,
   navigator: NavigateFunction
 ) => {
   if (!isValidDate(practicePlan.date)) {
@@ -127,13 +128,13 @@ const savePracticePlan = async (
     return;
   }
   await addDoc(collection(db, 'practice_plan'), practicePlan).then((res) => {
-    navigator(`/practice_plans/${res.id}`);
+    navigator(`/teams/${practicePlan.teamId}/practice_plans/${res.id}`);
   });
 };
 
 const updatePracticePlan = async (
   id: string,
-  practicePlan: PlanType,
+  practicePlan: Pick<PlanType, 'date' | 'moves' | 'teamId'>,
   navigator: NavigateFunction
 ) => {
   const practicePlanRef = doc(db, 'practice_plan', id);
@@ -142,7 +143,7 @@ const updatePracticePlan = async (
     return;
   }
   await updateDoc(practicePlanRef, practicePlan);
-  navigator(`/practice_plans/${id}`);
+  navigator(`/teams/${practicePlan.teamId}/practice_plans/${id}`);
 };
 
 const ScrollContainer = styled.div`
@@ -168,6 +169,7 @@ const PracticePlanDisplay = styled(
     clearPracticePlan,
     currentPracticePlanId,
     updatePracticePlanDate,
+    teamId,
   }) => {
     const navigator = useNavigate();
     const [transform, setTransform] = useState<boolean>(
@@ -266,7 +268,7 @@ const PracticePlanDisplay = styled(
                       {
                         moves: practicePlanMoves,
                         date: formatPracticePlanDate(practicePlanDate),
-                        id: currentPracticePlanId,
+                        teamId: teamId,
                       },
                       navigator
                     )
@@ -274,6 +276,7 @@ const PracticePlanDisplay = styled(
                       {
                         moves: practicePlanMoves,
                         date: formatPracticePlanDate(practicePlanDate),
+                        teamId: teamId,
                       },
                       navigator
                     );
@@ -371,6 +374,7 @@ const useExistingPracticePlanData = (
 
   useEffect(() => {
     if (currentPracticePlanId) {
+      // TODO: update this to use doc instead of where
       const q = query(
         collection(db, 'practice_plan'),
         where(documentId(), '==', currentPracticePlanId)
@@ -408,12 +412,13 @@ const useExistingPracticePlanData = (
   ];
 };
 
-const getData = () =>
-  getDocs(collection(db, 'moves')).then((querySnapshot) =>
-    querySnapshot.docs.map((doc) => ({
-      ...doc.data(),
-      id: doc.id,
-    }))
+const getData = (teamId: string) =>
+  getDocs(query(collection(db, 'moves'), where('teamId', '==', teamId))).then(
+    (querySnapshot) =>
+      querySnapshot.docs.map((doc) => ({
+        ...doc.data(),
+        id: doc.id,
+      }))
   );
 
 export const Map = styled(({ className }) => {
@@ -423,7 +428,8 @@ export const Map = styled(({ className }) => {
     ToastContext
   ) as ToastContextType;
 
-  let { id: currentPracticePlanId } = useParams();
+  const { practice_plan_id: currentPracticePlanId, id: teamId = '' } =
+    useParams();
 
   const [
     practicePlanMoves,
@@ -433,8 +439,10 @@ export const Map = styled(({ className }) => {
   ] = useExistingPracticePlanData(currentPracticePlanId);
 
   useEffect(() => {
-    getData().then((newData) => setMoves(newData as unknown as MoveType[]));
-  }, []);
+    getData(teamId).then((newData) =>
+      setMoves(newData as unknown as MoveType[])
+    );
+  }, [teamId]);
 
   const clearPracticePlan = () => {
     setPracticePlanDate(new Date());
@@ -498,6 +506,7 @@ export const Map = styled(({ className }) => {
         removeFromPracticePlan={removeFromPracticePlan}
         currentPracticePlanId={currentPracticePlanId}
         updatePracticePlanDate={updatePracticePlanDate}
+        teamId={teamId}
       />
       <ContentMap
         addToPracticePlan={addToPracticePlan}

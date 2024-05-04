@@ -1,5 +1,6 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from 'firebase/app';
+import { getAuth } from 'firebase/auth';
 import { getAnalytics, isSupported } from 'firebase/analytics';
 import { getFirestore } from 'firebase/firestore';
 
@@ -24,3 +25,5 @@ isSupported().then((res) => {
     getAnalytics(app);
   }
 });
+
+export const auth = getAuth(app);

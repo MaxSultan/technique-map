@@ -6,6 +6,7 @@ import {
   ToastDisplay,
   Panel,
 } from '@technique-map/design-system';
+import { SignInPage, SignUpPage, UserProvider } from '@technique-map/auth';
 import {
   RouterProvider,
   Route,
@@ -16,6 +17,7 @@ import { NavBar } from '@technique-map/design-system';
 import { PracticePlan, PracticePlans } from '@technique-map/practice-plans';
 import { Map } from '@technique-map/map-items';
 import styled from 'styled-components';
+import { Team, TeamsIndex } from '@technique-map/teams';
 
 const router = createHashRouter(
   createRoutesFromElements(
@@ -24,7 +26,7 @@ const router = createHashRouter(
       element={<NavBar />}
     >
       <Route
-        path="/create"
+        path="teams/:id/practice_plans/create"
         element={<Map />}
       />
       <Route
@@ -32,31 +34,47 @@ const router = createHashRouter(
         element={<PracticePlans />}
       />
       <Route
-        path="/practice_plans/:id"
+        path="teams/:id/practice_plans/:practice_plan_id"
         element={<PracticePlan />}
       />
       <Route
-        path="/"
-        element={<PracticePlans />}
+        path="/teams"
+        element={<TeamsIndex />}
       />
       <Route
-        path="/practice_plans/edit/:id"
+        path="/teams/:id"
+        element={<Team />}
+      />
+      <Route
+        path="teams/:id/practice_plans/:practice_plan_id/edit"
         element={<Map />}
+      />
+      <Route
+        path="/sign_in"
+        element={<SignInPage />}
+      />
+      <Route
+        path="/sign_up"
+        element={<SignUpPage />}
       />
     </Route>
   )
 );
 
-export const App = styled(({ className }) => (
-  <div className={className}>
-    <ToastProvider>
-      <PanelProvider>
-        <RouterProvider router={router} />
-        <GlobalStyle />
-      </PanelProvider>
-    </ToastProvider>
-  </div>
-))`
+export const App = styled(({ className }) => {
+  return (
+    <div className={className}>
+      <UserProvider>
+        <ToastProvider>
+          <PanelProvider>
+            <RouterProvider router={router} />
+            <GlobalStyle />
+          </PanelProvider>
+        </ToastProvider>
+      </UserProvider>
+    </div>
+  );
+})`
   height: 100%;
 
   & > ${ToastDisplay} {
