@@ -16,21 +16,34 @@ const IconInput = styled(({ Icon, className, ...rest }) => {
   display: grid;
   grid-auto-flow: column;
   align-items: center;
+  height: min-content;
+
+  &:focus-within {
+    border-radius: 8px;
+    outline: 1px solid blue;
+  }
 
   & > input {
     background-color: transparent;
-    border: 1px solid white;
+    border: 2px solid white;
     border-radius: 8px 0 0 8px;
     padding: 8px 16px 8px 16px;
     color: white;
     caret-color: white;
+    font-size: 1em;
+
+    &:focus {
+      outline: none;
+    }
   }
+
   & > svg {
     padding-left: 8px;
     padding-right: 8px;
-    border: 1px solid white;
+    border: 2px solid white;
     border-radius: 0 8px 8px 0;
-    height: 95%;
+    height: 90%;
+    border-left: none;
   }
 `;
 
@@ -72,7 +85,7 @@ export const SignInPage = styled(({ className }) => {
   );
 })`
   height: 100%;
-  background-color: var(--blue100);
+  background: linear-gradient(var(--blue100), var(--blue900));
   color: white;
   display: grid;
   place-items: center;
@@ -80,16 +93,21 @@ export const SignInPage = styled(({ className }) => {
   & > form {
     display: grid;
     justify-content: center;
+    align-content: space-evenly;
     gap: 8px;
     border: 1px solid white;
-    padding: 64px;
-    border-radius: 16px;
+    padding: 16px 32px;
+    border-radius: 24px;
+    aspect-ratio: 1;
+    box-shadow: 0px 10px 15px var(--blue900);
 
     & > button {
-      border-radius: 20em;
+      border-radius: 8px;
       background-color: transparent;
       border-color: var(--affirmative);
       color: var(--affirmative);
+      cursor: pointer;
+      padding: 8px 16px;
     }
   }
 `;
