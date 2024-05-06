@@ -14,7 +14,7 @@ import {
   createHashRouter,
 } from 'react-router-dom';
 import { NavBar } from '@technique-map/design-system';
-import { PracticePlan, PracticePlans } from '@technique-map/practice-plans';
+import { PracticePlan } from '@technique-map/practice-plans';
 import { Map } from '@technique-map/map-items';
 import styled from 'styled-components';
 import { Team, TeamsIndex } from '@technique-map/teams';
@@ -28,10 +28,6 @@ const router = createHashRouter(
       <Route
         path="teams/:id/practice_plans/create"
         element={<Map />}
-      />
-      <Route
-        path="/practice_plans"
-        element={<PracticePlans />}
       />
       <Route
         path="teams/:id/practice_plans/:practice_plan_id"

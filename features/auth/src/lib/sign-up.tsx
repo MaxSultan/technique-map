@@ -76,7 +76,7 @@ export const SignUpPage = styled(({ className }) => {
   );
 })`
   height: 100%;
-  background-color: var(--blue100);
+  background: linear-gradient(var(--blue100), var(--blue900));
   display: grid;
   place-items: center;
   color: white;
@@ -88,10 +88,15 @@ export const SignUpPage = styled(({ className }) => {
     border: 1px solid white;
     padding: 64px;
     border-radius: 16px;
+    box-shadow: 0px 10px 15px var(--blue900);
+    aspect-ratio: 1;
 
     & > label {
       display: grid;
       gap: 4px;
+      & > input {
+        font-size: 1em;
+      }
     }
 
     & > button {
