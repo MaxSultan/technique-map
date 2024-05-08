@@ -14,13 +14,14 @@ import { db } from '../../../../src/app/firebase';
 import { useContext, useEffect, useRef, useState } from 'react';
 import { UserContext, UserContextType } from '@technique-map/auth';
 import {
-  Details,
+  Button,
   FormModal,
   ToastContext,
   ToastContextType,
 } from '@technique-map/design-system';
 import { Link } from 'react-router-dom';
 import { TeamType } from './types';
+import { Tag } from './tag';
 
 export interface TeamsProps {
   className?: string;
@@ -102,6 +103,64 @@ const getMyTeams = (userId: string) => {
   });
 };
 
+const TeamsList = styled.ul`
+  list-style: none;
+  margin: 0;
+  padding-left: 16px;
+  padding-right: 16px;
+  display: grid;
+  max-width: 100%;
+`;
+
+const TeamListItem = styled.li`
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  align-items: center;
+  gap: 8px;
+  padding: 8px;
+  border-bottom: white 1px solid;
+
+  &:hover {
+    background-color: var(--blue900);
+  }
+
+  @media screen and (max-width: 750px) {
+    grid-template-columns: 1fr;
+    grid-auto-flow: row;
+  }
+`;
+
+const Count = styled.div`
+  background-color: aliceblue;
+  color: black;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 16px;
+  width: 16px;
+  font-size: 8px;
+  filter: drop-shadow(2px 4px 4px black);
+`;
+
+const CountText = styled.div`
+  display: grid;
+  grid-auto-flow: column;
+  gap: 8px;
+  width: min-content;
+
+  & > span {
+    white-space: nowrap;
+  }
+`;
+
+const Buttons = styled.div`
+  display: grid;
+  gap: 16px;
+  grid-auto-flow: column;
+  padding: 16px;
+`;
+
 export const TeamsIndex = styled(({ className }: TeamsProps) => {
   const [teams, setTeams] = useState<TeamType[]>([]);
   const [myTeams, setMyTeams] = useState<TeamType[]>([]);
@@ -162,7 +221,6 @@ export const TeamsIndex = styled(({ className }: TeamsProps) => {
     } as unknown as TeamType;
 
     addDoc(teamsRef, newTeam).then((team) => {
-      console.log(team);
       setMyTeams((prev) => [...prev, { ...newTeam, id: team.id }]);
       hideCreateTeamForm();
     });
@@ -174,7 +232,22 @@ export const TeamsIndex = styled(({ className }: TeamsProps) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
 
-    // TODO: stop users from adding Join requests multiple times
+    const currentTeam = teams.find(
+      (team) => team.id === formData.get('teamToJoin')
+    );
+    if (currentTeam) {
+      const currentUserExistingJoinRequestForTeam =
+        currentTeam.joinRequests.find((req) => req.uid === user.uid);
+      if (currentUserExistingJoinRequestForTeam) {
+        addToast({
+          variant: 'success',
+          message: 'You have an existing request to join this team',
+          onClose: () =>
+            removeToast('You have an existing request to join this team'),
+        });
+        return;
+      }
+    }
 
     updateDoc(doc(db, 'teams', formData.get('teamToJoin') as string), {
       joinRequests: arrayUnion({
@@ -202,21 +275,44 @@ export const TeamsIndex = styled(({ className }: TeamsProps) => {
   return (
     <main className={className}>
       <h1>My Teams</h1>
-      <ul>
+      <TeamsList>
         {myTeams.map((team) => (
-          <li key={team.id}>
-            <Details
-              title={
-                <Link to={`${team.id}`}>
-                  {team.name} ({team.state})
-                </Link>
-              }
-            ></Details>
-          </li>
+          <Link
+            to={`${team.id}`}
+            key={team.id}
+          >
+            <TeamListItem>
+              <span>
+                {team.name} ({team.state})
+              </span>
+              <CountText>
+                Users <Count>{team.users.length}</Count>
+              </CountText>
+              <CountText>
+                <span>Join Requests</span>{' '}
+                <Count>{team.joinRequests.length}</Count>
+              </CountText>
+              {team.users.find(
+                (u) => u.uid === user.uid && u.role === 'admin'
+              ) ? (
+                <Tag $color="white">Admin</Tag>
+              ) : (
+                <span></span>
+              )}
+            </TeamListItem>
+          </Link>
         ))}
-      </ul>
-      <button onClick={showTeamsSearch}>Request to Join a Team</button>
-      <button onClick={showCreateTeamForm}>Create a Team</button>
+      </TeamsList>
+      <Buttons>
+        <Button
+          text="Request to Join a Team"
+          onClick={showTeamsSearch}
+        />
+        <Button
+          text="Create a Team"
+          onClick={showCreateTeamForm}
+        />
+      </Buttons>
       <FormModal
         passedRef={createTeamModalRef}
         onClose={hideCreateTeamForm}
@@ -260,14 +356,16 @@ export const TeamsIndex = styled(({ className }: TeamsProps) => {
               name="teamToJoin"
               id="teamToJoin"
             >
-              {teams.map((team) => (
-                <option
-                  value={team.id}
-                  key={team.id}
-                >
-                  {team.name} ({team.state})
-                </option>
-              ))}
+              {teams
+                .filter((team) => !team.userIds.includes(user.uid))
+                .map((team) => (
+                  <option
+                    value={team.id}
+                    key={team.id}
+                  >
+                    {team.name} ({team.state})
+                  </option>
+                ))}
             </select>
           </label>
           <label htmlFor="requestedRole">
@@ -295,18 +393,13 @@ export const TeamsIndex = styled(({ className }: TeamsProps) => {
   height: 100%;
   background: linear-gradient(var(--blue100), var(--blue900));
   color: white;
+  padding: 8px;
+  display: grid;
+  grid-template-rows: repeat(3, min-content);
+  gap: 16px;
 
   & a {
     color: currentColor;
-  }
-
-  & > ul {
-    list-style: none;
-    margin: 0;
-    padding-left: 16px;
-    padding-right: 16px;
-    display: grid;
-    gap: 8px;
   }
 
   & > h1 {
