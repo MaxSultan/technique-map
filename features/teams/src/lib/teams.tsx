@@ -390,7 +390,7 @@ export const TeamsIndex = styled(({ className }: TeamsProps) => {
     </main>
   );
 })`
-  height: 100%;
+  min-height: 100%;
   background: linear-gradient(var(--blue100), var(--blue900));
   color: white;
   padding: 8px;
