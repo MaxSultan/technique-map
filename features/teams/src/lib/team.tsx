@@ -14,14 +14,7 @@ import {
   where,
 } from 'firebase/firestore';
 import { useNavigate, useParams } from 'react-router';
-import {
-  LegacyRef,
-  ReactNode,
-  useContext,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
+import { ReactNode, useContext, useEffect, useRef, useState } from 'react';
 import { FormModal, Loader, PageLoader } from '@technique-map/design-system';
 import { UserContext, UserContextType } from '@technique-map/auth';
 import { Link } from 'react-router-dom';
@@ -32,6 +25,7 @@ import type {
   TeamType,
   TeamUserType,
 } from './types';
+import { Tag } from './tag';
 
 type ShowForTypes = {
   roles: RolesEnum[];
@@ -214,24 +208,15 @@ const MovesList = styled.ul`
   gap: 8px;
 `;
 
-const Tag = styled.div<{
-  level: 'jv' | 'varsity' | 'state qualifier' | 'state placer';
-}>`
-  color: ${({ level }) => {
-    if (level === 'jv') return 'hsl(30, 61%, 50%)';
-    if (level === 'varsity') return 'silver';
-    if (level === 'state qualifier') return 'gold';
-    if (level === 'state placer') return 'hsl(40, 5%, 89%)';
-  }};
-  border-radius: 20em;
-  background-color: transparent;
-  border-color: currentColor;
-  text-transform: uppercase;
-  border: 2px solid;
-  width: min-content;
-  padding: 4px 8px;
-  white-space: nowrap;
-`;
+const mapLevelToColor = (
+  level: 'jv' | 'varsity' | 'state qualifier' | 'state placer'
+) => {
+  if (level === 'jv') return 'hsl(30, 61%, 50%)';
+  if (level === 'varsity') return 'silver';
+  if (level === 'state qualifier') return 'gold';
+  if (level === 'state placer') return 'hsl(40, 5%, 89%)';
+  return 'white';
+};
 
 const MoveItem = styled(({ className, move }) => {
   return (
@@ -241,7 +226,7 @@ const MoveItem = styled(({ className, move }) => {
         <span>
           {move.area} - {move.position}
         </span>
-        <Tag level={move.level}>{move.level}</Tag>
+        <Tag $color={mapLevelToColor(move.level)}>{move.level}</Tag>
       </div>
     </li>
   );
