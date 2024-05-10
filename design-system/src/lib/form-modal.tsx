@@ -22,7 +22,10 @@ export const FormModal = styled(
   border: none;
   border-radius: 16px;
   filter: drop-shadow(1px 2px 8px var(--blue900));
-  position: relative;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   overflow: visible;
 
   & > button:has(> svg) {
@@ -33,7 +36,7 @@ export const FormModal = styled(
     display: grid;
     place-items: center;
     transform: translate(50%, -50%);
-    aspect-ratio: 1/1;
+    padding: 16px;
     border: none;
   }
 `;

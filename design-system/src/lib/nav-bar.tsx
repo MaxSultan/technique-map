@@ -4,6 +4,13 @@ import { useContext } from 'react';
 import { getAuth } from 'firebase/auth';
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import { UserContext } from '@technique-map/auth';
+import { Button } from './button';
+
+const ThinButton = styled(Button)`
+  padding-left: 8px;
+  padding-right: 8px;
+  white-space: nowrap;
+`;
 
 export const NavBar = styled(({ className }) => {
   const user = useContext(UserContext) as unknown as { email: string };
@@ -20,7 +27,10 @@ export const NavBar = styled(({ className }) => {
 
               <li>{user.email}</li>
               <li>
-                <button onClick={() => getAuth().signOut()}>Sign out</button>
+                <ThinButton
+                  text="Sign out"
+                  onClick={() => getAuth().signOut()}
+                />
               </li>
             </>
           ) : (
@@ -41,7 +51,7 @@ export const NavBar = styled(({ className }) => {
 })`
   border-bottom: 1px groove var(--blue100);
   background-color: var(--blue100);
-  padding: 16px;
+  padding: 16px 8px;
   color: white;
 
   & a {
@@ -51,6 +61,7 @@ export const NavBar = styled(({ className }) => {
   & > ul {
     list-style: none;
     display: flex;
+    align-items: center;
     padding: 0;
     margin: 0;
 

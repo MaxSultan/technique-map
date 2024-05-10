@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 export const Tag = styled.div<{
-  $color: string;
+  $color?: string;
 }>`
   color: ${({ $color }) => $color};
   border-radius: 20em;

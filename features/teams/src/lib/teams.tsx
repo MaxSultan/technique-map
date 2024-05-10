@@ -342,7 +342,10 @@ export const TeamsIndex = styled(({ className }: TeamsProps) => {
               ))}
             </select>
           </label>
-          <button type="submit">Create</button>
+          <Button
+            text="Create"
+            type="submit"
+          />
         </form>
       </FormModal>
       <FormModal
@@ -384,7 +387,10 @@ export const TeamsIndex = styled(({ className }: TeamsProps) => {
               ))}
             </select>
           </label>
-          <button type="submit">Send Request to Join</button>
+          <Button
+            text="Send Request to Join"
+            type="submit"
+          />
         </form>
       </FormModal>
     </main>

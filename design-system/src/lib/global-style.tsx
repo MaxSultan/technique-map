@@ -33,5 +33,13 @@ export const GlobalStyle = createGlobalStyle`
   * {
     font-family: 'Rubik', sans-serif;
     font-weight: 400;
+    padding:0;
+    margin:0
   }
+
+  input {
+    font-size: 1em;
+  }
+
+
 `;
