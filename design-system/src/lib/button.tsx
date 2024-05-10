@@ -1,10 +1,11 @@
 import styled from 'styled-components';
 
-export const Button = styled(({ text, onClick, className, Icon }) => {
+export const Button = styled(({ text, onClick, className, Icon, ...rest }) => {
   return (
     <button
       className={className}
       onClick={onClick}
+      {...rest}
     >
       <span>{text}</span>
       {!!Icon && (
