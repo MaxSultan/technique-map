@@ -2,9 +2,16 @@ import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
 import React, { useContext } from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
-import { ToastContext, ToastContextType } from '@technique-map/design-system';
+// eslint-disable-next-line @nx/enforce-module-boundaries
+import {
+  Button,
+  ToastContext,
+  ToastContextType,
+} from '@technique-map/design-system';
 import { doc, setDoc } from 'firebase/firestore';
+// eslint-disable-next-line @nx/enforce-module-boundaries
 import { db } from '../../../../src/app/firebase';
+import { SignInSignUpLink } from './sign-in-sign-up-link';
 
 export const SignUpPage = styled(({ className }) => {
   const { addToast, removeToast } = useContext(
@@ -46,6 +53,7 @@ export const SignUpPage = styled(({ className }) => {
   return (
     <div className={className}>
       <form onSubmit={handleSubmit}>
+        <SignInSignUpLink />
         <label htmlFor="email">
           Email:
           <input
@@ -70,7 +78,10 @@ export const SignUpPage = styled(({ className }) => {
             name="passwordConfirmation"
           />
         </label>
-        <button type="submit">Sign Up</button>
+        <Button
+          type="submit"
+          text="Sign Up"
+        />
       </form>
     </div>
   );
@@ -80,14 +91,15 @@ export const SignUpPage = styled(({ className }) => {
   display: grid;
   place-items: center;
   color: white;
+  font-size: 1em;
 
   & > form {
     display: grid;
     justify-content: center;
     gap: 8px;
     border: 1px solid white;
-    padding: 64px;
-    border-radius: 16px;
+    padding: 16px;
+    border-radius: 24px;
     box-shadow: 0px 10px 15px var(--blue900);
     aspect-ratio: 1;
 
@@ -97,13 +109,6 @@ export const SignUpPage = styled(({ className }) => {
       & > input {
         font-size: 1em;
       }
-    }
-
-    & > button {
-      border-radius: 20em;
-      background-color: transparent;
-      border-color: var(--affirmative);
-      color: var(--affirmative);
     }
   }
 `;
