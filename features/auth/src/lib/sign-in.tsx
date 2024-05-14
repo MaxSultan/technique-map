@@ -1,9 +1,10 @@
 import React from 'react';
 // eslint-disable-next-line @nx/enforce-module-boundaries
-import { EmailIcon, KeyIcon } from '@technique-map/design-system';
+import { Button, EmailIcon, KeyIcon } from '@technique-map/design-system';
 import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
+import { SignInSignUpLink } from './sign-in-sign-up-link';
 
 const IconInput = styled(({ Icon, className, ...rest }) => {
   return (
@@ -66,6 +67,7 @@ export const SignInPage = styled(({ className }) => {
   return (
     <div className={className}>
       <form onSubmit={handleSubmit}>
+        <SignInSignUpLink />
         <IconInput
           Icon={EmailIcon}
           id="email"
@@ -79,11 +81,15 @@ export const SignInPage = styled(({ className }) => {
           name="password"
         />
 
-        <button type="submit">Sign In</button>
+        <Button
+          type="submit"
+          text="Sign In"
+        />
       </form>
     </div>
   );
 })`
+  --form-padding: 16px;
   height: 100%;
   background: linear-gradient(var(--blue100), var(--blue900));
   color: white;
@@ -93,21 +99,12 @@ export const SignInPage = styled(({ className }) => {
   & > form {
     display: grid;
     justify-content: center;
-    align-content: space-evenly;
+    align-content: space-between;
     gap: 8px;
     border: 1px solid white;
-    padding: 16px 32px;
+    padding: var(--form-padding);
     border-radius: 24px;
     aspect-ratio: 1;
     box-shadow: 0px 10px 15px var(--blue900);
-
-    & > button {
-      border-radius: 8px;
-      background-color: transparent;
-      border-color: var(--affirmative);
-      color: var(--affirmative);
-      cursor: pointer;
-      padding: 8px 16px;
-    }
   }
 `;

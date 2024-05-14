@@ -205,10 +205,11 @@ const PracticePlanDisplay = styled(
     return (
       <aside
         className={className}
-        style={{
-          /* @ts-ignore:next-line */
-          '--transform': transform ? 'translateX(0%)' : 'translateX(-100%)',
-        }}
+        style={
+          {
+            '--transform': transform ? 'translateX(0%)' : 'translateX(-100%)',
+          } as React.CSSProperties
+        }
       >
         <button
           aria-label="show practice plan"

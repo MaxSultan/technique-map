@@ -475,6 +475,7 @@ const NumberTile = styled(({ className, title, subtext, value }) => {
   padding: 8px;
   border-radius: 8px;
   text-align: center;
+  box-shadow: 2px 2px 8px hsl(0deg 0% 1.55% / 50%);
 `;
 
 const NumberTileLayout = styled.div`
@@ -508,7 +509,7 @@ const AdminSectionLayout = styled.div`
   padding: 0 16px;
   gap: 32px;
 
-  @media screen and (width >= 850px) {
+  @media screen and (width >= 1200px) {
     grid-template-columns: 1fr 1fr;
     grid-template-rows: 1fr;
   }
@@ -789,10 +790,16 @@ const PracticePlanSection = styled(
 
 const MainContent = styled.main`
   display: grid;
-  gap: 32px;
+  gap: 64px;
+  max-width: 90%;
+
+  @media screen and (width > 550px) {
+    max-width: 80%;
+  }
 `;
 
 const HeaderContent = styled.div`
+  padding-top: 64px;
   display: grid;
   gap: 16px;
 `;
@@ -878,6 +885,8 @@ export const Team = styled(({ className }) => {
   background: linear-gradient(var(--blue100), var(--blue900));
   color: white;
   padding: 8px;
+  display: flex;
+  justify-content: center;
 
   & > h1 {
     margin: 0;
