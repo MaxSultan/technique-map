@@ -12,6 +12,15 @@ const ThinButton = styled(Button)`
   white-space: nowrap;
 `;
 
+const OverflowEmail = styled.li`
+  text-overflow: ellipsis;
+  overflow: hidden;
+  flex-basis: 0px;
+  min-width: 75px;
+  flex-grow: 1;
+  text-align: end;
+`;
+
 export const NavBar = styled(({ className }) => {
   const user = useContext(UserContext) as unknown as { email: string };
 
@@ -25,7 +34,7 @@ export const NavBar = styled(({ className }) => {
                 <NavLink to="/teams">Teams</NavLink>
               </li>
 
-              <li>{user.email}</li>
+              <OverflowEmail>{user.email}</OverflowEmail>
               <li>
                 <ThinButton
                   text="Sign out"
@@ -66,13 +75,13 @@ export const NavBar = styled(({ className }) => {
     margin: 0;
 
     & > li:not(:last-of-type) {
-      padding-right: 16px;
+      padding-right: 8px;
       border-right: 1px groove rgba(255, 255, 255, 0.25);
     }
 
     & > li {
-      padding-left: 16px;
-      padding-right: 16px;
+      padding-left: 8px;
+      padding-right: 8px;
     }
 
     & > li:nth-of-type(2) {
