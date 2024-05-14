@@ -11,11 +11,20 @@ import {
 } from 'firebase/firestore';
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import { db } from '../../../../src/app/firebase';
-import { useContext, useEffect, useRef, useState } from 'react';
+import {
+  Dispatch,
+  SetStateAction,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import { UserContext, UserContextType } from '@technique-map/auth';
 import {
   Button,
   FormModal,
+  Loader,
+  PageLoader,
   ToastContext,
   ToastContextType,
 } from '@technique-map/design-system';
@@ -25,6 +34,8 @@ import { Tag } from './tag';
 
 export interface TeamsProps {
   className?: string;
+  teams: TeamType[];
+  setTeams: Dispatch<SetStateAction<TeamType[]>>;
 }
 
 const STATE_ABBREVIATIONS = [
@@ -161,243 +172,235 @@ const Buttons = styled.div`
   padding: 16px;
 `;
 
-export const TeamsIndex = styled(({ className }: TeamsProps) => {
-  const [teams, setTeams] = useState<TeamType[]>([]);
-  const [myTeams, setMyTeams] = useState<TeamType[]>([]);
+const TeamsIndexContent = styled(
+  ({ className, teams, setTeams }: TeamsProps) => {
+    const user = useContext(UserContext) as unknown as UserContextType;
 
-  const user = useContext(UserContext) as unknown as UserContextType;
+    const { addToast, removeToast } = useContext(
+      ToastContext
+    ) as ToastContextType;
 
-  const { addToast, removeToast } = useContext(
-    ToastContext
-  ) as ToastContextType;
+    const createTeamModalRef = useRef();
+    const searchTeamsModalRef = useRef();
 
-  const createTeamModalRef = useRef();
-  const searchTeamsModalRef = useRef();
+    const showCreateTeamForm = () => {
+      if (createTeamModalRef.current) {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore:next-line
+        createTeamModalRef.current.showModal();
+      }
+    };
 
-  const showCreateTeamForm = () => {
-    if (createTeamModalRef.current) {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore:next-line
-      createTeamModalRef.current.showModal();
-    }
-  };
+    const hideCreateTeamForm = () => {
+      if (createTeamModalRef.current) {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore:next-line
+        createTeamModalRef.current.close();
+      }
+    };
 
-  const hideCreateTeamForm = () => {
-    if (createTeamModalRef.current) {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore:next-line
-      createTeamModalRef.current.close();
-    }
-  };
+    const showTeamsSearch = () => {
+      if (searchTeamsModalRef.current) {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore:next-line
+        searchTeamsModalRef.current.showModal();
+      }
+    };
 
-  const showTeamsSearch = () => {
-    if (searchTeamsModalRef.current) {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore:next-line
-      searchTeamsModalRef.current.showModal();
-    }
-  };
+    const hideTeamsSearch = () => {
+      if (searchTeamsModalRef.current) {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore:next-line
+        searchTeamsModalRef.current.close();
+      }
+    };
 
-  const hideTeamsSearch = () => {
-    if (searchTeamsModalRef.current) {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore:next-line
-      searchTeamsModalRef.current.close();
-    }
-  };
+    const handleCreateTeamSubmit = (
+      event: React.SyntheticEvent<HTMLFormElement>
+    ) => {
+      event.preventDefault();
+      const formData = new FormData(event.currentTarget);
 
-  const handleCreateTeamSubmit = (
-    event: React.SyntheticEvent<HTMLFormElement>
-  ) => {
-    event.preventDefault();
-    const formData = new FormData(event.currentTarget);
+      const newTeam = {
+        name: formData.get('teamName') as string,
+        state: formData.get('stateLocation') as string,
+        joinRequests: [],
+        userIds: [user.uid],
+        users: [{ role: 'admin', uid: user.uid }],
+      } as unknown as TeamType;
 
-    const newTeam = {
-      name: formData.get('teamName') as string,
-      state: formData.get('stateLocation') as string,
-      joinRequests: [],
-      userIds: [user.uid],
-      users: [{ role: 'admin', uid: user.uid }],
-    } as unknown as TeamType;
+      addDoc(teamsRef, newTeam).then((team) => {
+        setTeams((prev) => [...prev, { ...newTeam, id: team.id }]);
+        hideCreateTeamForm();
+      });
+    };
 
-    addDoc(teamsRef, newTeam).then((team) => {
-      setMyTeams((prev) => [...prev, { ...newTeam, id: team.id }]);
-      hideCreateTeamForm();
-    });
-  };
+    const handleTeamJoinRequestSubmit = (
+      event: React.SyntheticEvent<HTMLFormElement>
+    ) => {
+      event.preventDefault();
+      const formData = new FormData(event.currentTarget);
 
-  const handleTeamJoinRequestSubmit = (
-    event: React.SyntheticEvent<HTMLFormElement>
-  ) => {
-    event.preventDefault();
-    const formData = new FormData(event.currentTarget);
+      const currentTeam = teams.find(
+        (team) => team.id === formData.get('teamToJoin')
+      );
+      if (currentTeam) {
+        const currentUserExistingJoinRequestForTeam =
+          currentTeam.joinRequests.find((req) => req.uid === user.uid);
+        if (currentUserExistingJoinRequestForTeam) {
+          addToast({
+            variant: 'success',
+            message: 'You have an existing request to join this team',
+            onClose: () =>
+              removeToast('You have an existing request to join this team'),
+          });
+          return;
+        }
+      }
 
-    const currentTeam = teams.find(
-      (team) => team.id === formData.get('teamToJoin')
-    );
-    if (currentTeam) {
-      const currentUserExistingJoinRequestForTeam =
-        currentTeam.joinRequests.find((req) => req.uid === user.uid);
-      if (currentUserExistingJoinRequestForTeam) {
+      updateDoc(doc(db, 'teams', formData.get('teamToJoin') as string), {
+        joinRequests: arrayUnion({
+          userEmail: user.email,
+          uid: user.uid,
+          role: formData.get('requestedRole'),
+        }),
+      }).then(() => {
+        hideTeamsSearch();
         addToast({
           variant: 'success',
-          message: 'You have an existing request to join this team',
-          onClose: () =>
-            removeToast('You have an existing request to join this team'),
+          message: 'Request Successfully Submitted',
+          onClose: () => removeToast('Request Successfully Submitted'),
         });
-        return;
-      }
-    }
-
-    updateDoc(doc(db, 'teams', formData.get('teamToJoin') as string), {
-      joinRequests: arrayUnion({
-        userEmail: user.email,
-        uid: user.uid,
-        role: formData.get('requestedRole'),
-      }),
-    }).then(() => {
-      hideTeamsSearch();
-      addToast({
-        variant: 'success',
-        message: 'Request Successfully Submitted',
-        onClose: () => removeToast('Request Successfully Submitted'),
       });
-    });
-  };
+    };
 
-  useEffect(() => {
-    getAllTeams().then((teams) => setTeams(teams as TeamType[]));
-    if (user?.uid) {
-      getMyTeams(user.uid).then((myTeams) => setMyTeams(myTeams as TeamType[]));
-    }
-  }, [user]);
-
-  return (
-    <main className={className}>
-      <h1>My Teams</h1>
-      <TeamsList>
-        {myTeams.map((team) => (
-          <Link
-            to={`${team.id}`}
-            key={team.id}
-          >
-            <TeamListItem>
-              <span>
-                {team.name} ({team.state})
-              </span>
-              <CountText>
-                Users <Count>{team.users.length}</Count>
-              </CountText>
-              <CountText>
-                <span>Join Requests</span>{' '}
-                <Count>{team.joinRequests.length}</Count>
-              </CountText>
-              {team.users.find(
-                (u) => u.uid === user.uid && u.role === 'admin'
-              ) ? (
-                <Tag $color="white">Admin</Tag>
-              ) : (
-                <span></span>
-              )}
-            </TeamListItem>
-          </Link>
-        ))}
-      </TeamsList>
-      <Buttons>
-        <Button
-          text="Request to Join a Team"
-          onClick={showTeamsSearch}
-        />
-        <Button
-          text="Create a Team"
-          onClick={showCreateTeamForm}
-        />
-      </Buttons>
-      <FormModal
-        passedRef={createTeamModalRef}
-        onClose={hideCreateTeamForm}
-      >
-        <form onSubmit={handleCreateTeamSubmit}>
-          <label htmlFor="teamName">
-            <span>Team Name:</span>
-            <input
-              name="teamName"
-              type="text"
-              id="teamName"
-            />
-          </label>
-          <label htmlFor="stateLocation">
-            <span>State:</span>
-            <select
-              name="stateLocation"
-              id="stateLocation"
-            >
-              {STATE_ABBREVIATIONS.map((state) => (
-                <option
-                  value={state}
-                  key={state}
-                >
-                  {state}
-                </option>
-              ))}
-            </select>
-          </label>
-          <Button
-            text="Create"
-            type="submit"
-          />
-        </form>
-      </FormModal>
-      <FormModal
-        passedRef={searchTeamsModalRef}
-        onClose={hideTeamsSearch}
-      >
-        <form onSubmit={handleTeamJoinRequestSubmit}>
-          <label htmlFor="teamToJoin">
-            <span>Team:</span>
-            <select
-              name="teamToJoin"
-              id="teamToJoin"
-            >
-              {teams
-                .filter((team) => !team.userIds.includes(user.uid))
-                .map((team) => (
-                  <option
-                    value={team.id}
-                    key={team.id}
-                  >
+    return (
+      <main className={className}>
+        <h1>My Teams</h1>
+        <TeamsList>
+          {teams
+            .filter((team) => team.userIds.includes(user.uid))
+            .map((team) => (
+              <Link
+                to={`${team.id}`}
+                key={team.id}
+              >
+                <TeamListItem>
+                  <span>
                     {team.name} ({team.state})
+                  </span>
+                  <CountText>
+                    Users <Count>{team.users.length}</Count>
+                  </CountText>
+                  <CountText>
+                    <span>Join Requests</span>{' '}
+                    <Count>{team.joinRequests.length}</Count>
+                  </CountText>
+                  {team.users.find(
+                    (u) => u.uid === user.uid && u.role === 'admin'
+                  ) ? (
+                    <Tag $color="white">Admin</Tag>
+                  ) : (
+                    <span></span>
+                  )}
+                </TeamListItem>
+              </Link>
+            ))}
+        </TeamsList>
+        <Buttons>
+          <Button
+            text="Request to Join a Team"
+            onClick={showTeamsSearch}
+          />
+          <Button
+            text="Create a Team"
+            onClick={showCreateTeamForm}
+          />
+        </Buttons>
+        <FormModal
+          passedRef={createTeamModalRef}
+          onClose={hideCreateTeamForm}
+        >
+          <form onSubmit={handleCreateTeamSubmit}>
+            <label htmlFor="teamName">
+              <span>Team Name:</span>
+              <input
+                name="teamName"
+                type="text"
+                id="teamName"
+              />
+            </label>
+            <label htmlFor="stateLocation">
+              <span>State:</span>
+              <select
+                name="stateLocation"
+                id="stateLocation"
+              >
+                {STATE_ABBREVIATIONS.map((state) => (
+                  <option
+                    value={state}
+                    key={state}
+                  >
+                    {state}
                   </option>
                 ))}
-            </select>
-          </label>
-          <label htmlFor="requestedRole">
-            <span>Requested Role:</span>
-            <select
-              name="requestedRole"
-              id="requestedRole"
-            >
-              {['admin', 'base+', 'base'].map((role) => (
-                <option
-                  value={role}
-                  key={role}
-                >
-                  {role}
-                </option>
-              ))}
-            </select>
-          </label>
-          <Button
-            text="Send Request to Join"
-            type="submit"
-          />
-        </form>
-      </FormModal>
-    </main>
-  );
-})`
-  min-height: 100%;
-  background: linear-gradient(var(--blue100), var(--blue900));
+              </select>
+            </label>
+            <Button
+              text="Create"
+              type="submit"
+            />
+          </form>
+        </FormModal>
+        <FormModal
+          passedRef={searchTeamsModalRef}
+          onClose={hideTeamsSearch}
+        >
+          <form onSubmit={handleTeamJoinRequestSubmit}>
+            <label htmlFor="teamToJoin">
+              <span>Team:</span>
+              <select
+                name="teamToJoin"
+                id="teamToJoin"
+              >
+                {teams
+                  .filter((team) => !team.userIds.includes(user.uid))
+                  .map((team) => (
+                    <option
+                      value={team.id}
+                      key={team.id}
+                    >
+                      {team.name} ({team.state})
+                    </option>
+                  ))}
+              </select>
+            </label>
+            <label htmlFor="requestedRole">
+              <span>Requested Role:</span>
+              <select
+                name="requestedRole"
+                id="requestedRole"
+              >
+                {['admin', 'base+', 'base'].map((role) => (
+                  <option
+                    value={role}
+                    key={role}
+                  >
+                    {role}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <Button
+              text="Send Request to Join"
+              type="submit"
+            />
+          </form>
+        </FormModal>
+      </main>
+    );
+  }
+)`
   color: white;
   padding: 8px;
   display: grid;
@@ -422,4 +425,34 @@ export const TeamsIndex = styled(({ className }: TeamsProps) => {
       gap: 4px;
     }
   }
+`;
+
+export const TeamsIndex = styled(({ className }) => {
+  const [teams, setTeams] = useState<TeamType[]>([]);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    setLoading(true);
+    getAllTeams()
+      .then((teams) => setTeams(teams as TeamType[]))
+      .then(() => setLoading(false));
+  }, []);
+
+  return (
+    <div className={className}>
+      {loading ? (
+        <PageLoader>
+          <Loader />
+        </PageLoader>
+      ) : (
+        <TeamsIndexContent
+          teams={teams}
+          setTeams={setTeams}
+        />
+      )}
+    </div>
+  );
+})`
+  min-height: 100%;
+  background: linear-gradient(var(--blue100), var(--blue900));
 `;

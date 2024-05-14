@@ -52,6 +52,12 @@ type UserRoleItemType = {
   className?: string;
 };
 
+const ThinButton = styled(Button)`
+  padding-left: 8px;
+  padding-right: 8px;
+  white-space: nowrap;
+`;
+
 const ShowFor = ({ roles, team, children }: ShowForTypes) => {
   const user = useContext(UserContext) as unknown as UserContextType;
   const userPermission = team.users.find((u) => u.uid === user?.uid);
@@ -150,12 +156,12 @@ const UserRoleItem = styled(
           roles={['admin']}
           team={team}
         >
-          <Button
+          <ThinButton
             onClick={showUpdateRoleForm}
             text="Update Role"
           />
           {uid !== user.uid && (
-            <Button
+            <OutlineCautionButton
               $level="caution"
               onClick={handleRemoveUserFromTeam}
               text="Remove User"
@@ -194,15 +200,16 @@ const UserRoleItem = styled(
   }
 )`
   display: grid;
-  grid-template-columns: repeat(3, max-content);
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  grid-template-rows: 1fr;
   gap: 8px;
   align-items: center;
   padding: 8px;
   border-bottom: 1px solid white;
 
-  @media screen and (width < 600px) {
+  @media screen and (width < 650px) {
     grid-template-columns: 1fr 1fr;
-    grid-template-rows: repeat(3, max-content);
+    grid-template-rows: repeat(2, max-content);
     border: 1px solid white;
     border-radius: 8px;
 
@@ -254,7 +261,128 @@ const getTeamPracticePlans = (teamId: string) => {
 
 // #region Moves
 
-const MovesSection = styled.section`
+const MOVE_LEVELS = ['jv', 'varsity', 'state qualifier', 'state placer'];
+
+const MOVE_AREAS = ['neutral', 'top', 'bottom'];
+
+const MovesSection = styled(({ className, moves, setMoves, teamId, team }) => {
+  const addMoveModalFormRef = useRef();
+
+  const showAddMoveModalForm = () => {
+    if (addMoveModalFormRef.current) {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore:next-line
+      addMoveModalFormRef.current.showModal();
+    }
+  };
+
+  const hideAddMoveModalForm = () => {
+    if (addMoveModalFormRef.current) {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore:next-line
+      addMoveModalFormRef.current.close();
+    }
+  };
+
+  const handleAddMoveSubmit = (
+    event: React.SyntheticEvent<HTMLFormElement>
+  ) => {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+
+    const newMove = {
+      area: formData.get('area'),
+      level: formData.get('level'),
+      name: formData.get('name'),
+      position: formData.get('position'),
+      teamId: teamId,
+    };
+
+    addDoc(collection(db, 'moves'), newMove);
+
+    setMoves((prev: MoveType[]) => [...prev, newMove]);
+
+    hideAddMoveModalForm();
+  };
+  return (
+    <section className={className}>
+      <h2>Moves</h2>
+      <MovesList>
+        {moves.map((move: MoveType) => (
+          <MoveItem move={move} />
+        ))}
+      </MovesList>
+      <ShowFor
+        roles={['admin', 'base+']}
+        team={team}
+      >
+        <Button
+          onClick={showAddMoveModalForm}
+          text="Add Move"
+        />
+        <FormModal
+          passedRef={addMoveModalFormRef}
+          onClose={hideAddMoveModalForm}
+        >
+          <form onSubmit={handleAddMoveSubmit}>
+            <label htmlFor="name">
+              <span>Move name:</span>
+              <input
+                type="text"
+                name="name"
+                id="name"
+              />
+            </label>
+            <label htmlFor="area">
+              <span>Move Area:</span>
+              <select
+                name="area"
+                id="area"
+              >
+                {MOVE_AREAS.map((area) => (
+                  <option
+                    value={area}
+                    key={area}
+                  >
+                    {area}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label htmlFor="level">
+              <span>Move Level:</span>
+              <select
+                name="level"
+                id="level"
+              >
+                {MOVE_LEVELS.map((level) => (
+                  <option
+                    value={level}
+                    key={level}
+                  >
+                    {level}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label htmlFor="position">
+              <span>Move Position:</span>
+              <input
+                type="text"
+                name="position"
+                id="position"
+              />
+            </label>
+            <Button
+              text="Add Move"
+              type="submit"
+            />
+          </form>
+        </FormModal>
+      </ShowFor>
+    </section>
+  );
+})`
   display: grid;
   gap: 16px;
 `;
@@ -277,6 +405,16 @@ const mapLevelToColor = (
   return 'white';
 };
 
+const mapLevelToAbbreviation = (
+  level: 'jv' | 'varsity' | 'state qualifier' | 'state placer'
+) => {
+  if (level === 'jv') return 'JV';
+  if (level === 'varsity') return 'V';
+  if (level === 'state qualifier') return 'SQ';
+  if (level === 'state placer') return 'SP';
+  return '';
+};
+
 const MoveItem = styled(({ className, move }) => {
   return (
     <li className={className}>
@@ -285,7 +423,9 @@ const MoveItem = styled(({ className, move }) => {
         <span>
           {move.area} - {move.position}
         </span>
-        <Tag $color={mapLevelToColor(move.level)}>{move.level}</Tag>
+        <Tag $color={mapLevelToColor(move.level)}>
+          {mapLevelToAbbreviation(move.level)}
+        </Tag>
       </div>
     </li>
   );
@@ -357,16 +497,20 @@ const UsersList = styled.ul`
   list-style: none;
   margin: 0;
   padding: 0;
+  display: grid;
+  gap: 8px;
 `;
 
 const AdminSectionLayout = styled.div`
   display: grid;
-  grid-auto-flow: row;
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr 1fr;
   padding: 0 16px;
   gap: 32px;
 
   @media screen and (width >= 850px) {
-    grid-auto-flow: column;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr;
   }
 `;
 // #endregion numberTiles
@@ -384,9 +528,20 @@ const TeamJoinRequestList = styled.ul`
 
 const TeamJoinRequestListItem = styled.li`
   display: grid;
-  grid-auto-flow: column;
   align-items: center;
   justify-content: space-between;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 8px;
+  border: 1px solid white;
+  border-radius: 8px;
+  padding: 8px;
+
+  @media screen and (width > 650px) {
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    border: none;
+  }
 `;
 
 const AdminSection = styled(({ className, team, setTeam, teamId }) => {
@@ -446,14 +601,13 @@ const AdminSection = styled(({ className, team, setTeam, teamId }) => {
             <TeamJoinRequestList>
               {team.joinRequests.map((request: TeamRequestType) => (
                 <TeamJoinRequestListItem>
-                  <span>
-                    {request.userEmail} {request.role}
-                  </span>
+                  <span>{request.userEmail}</span>
+                  <span>{request.role}</span>
                   <Button
                     onClick={() => handleAcceptJoinRequest(request)}
                     text="Accept"
                   />
-                  <Button
+                  <OutlineCautionButton
                     $level="caution"
                     onClick={() => handleDenyJoinRequest(request)}
                     text="Decline"
@@ -503,6 +657,18 @@ const PracticePlanListItem = styled.li`
   @media screen and (width >= 650px) {
     grid-template-columns: repeat(3, 1fr);
     grid-template-rows: 1fr;
+  }
+`;
+
+const OutlineCautionButton = styled(Button)`
+  background: transparent;
+  color: var(--caution);
+  border: 2px solid var(--caution);
+  padding: 8px;
+  white-space: nowrap;
+
+  &:hover {
+    background-color: var(--blue900);
   }
 `;
 
@@ -574,9 +740,9 @@ const PracticePlanList = styled(
                   >
                     {plan.time}
                   </Link>
-                  <Button
-                    text="Delete Practice Plan"
+                  <OutlineCautionButton
                     $level="caution"
+                    text="Delete Practice Plan"
                     onClick={() => deletePracticePlan(plan.id)}
                   />
                 </PracticePlanListItem>
@@ -630,14 +796,16 @@ const HeaderContent = styled.div`
   display: grid;
   gap: 16px;
 `;
+
+const Divider = styled.hr`
+  color: white;
+`;
+
 export const Team = styled(({ className }) => {
   const [team, setTeam] = useState<any>();
   const [moves, setMoves] = useState<any>([]);
   const [practicePlans, setPracticePlans] = useState<any>([]);
-  const addMoveModalFormRef = useRef();
-
   const user = useContext(UserContext) as unknown as UserContextType;
-
   const { id: teamId = '' } = useParams();
   const navigate = useNavigate();
 
@@ -655,43 +823,6 @@ export const Team = styled(({ className }) => {
     }
   }, [navigate, team, user]);
 
-  const showAddMoveModalForm = () => {
-    if (addMoveModalFormRef.current) {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore:next-line
-      addMoveModalFormRef.current.showModal();
-    }
-  };
-
-  const hideAddMoveModalForm = () => {
-    if (addMoveModalFormRef.current) {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore:next-line
-      addMoveModalFormRef.current.close();
-    }
-  };
-
-  const handleAddMoveSubmit = (
-    event: React.SyntheticEvent<HTMLFormElement>
-  ) => {
-    event.preventDefault();
-    const formData = new FormData(event.currentTarget);
-
-    const newMove = {
-      area: formData.get('area'),
-      level: formData.get('level'),
-      name: formData.get('name'),
-      position: formData.get('position'),
-      teamId: teamId,
-    };
-
-    addDoc(collection(db, 'moves'), newMove);
-
-    setMoves((prev: MoveType[]) => [...prev, newMove]);
-
-    hideAddMoveModalForm();
-  };
-
   return (
     <div className={className}>
       {team ? (
@@ -707,7 +838,7 @@ export const Team = styled(({ className }) => {
               />
               <NumberTile
                 title="Practice Plans"
-                subtext="Number of practice plans team leaders have created"
+                subtext="practice plans in the current season"
                 value={practicePlans.length}
               />
               <NumberTile
@@ -716,88 +847,19 @@ export const Team = styled(({ className }) => {
               />
             </NumberTileLayout>
           </HeaderContent>
+          <Divider />
           <PracticePlanSection
             practicePlans={practicePlans}
             setPracticePlans={setPracticePlans}
           />
-          <MovesSection>
-            <h2>Moves</h2>
-            <MovesList>
-              {moves.map((move: MoveType) => (
-                <MoveItem move={move} />
-              ))}
-            </MovesList>
-            <ShowFor
-              roles={['admin', 'base+']}
-              team={team}
-            >
-              <Button
-                onClick={showAddMoveModalForm}
-                text="Add Move"
-              />
-              <FormModal
-                passedRef={addMoveModalFormRef}
-                onClose={hideAddMoveModalForm}
-              >
-                <form onSubmit={handleAddMoveSubmit}>
-                  <label htmlFor="name">
-                    <span>Move name:</span>
-                    <input
-                      type="text"
-                      name="name"
-                      id="name"
-                    />
-                  </label>
-                  <label htmlFor="area">
-                    <span>Move Area:</span>
-                    <select
-                      name="area"
-                      id="area"
-                    >
-                      {['neutral', 'top', 'bottom'].map((area) => (
-                        <option
-                          value={area}
-                          key={area}
-                        >
-                          {area}
-                        </option>
-                      ))}
-                    </select>
-                  </label>
-                  <label htmlFor="level">
-                    <span>Move Level:</span>
-                    <select
-                      name="level"
-                      id="level"
-                    >
-                      {['jv', 'varsity', 'state qualifier', 'state placer'].map(
-                        (area) => (
-                          <option
-                            value={area}
-                            key={area}
-                          >
-                            {area}
-                          </option>
-                        )
-                      )}
-                    </select>
-                  </label>
-                  <label htmlFor="position">
-                    <span>Move Position:</span>
-                    <input
-                      type="text"
-                      name="position"
-                      id="position"
-                    />
-                  </label>
-                  <Button
-                    text="Add Move"
-                    type="submit"
-                  />
-                </form>
-              </FormModal>
-            </ShowFor>
-          </MovesSection>
+          <Divider />
+          <MovesSection
+            team={team}
+            teamId={teamId}
+            setMoves={setMoves}
+            moves={moves}
+          />
+          <Divider />
           <AdminSection
             setTeam={setTeam}
             team={team}
