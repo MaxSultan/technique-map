@@ -1,19 +1,17 @@
-import React, { ReactFragment } from 'react';
+import React from 'react';
 
 import { Preview } from '@storybook/react';
 
 import { GlobalStyle as Styles } from '../src/lib/global-style';
-import { PanelProvider } from '@technique-map/design-system';
+import { PanelProvider } from '../src/lib/panel';
 
 const preview: Preview = {
   decorators: [
     (Story) => (
-      <>
-        <PanelProvider>
-          <Styles />
-          <Story />
-        </PanelProvider>
-      </>
+      <PanelProvider>
+        <Styles />
+        <Story />
+      </PanelProvider>
     ),
   ],
 };

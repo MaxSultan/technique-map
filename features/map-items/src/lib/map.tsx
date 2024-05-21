@@ -9,14 +9,14 @@ import styled from 'styled-components';
 import {
   collection,
   getDocs,
+  getDoc,
   addDoc,
   doc,
   updateDoc,
   where,
-  documentId,
   query,
 } from 'firebase/firestore';
-import { ContentMap } from '@technique-map/map-items';
+import { ContentMap } from './content-map';
 import {
   Button,
   Tabs,
@@ -31,7 +31,7 @@ import {
   PanelContext,
   PanelContextType,
 } from '@technique-map/design-system';
-import { db } from '../../../../src/app/firebase';
+import { db } from '@technique-map/firebase';
 import { NavigateFunction, useNavigate, useParams } from 'react-router';
 
 type Area = 'top' | 'bottom' | 'neutral';
@@ -375,31 +375,27 @@ const useExistingPracticePlanData = (
 
   useEffect(() => {
     if (currentPracticePlanId) {
-      // TODO: update this to use doc instead of where
-      const q = query(
-        collection(db, 'practice_plan'),
-        where(documentId(), '==', currentPracticePlanId)
-      );
-
       const getPracticePlanData = () =>
-        getDocs(q).then((querySnapshot) => {
-          const newData = querySnapshot.docs.map((doc) => ({
-            ...doc.data(),
-            id: doc.id,
-          }));
-          const [plan] = newData;
-          setPracticePlanDate(
-            normalizePracticePlanDate(
-              new Date(
-                Number(
-                  (plan as { id: string; date: { seconds: string } }).date
-                    .seconds
-                ) * 1000
+        getDoc(doc(db, 'practice_plan', currentPracticePlanId)).then(
+          (querySnapshot) => {
+            const newData = {
+              ...querySnapshot.data(),
+              id: querySnapshot.id,
+            };
+
+            setPracticePlanDate(
+              normalizePracticePlanDate(
+                new Date(
+                  Number(
+                    (newData as { id: string; date: { seconds: string } }).date
+                      .seconds
+                  ) * 1000
+                )
               )
-            )
-          );
-          setPracticePlanMoves((plan as PlanType).moves);
-        });
+            );
+            setPracticePlanMoves((newData as PlanType).moves);
+          }
+        );
 
       getPracticePlanData();
     }

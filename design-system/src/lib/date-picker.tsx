@@ -1,10 +1,6 @@
-import { MouseEvent, RefObject, useEffect, useRef, useState } from 'react';
+import { RefObject, useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { CalendarIcon } from './icons/calendar-icon';
-
-interface DetailedHTMLProps {
-  popover: boolean;
-}
 
 const DateInput = styled.input`
   border: 1px solid black;
@@ -38,9 +34,9 @@ const useOnClickOutside = (
       callback: (event: Event) => any
     ) =>
     (event: Event) => {
-      //@ts-ignore:next-line
+      //@ts-expect-error:next-line
       if (ref.current?.contains(event.target)) return;
-      typeof callback === 'function' ? callback(event) : null;
+      return typeof callback === 'function' ? callback(event) : null;
     };
 
   const clickEventCallback = clickOutside(ref, callback);
@@ -168,7 +164,7 @@ const Calendar = styled(
       <div
         ref={passedRef}
         className={className}
-        // @ts-ignore:next-line
+        // @ts-expect-error:next-line
         popover="true"
       >
         <CalendarHeader>
@@ -259,7 +255,7 @@ export const DatePicker = styled(({ className, value, setValue }) => {
   };
 
   useOnClickOutside(calendarDisplayRef, (event: Event) => {
-    //@ts-ignore:next-line
+    //@ts-expect-error:next-line
     if (buttonRef.current?.contains(event.target)) return;
     calendarDisplayRef.current?.hidePopover();
   });

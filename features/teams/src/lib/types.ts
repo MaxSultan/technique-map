@@ -4,6 +4,13 @@ export type TeamUserType = { uid: string; role: RolesEnum };
 
 export type TeamRequestType = TeamUserType & { userEmail: string };
 
+export type GoalType = {
+  moveId: string;
+  startDate: typeof Date;
+  endDate: typeof Date;
+  practicePlanPercentage: number;
+};
+
 export type TeamType = {
   users: TeamUserType[];
   userIds: string[];
@@ -11,4 +18,5 @@ export type TeamType = {
   name: string;
   state: string;
   id: string;
+  goals: GoalType[];
 };

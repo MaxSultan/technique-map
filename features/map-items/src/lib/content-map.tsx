@@ -8,7 +8,8 @@ import {
 import { MoveType } from './map';
 import { useContext, useEffect, useState } from 'react';
 import { collection, getDocs, query, where } from 'firebase/firestore';
-import { db } from '../../../../src/app/firebase';
+import { db } from '@technique-map/firebase';
+// eslint-disable-next-line @nx/enforce-module-boundaries
 import { PracticePlanType } from '@technique-map/practice-plans';
 import { useParams } from 'react-router';
 

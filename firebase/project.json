@@ -1,0 +1,29 @@
+{
+  "name": "firebase",
+  "$schema": "../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "firebase/src",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/firebase",
+        "main": "firebase/src/index.ts",
+        "tsConfig": "firebase/tsconfig.lib.json",
+        "assets": ["firebase/*.md"]
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "test": {
+      "executor": "@nx/vite:test",
+      "outputs": ["{options.reportsDirectory}"],
+      "options": {
+        "reportsDirectory": "../coverage/firebase"
+      }
+    }
+  },
+  "tags": []
+}

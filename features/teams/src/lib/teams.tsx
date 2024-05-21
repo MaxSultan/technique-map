@@ -9,8 +9,7 @@ import {
   updateDoc,
   where,
 } from 'firebase/firestore';
-// eslint-disable-next-line @nx/enforce-module-boundaries
-import { db } from '../../../../src/app/firebase';
+import { db } from '@technique-map/firebase';
 import {
   Dispatch,
   SetStateAction,
@@ -180,37 +179,29 @@ const TeamsIndexContent = styled(
       ToastContext
     ) as ToastContextType;
 
-    const createTeamModalRef = useRef();
-    const searchTeamsModalRef = useRef();
+    const createTeamModalRef = useRef<HTMLDialogElement>();
+    const searchTeamsModalRef = useRef<HTMLDialogElement>();
 
     const showCreateTeamForm = () => {
       if (createTeamModalRef.current) {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore:next-line
         createTeamModalRef.current.showModal();
       }
     };
 
     const hideCreateTeamForm = () => {
       if (createTeamModalRef.current) {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore:next-line
         createTeamModalRef.current.close();
       }
     };
 
     const showTeamsSearch = () => {
       if (searchTeamsModalRef.current) {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore:next-line
         searchTeamsModalRef.current.showModal();
       }
     };
 
     const hideTeamsSearch = () => {
       if (searchTeamsModalRef.current) {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore:next-line
         searchTeamsModalRef.current.close();
       }
     };
@@ -225,6 +216,7 @@ const TeamsIndexContent = styled(
         name: formData.get('teamName') as string,
         state: formData.get('stateLocation') as string,
         joinRequests: [],
+        goals: [],
         userIds: [user.uid],
         users: [{ role: 'admin', uid: user.uid }],
       } as unknown as TeamType;

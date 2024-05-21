@@ -9,8 +9,7 @@ import {
   ToastContextType,
 } from '@technique-map/design-system';
 import { doc, setDoc } from 'firebase/firestore';
-// eslint-disable-next-line @nx/enforce-module-boundaries
-import { db } from '../../../../src/app/firebase';
+import { db } from '@technique-map/firebase';
 import { SignInSignUpLink } from './sign-in-sign-up-link';
 
 export const SignUpPage = styled(({ className }) => {
