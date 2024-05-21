@@ -17,6 +17,8 @@
     "paths": {
       "@technique-map/auth": ["features/auth/src/index.ts"],
       "@technique-map/design-system": ["design-system/src/index.ts"],
+      "@technique-map/firebase": ["firebase/src/index.ts"],
+      "@technique-map/home": ["features/home/src/index.ts"],
       "@technique-map/map-items": ["features/map-items/src/index.ts"],
       "@technique-map/practice-plans": ["features/practice-plans/src/index.ts"],
       "@technique-map/teams": ["features/teams/src/index.ts"]

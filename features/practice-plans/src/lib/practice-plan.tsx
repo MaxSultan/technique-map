@@ -6,8 +6,9 @@ import {
   getDocs,
   documentId,
 } from 'firebase/firestore';
-import { db } from '../../../../src/app/firebase';
+import { db } from '@technique-map/firebase';
 import { useEffect, useState } from 'react';
+// eslint-disable-next-line @nx/enforce-module-boundaries
 import {
   MoveType,
   PlanType,

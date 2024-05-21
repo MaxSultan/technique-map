@@ -1,8 +1,8 @@
 import styled from 'styled-components';
-// eslint-disable-next-line @nx/enforce-module-boundaries
-import { db } from '../../../../src/app/firebase';
+import { db } from '@technique-map/firebase';
 import {
   addDoc,
+  and,
   arrayRemove,
   arrayUnion,
   collection,
@@ -15,7 +15,17 @@ import {
   where,
 } from 'firebase/firestore';
 import { useNavigate, useParams } from 'react-router';
-import { ReactNode, useContext, useEffect, useRef, useState } from 'react';
+import {
+  ChangeEvent,
+  Dispatch,
+  ReactNode,
+  SetStateAction,
+  SyntheticEvent,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import {
   Button,
   FormModal,
@@ -28,6 +38,7 @@ import { UserContext, UserContextType } from '@technique-map/auth';
 import { Link } from 'react-router-dom';
 import { MoveType } from '@technique-map/map-items';
 import type {
+  GoalType,
   RolesEnum,
   TeamRequestType,
   TeamType,
@@ -48,7 +59,7 @@ type UserRoleItemType = {
   uid: string;
   role: RolesEnum;
   team: TeamType;
-  setTeam: (arg0: any) => void;
+  setTeam: Dispatch<SetStateAction<TeamType>>;
   className?: string;
 };
 
@@ -70,7 +81,7 @@ const UserRoleItem = styled(
   ({ uid, role, team, setTeam, className }: UserRoleItemType) => {
     const [userEmail, setUserEmail] = useState<string>('');
     const user = useContext(UserContext) as unknown as UserContextType;
-    const updateRoleRef = useRef();
+    const updateRoleRef = useRef<HTMLDialogElement>();
 
     const findUserEmail = async (uid: string) => {
       return await getDoc(doc(db, 'users', uid)).then((querySnapshot) => {
@@ -92,7 +103,7 @@ const UserRoleItem = styled(
         users: arrayRemove({ uid: uid, role: role }),
         userIds: arrayRemove(uid),
       });
-      setTeam((prev: TeamType) => ({
+      setTeam((prev) => ({
         ...prev,
         users: prev.users.filter((item) => item.uid !== uid),
         userIds: prev.userIds.filter((item) => item !== uid),
@@ -101,16 +112,12 @@ const UserRoleItem = styled(
 
     const showUpdateRoleForm = () => {
       if (updateRoleRef.current) {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore:next-line
         updateRoleRef.current.showModal();
       }
     };
 
     const hideRoleUpdateModal = () => {
       if (updateRoleRef.current) {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore:next-line
         updateRoleRef.current.close();
       }
     };
@@ -128,18 +135,24 @@ const UserRoleItem = styled(
       updateDoc(doc(db, 'teams', team.id), {
         users: arrayUnion({ uid: uid, role: formData.get('newRole') }),
       });
-      setTeam((prev: TeamType) => {
+
+      // @ts-expect-error -- prev is the same type
+      setTeam((prev) => {
         const updatedUser = prev.users.find((i) => i.uid === uid);
-        if (updatedUser) {
-          updatedUser.role = formData.get('newRole') as RolesEnum;
+
+        if (!updatedUser) {
+          alert('could not find user!');
+          return;
         }
+
+        updatedUser.role = formData.get('newRole') as RolesEnum;
 
         return {
           ...prev,
           users: [
             ...prev.users.filter((item) => item.uid !== uid),
             updatedUser,
-          ],
+          ].filter((i) => i),
         };
       });
 
@@ -266,20 +279,16 @@ const MOVE_LEVELS = ['jv', 'varsity', 'state qualifier', 'state placer'];
 const MOVE_AREAS = ['neutral', 'top', 'bottom'];
 
 const MovesSection = styled(({ className, moves, setMoves, teamId, team }) => {
-  const addMoveModalFormRef = useRef();
+  const addMoveModalFormRef = useRef<HTMLDialogElement>();
 
   const showAddMoveModalForm = () => {
     if (addMoveModalFormRef.current) {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore:next-line
       addMoveModalFormRef.current.showModal();
     }
   };
 
   const hideAddMoveModalForm = () => {
     if (addMoveModalFormRef.current) {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore:next-line
       addMoveModalFormRef.current.close();
     }
   };
@@ -298,9 +307,9 @@ const MovesSection = styled(({ className, moves, setMoves, teamId, team }) => {
       teamId: teamId,
     };
 
-    addDoc(collection(db, 'moves'), newMove);
-
-    setMoves((prev: MoveType[]) => [...prev, newMove]);
+    addDoc(collection(db, 'moves'), newMove).then((move) => {
+      setMoves((prev: MoveType[]) => [...prev, { ...newMove, id: move.id }]);
+    });
 
     hideAddMoveModalForm();
   };
@@ -567,6 +576,7 @@ const AdminSection = styled(({ className, team, setTeam, teamId }) => {
     updateDoc(doc(db, 'teams', teamId), {
       joinRequests: arrayRemove(request),
     });
+
     setTeam((prev: TeamType) => ({
       ...prev,
       joinRequests: prev.joinRequests.filter((req) => req.uid !== request.uid),
@@ -786,6 +796,239 @@ const PracticePlanSection = styled(
 `;
 // #endregion PracticePlans
 
+// #region goals
+
+const GoalsTable = styled.table``;
+
+const GoalsTableRow = styled.tr``;
+
+const GoalsTableCell = styled.td`
+  padding: 4px 16px;
+`;
+
+type GoalsRowType = {
+  goal: GoalType;
+  teamId: string;
+  moves: MoveType[];
+  practicePlans: PracticePlanType[];
+};
+
+const GoalsRow = ({ goal, teamId, moves, practicePlans }: GoalsRowType) => {
+  const [applicablePracticePlans, setCurrentApplicablePracticePlans] =
+    useState<number>();
+
+  useEffect(() => {
+    calculateCurrentPercentage(goal.moveId, teamId).then((plans) =>
+      setCurrentApplicablePracticePlans(plans)
+    );
+  }, [goal.moveId, teamId]);
+
+  const calculateCurrentPercentage = async (moveId: string, teamId: string) =>
+    await getDocs(
+      query(
+        collection(db, 'practice_plan'),
+        and(
+          where('teamId', '==', teamId),
+          where('moves', 'array-contains', moveId)
+          // TODO: add start date and end date queries
+        )
+      )
+    ).then((querySnapshot) => querySnapshot.docs.length);
+
+  const currentMove = moves.find((move) => move.id === goal.moveId) || {
+    name: '',
+    area: '',
+    position: '',
+  };
+
+  return (
+    <GoalsTableRow>
+      <GoalsTableCell>{currentMove.name}</GoalsTableCell>
+      <GoalsTableCell>{currentMove.area}</GoalsTableCell>
+      <GoalsTableCell>{currentMove.position}</GoalsTableCell>
+      <GoalsTableCell>{String(goal.startDate)}</GoalsTableCell>
+      <GoalsTableCell>{String(goal.endDate)}</GoalsTableCell>
+      <GoalsTableCell>
+        {Math.round(goal.practicePlanPercentage * 100)}%
+      </GoalsTableCell>
+      <GoalsTableCell>
+        {Math.round(
+          (Number(applicablePracticePlans) / practicePlans.length) * 100
+        )}
+        %
+      </GoalsTableCell>
+    </GoalsTableRow>
+  );
+};
+
+type GoalsSectionType = {
+  className?: string;
+  team: TeamType;
+  setTeam: Dispatch<SetStateAction<TeamType>>;
+  moves: MoveType[];
+  practicePlans: PracticePlanType[];
+};
+
+const GoalsSection = styled(
+  ({ className, team, setTeam, moves, practicePlans }: GoalsSectionType) => {
+    const [percentageOfPractices, setPercentageOfPractices] = useState(0.5);
+    const addGoalRef = useRef<HTMLDialogElement>();
+
+    const showAddGoalModalForm = () => {
+      if (addGoalRef.current) {
+        addGoalRef.current.showModal();
+      }
+    };
+
+    const hideAddGoalModalForm = () => {
+      if (addGoalRef.current) {
+        addGoalRef.current.close();
+      }
+    };
+
+    const handleAddGoalSubmit = (event: SyntheticEvent<HTMLFormElement>) => {
+      event.preventDefault();
+
+      const formData = new FormData(event.currentTarget);
+
+      if (
+        !formData.get('endDate') &&
+        formData.get('startDate') &&
+        !formData.get('move')
+      ) {
+        alert('Please enter all fields');
+        return;
+      }
+
+      if (
+        Number(new Date(formData.get('endDate') as string)) -
+          Number(new Date(formData.get('startDate') as string)) <
+        0
+      ) {
+        alert('Start date cannot be after end date');
+        return;
+      }
+
+      const newGoal = {
+        moveId: formData.get('move'),
+        startDate: formData.get('startDate'),
+        endDate: formData.get('endDate'),
+        practicePlanPercentage: percentageOfPractices,
+      };
+
+      updateDoc(doc(db, 'teams', team.id), {
+        goals: arrayUnion(newGoal),
+      });
+
+      //@ts-expect-error -- prev is the same type
+      setTeam((prev: TeamType) => ({
+        ...prev,
+        goals: [...prev.goals, newGoal],
+      }));
+
+      hideAddGoalModalForm();
+    };
+
+    return (
+      <section className={className}>
+        <h2>Goals</h2>
+        <GoalsTable>
+          <thead>
+            <GoalsTableRow>
+              <GoalsTableCell>Name</GoalsTableCell>
+              <GoalsTableCell>Area</GoalsTableCell>
+              <GoalsTableCell>Position</GoalsTableCell>
+              <GoalsTableCell>Start</GoalsTableCell>
+              <GoalsTableCell>End</GoalsTableCell>
+              <GoalsTableCell>Goal Percentage</GoalsTableCell>
+              <GoalsTableCell>Current Percentage</GoalsTableCell>
+            </GoalsTableRow>
+          </thead>
+          <tbody>
+            {team.goals.map((goal) => (
+              <GoalsRow
+                goal={goal}
+                teamId={team.id}
+                moves={moves}
+                practicePlans={practicePlans}
+              />
+            ))}
+          </tbody>
+        </GoalsTable>
+        <Button
+          text="Add Goal"
+          onClick={showAddGoalModalForm}
+        />
+        <FormModal
+          passedRef={addGoalRef}
+          onClose={hideAddGoalModalForm}
+        >
+          <form onSubmit={handleAddGoalSubmit}>
+            <h2>Add a Goal</h2>
+            <label htmlFor="move">
+              <span>Move:</span>
+              <select
+                name="move"
+                id="move"
+              >
+                {moves.map(({ id, name, area, position }) => (
+                  <option
+                    key={id}
+                    value={id}
+                  >
+                    {name} - {area} - {position}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label htmlFor="startDate">
+              <span>Start Date:</span>
+              <input
+                type="date"
+                name="startDate"
+                id="startDate"
+              />
+            </label>
+            <label htmlFor="endDate">
+              <span>End Date:</span>
+              <input
+                type="date"
+                name="endDate"
+                id="endDate"
+              />
+            </label>
+            <label htmlFor="practicePlanPercentage">
+              <span>Percentage of Practices</span>
+              <output>{Math.round(percentageOfPractices * 100)}</output>
+              <input
+                type="range"
+                max="1"
+                min="0"
+                step=".01"
+                value={percentageOfPractices}
+                onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                  setPercentageOfPractices(Number(e.target.value))
+                }
+              ></input>
+            </label>
+
+            <Button
+              text="Add Goal"
+              type="submit"
+            />
+          </form>
+        </FormModal>
+      </section>
+    );
+  }
+)`
+  min-height: 0;
+  min-width: 0;
+  overflow: auto;
+`;
+
+// #endregion goals
+
 // #region Team
 
 const MainContent = styled.main`
@@ -854,6 +1097,13 @@ export const Team = styled(({ className }) => {
               />
             </NumberTileLayout>
           </HeaderContent>
+          <Divider />
+          <GoalsSection
+            team={team}
+            setTeam={setTeam}
+            moves={moves}
+            practicePlans={practicePlans}
+          />
           <Divider />
           <PracticePlanSection
             practicePlans={practicePlans}

@@ -202,7 +202,7 @@ export const PanelProvider = ({
   };
 
   const showPanel = () => {
-    // @ts-ignore:next-line -- function exists on dialog elements
+    // @ts-expect-error:next-line -- function exists on dialog elements
     panelRef.current?.show();
     setAnimationDirection(true);
   };
@@ -222,7 +222,7 @@ export const PanelProvider = ({
       {children}
       <Panel
         title={panelTitle}
-        /* @ts-ignore:next-line */
+        /* @ts-expect-error:next-line */
         passedRef={panelRef}
         onClose={closePanel}
         animationDirection={animationDirection}

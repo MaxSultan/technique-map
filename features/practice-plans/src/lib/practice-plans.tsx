@@ -8,7 +8,7 @@ import {
 } from 'react';
 import styled from 'styled-components';
 import { collection, getDocs, doc, deleteDoc } from 'firebase/firestore';
-import { db } from '../../../../src/app/firebase';
+import { db } from '@technique-map/firebase';
 import { Link, NavigateFunction, useNavigate } from 'react-router-dom';
 import {
   Button,

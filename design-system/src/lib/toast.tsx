@@ -41,7 +41,7 @@ export const Toast = styled(
     return (
       <div
         className={className}
-        /* @ts-ignore: next-line -- popover does not exist on DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> */
+        /* @ts-expect-error: next-line -- popover does not exist on DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> */
         popover="auto"
       >
         <Icon style={{ color: VARIANT_COLORS[variant] }} />

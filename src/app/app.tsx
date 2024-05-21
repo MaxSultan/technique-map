@@ -18,6 +18,7 @@ import { PracticePlan } from '@technique-map/practice-plans';
 import { Map } from '@technique-map/map-items';
 import styled from 'styled-components';
 import { Team, TeamsIndex } from '@technique-map/teams';
+import { Home } from '@technique-map/home';
 
 const router = createHashRouter(
   createRoutesFromElements(
@@ -25,6 +26,10 @@ const router = createHashRouter(
       path="/"
       element={<NavBar />}
     >
+      <Route
+        path="/"
+        element={<Home />}
+      />
       <Route
         path="teams/:id/practice_plans/create"
         element={<Map />}
