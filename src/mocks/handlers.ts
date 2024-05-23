@@ -1,4 +1,4 @@
-import { HttpResponse, http, passthrough } from 'msw';
+import { http, passthrough } from 'msw';
 
 export const handlers = [
   http.get('*', () => {

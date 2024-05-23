@@ -798,68 +798,92 @@ const PracticePlanSection = styled(
 
 // #region goals
 
-const GoalsTable = styled.table``;
+const GoalsTable = styled.table`
+  border-collapse: collapse;
+  border-radius: 8px;
+  overflow: clip;
+`;
 
 const GoalsTableRow = styled.tr``;
 
 const GoalsTableCell = styled.td`
   padding: 4px 16px;
+  text-align: center;
 `;
 
 type GoalsRowType = {
+  className?: string;
   goal: GoalType;
   teamId: string;
   moves: MoveType[];
   practicePlans: PracticePlanType[];
 };
 
-const GoalsRow = ({ goal, teamId, moves, practicePlans }: GoalsRowType) => {
-  const [applicablePracticePlans, setCurrentApplicablePracticePlans] =
-    useState<number>();
+const GoalsRow = styled(
+  ({ className, goal, teamId, moves, practicePlans }: GoalsRowType) => {
+    const [applicablePracticePlans, setCurrentApplicablePracticePlans] =
+      useState<number>();
 
-  useEffect(() => {
-    calculateCurrentPercentage(goal.moveId, teamId).then((plans) =>
-      setCurrentApplicablePracticePlans(plans)
-    );
-  }, [goal.moveId, teamId]);
+    useEffect(() => {
+      calculateCurrentPercentage(goal.moveId, teamId).then((plans) =>
+        setCurrentApplicablePracticePlans(plans)
+      );
+    }, [goal.moveId, teamId]);
 
-  const calculateCurrentPercentage = async (moveId: string, teamId: string) =>
-    await getDocs(
-      query(
-        collection(db, 'practice_plan'),
-        and(
-          where('teamId', '==', teamId),
-          where('moves', 'array-contains', moveId)
-          // TODO: add start date and end date queries
+    const calculateCurrentPercentage = async (moveId: string, teamId: string) =>
+      await getDocs(
+        query(
+          collection(db, 'practice_plan'),
+          and(
+            where('teamId', '==', teamId),
+            where('moves', 'array-contains', moveId)
+            // TODO: add start date and end date queries
+          )
         )
-      )
-    ).then((querySnapshot) => querySnapshot.docs.length);
+      ).then((querySnapshot) => querySnapshot.docs.length);
 
-  const currentMove = moves.find((move) => move.id === goal.moveId) || {
-    name: '',
-    area: '',
-    position: '',
-  };
+    const currentMove = moves.find((move) => move.id === goal.moveId) || {
+      name: '',
+      area: '',
+      position: '',
+    };
 
-  return (
-    <GoalsTableRow>
-      <GoalsTableCell>{currentMove.name}</GoalsTableCell>
-      <GoalsTableCell>{currentMove.area}</GoalsTableCell>
-      <GoalsTableCell>{currentMove.position}</GoalsTableCell>
-      <GoalsTableCell>{String(goal.startDate)}</GoalsTableCell>
-      <GoalsTableCell>{String(goal.endDate)}</GoalsTableCell>
-      <GoalsTableCell>
-        {Math.round(goal.practicePlanPercentage * 100)}%
-      </GoalsTableCell>
-      <GoalsTableCell>
-        {Math.round(
-          (Number(applicablePracticePlans) / practicePlans.length) * 100
-        )}
-        %
-      </GoalsTableCell>
-    </GoalsTableRow>
-  );
-};
+    return (
+      <GoalsTableRow className={className}>
+        <GoalsTableCell>{currentMove.name}</GoalsTableCell>
+        <GoalsTableCell>{currentMove.area}</GoalsTableCell>
+        <GoalsTableCell>{currentMove.position}</GoalsTableCell>
+        <GoalsTableCell>{String(goal.startDate)}</GoalsTableCell>
+        <GoalsTableCell>{String(goal.endDate)}</GoalsTableCell>
+        <GoalsTableCell>
+          {Math.round(goal.practicePlanPercentage * 100)}%
+        </GoalsTableCell>
+        <GoalsTableCell>
+          {Math.round(
+            (Number(applicablePracticePlans) / practicePlans.length) * 100
+          )}
+          %
+        </GoalsTableCell>
+      </GoalsTableRow>
+    );
+  }
+)`
+  &:nth-of-type(odd) {
+    background-color: hsla(255, 10%, 50%, 0.5);
+    backdrop-filter: blur(3px);
+  }
+`;
+
+const GoalTableScroll = styled.div`
+  min-width: 0;
+  overflow: auto;
+`;
+
+const GoalsTableHead = styled.thead`
+  & > ${GoalsTableRow} {
+    background-color: var(--blue900);
+  }
+`;
 
 type GoalsSectionType = {
   className?: string;
@@ -932,29 +956,31 @@ const GoalsSection = styled(
     return (
       <section className={className}>
         <h2>Goals</h2>
-        <GoalsTable>
-          <thead>
-            <GoalsTableRow>
-              <GoalsTableCell>Name</GoalsTableCell>
-              <GoalsTableCell>Area</GoalsTableCell>
-              <GoalsTableCell>Position</GoalsTableCell>
-              <GoalsTableCell>Start</GoalsTableCell>
-              <GoalsTableCell>End</GoalsTableCell>
-              <GoalsTableCell>Goal Percentage</GoalsTableCell>
-              <GoalsTableCell>Current Percentage</GoalsTableCell>
-            </GoalsTableRow>
-          </thead>
-          <tbody>
-            {team.goals.map((goal) => (
-              <GoalsRow
-                goal={goal}
-                teamId={team.id}
-                moves={moves}
-                practicePlans={practicePlans}
-              />
-            ))}
-          </tbody>
-        </GoalsTable>
+        <GoalTableScroll>
+          <GoalsTable>
+            <GoalsTableHead>
+              <GoalsTableRow>
+                <GoalsTableCell>Name</GoalsTableCell>
+                <GoalsTableCell>Area</GoalsTableCell>
+                <GoalsTableCell>Position</GoalsTableCell>
+                <GoalsTableCell>Start</GoalsTableCell>
+                <GoalsTableCell>End</GoalsTableCell>
+                <GoalsTableCell>Goal Percentage</GoalsTableCell>
+                <GoalsTableCell>Current Percentage</GoalsTableCell>
+              </GoalsTableRow>
+            </GoalsTableHead>
+            <tbody>
+              {team.goals.map((goal) => (
+                <GoalsRow
+                  goal={goal}
+                  teamId={team.id}
+                  moves={moves}
+                  practicePlans={practicePlans}
+                />
+              ))}
+            </tbody>
+          </GoalsTable>
+        </GoalTableScroll>
         <Button
           text="Add Goal"
           onClick={showAddGoalModalForm}
@@ -1022,9 +1048,9 @@ const GoalsSection = styled(
     );
   }
 )`
-  min-height: 0;
-  min-width: 0;
-  overflow: auto;
+  display: grid;
+  grid-template-rows: min-content 1fr min-content;
+  gap: 16px;
 `;
 
 // #endregion goals

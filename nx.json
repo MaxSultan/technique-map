@@ -41,6 +41,10 @@
       "cache": true,
       "dependsOn": ["^build"],
       "inputs": ["production", "^production"]
+    },
+    "component-test": {
+      "cache": true,
+      "inputs": ["default", "^production"]
     }
   },
   "namedInputs": {
@@ -78,11 +82,12 @@
       }
     }
   },
+  "defaultBranch": "main",
   "defaultProject": "technique-map",
   "tasksRunnerOptions": {
     "default": {
       "options": {
-        "cacheableOperations": ["build-storybook"]
+        "cacheableOperations": ["build-storybook", "component-test"]
       }
     }
   }
