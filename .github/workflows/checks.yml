@@ -25,8 +25,8 @@ jobs:
           node-version: 20
           cache: 'npm'
       - run: npm ci
-      - name: Nx Test Affected
-        run: npx nx run-many -t test
+      - name: Nx run Affected Tests
+        run: npx nx affected -t test
 
   component-test:
     runs-on: ubuntu-latest
@@ -37,8 +37,8 @@ jobs:
           node-version: 20
           cache: 'npm'
       - run: npm ci
-      - name: Nx Cypress Component Tests
-        run: npx nx run-many -t component-test
+      - name: Nx run affected Cypress Component Tests
+        run: npx nx affected -t component-test
 
   typescript:
     runs-on: ubuntu-latest
