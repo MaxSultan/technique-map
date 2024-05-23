@@ -1,4 +1,3 @@
-import './firebase';
 import {
   GlobalStyle,
   PanelProvider,
