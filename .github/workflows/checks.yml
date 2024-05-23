@@ -7,51 +7,47 @@ on:
 jobs:
   format:
     runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        node-version: [20.x]
-
     steps:
-      - name: Checkout
-        uses: actions/checkout@v1
-
-      - name: clean install
-        run: npm ci
-
-      - name: format
-        run: npx nx format:check
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+      - run: npm ci
+      - run: npx nx format:check --all
 
   test:
     runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        node-version: [20.x]
-
     steps:
-      - name: Checkout
-        uses: actions/checkout@v1
-
-      - name: clean install
-        run: npm ci
-
-      - name: test
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+      - run: npm ci
+      - name: Nx Test Affected
         run: npx nx run-many -t test
+
+  component-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+      - run: npm ci
+      - name: Nx Cypress Component Tests
+        run: npx nx run-many -t component-test
 
   typescript:
     runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        node-version: [20.x]
-
     steps:
-      - name: Checkout
-        uses: actions/checkout@v1
-
-      - name: clean install
-        run: npm ci
-
-      - name: typescript
-        run: npx tsc -b
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+      - run: npm ci
+      - name: Run Typescript Linter
+        run: npm run tsc

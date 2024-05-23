@@ -13,6 +13,10 @@ const StyledHome = styled.main`
   min-height: 100%;
   background: linear-gradient(var(--blue100), var(--blue900));
   color: white;
+
+  & a {
+    color: currentColor;
+  }
 `;
 
 const getTeamData = (userId: string) =>
@@ -38,7 +42,7 @@ export function Home(props: HomeProps) {
   return (
     <StyledHome>
       <h1>Welcome to Home!</h1>
-      {hasNoTeams && <Link to="">Go To Teams</Link>}
+      {hasNoTeams && <Link to="/teams">Go To Teams</Link>}
     </StyledHome>
   );
 }

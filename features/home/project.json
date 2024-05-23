@@ -30,6 +30,14 @@
       "options": {
         "reportsDirectory": "../../coverage/features/home"
       }
+    },
+    "component-test": {
+      "executor": "@nx/cypress:cypress",
+      "options": {
+        "cypressConfig": "features/home/cypress.config.ts",
+        "testingType": "component",
+        "skipServe": true
+      }
     }
   }
 }
