@@ -25,7 +25,7 @@ jobs:
           node-version: 20
           cache: 'npm'
       - run: npm ci
-      - name: Nx Test Affected
+      - name: Nx run all Tests
         run: npx nx run-many -t test
 
   component-test:
@@ -37,8 +37,20 @@ jobs:
           node-version: 20
           cache: 'npm'
       - run: npm ci
-      - name: Nx Cypress Component Tests
+      - name: Nx run all Cypress Component Tests
         run: npx nx run-many -t component-test
+
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+      - run: npm ci
+      - name: Eslint
+        run: npx nx run-many -t lint
 
   typescript:
     runs-on: ubuntu-latest
