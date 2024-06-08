@@ -86,7 +86,7 @@ export const SignUpPage = styled(({ className }) => {
   );
 })`
   height: 100%;
-  background: linear-gradient(var(--blue100), var(--blue900));
+  background: linear-gradient(var(--blue500), var(--blue900));
   display: grid;
   place-items: center;
   color: white;

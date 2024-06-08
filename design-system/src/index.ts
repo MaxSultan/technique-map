@@ -25,3 +25,4 @@ export { DatePicker } from './lib/date-picker';
 export { Toast, ToastContext, ToastProvider, ToastDisplay } from './lib/toast';
 export type { ToastContextType } from './lib/toast';
 export { FormModal } from './lib/form-modal';
+export { ProgressChart } from './lib/progress-chart';

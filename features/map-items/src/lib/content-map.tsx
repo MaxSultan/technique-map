@@ -199,7 +199,7 @@ export const ContentMap = styled(
   }
 )`
   min-height: 100%;
-  background: linear-gradient(var(--blue100), var(--blue900));
+  background: linear-gradient(var(--blue500), var(--blue900));
 
   & > g > line {
     stroke: var(--orange);

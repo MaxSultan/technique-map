@@ -179,7 +179,7 @@ const PracticePlansContent = styled(
     );
   }
 )`
-  background: linear-gradient(var(--blue100), var(--blue900));
+  background: linear-gradient(var(--blue500), var(--blue900));
   color: white;
   min-height: 100%;
   display: flex;
@@ -267,6 +267,6 @@ export const PracticePlans = styled(({ className }) => {
     </ErrorBoundary>
   );
 })`
-  background: linear-gradient(var(--blue100), var(--blue900));
+  background: linear-gradient(var(--blue500), var(--blue900));
   height: calc(100% - 51px);
 `;

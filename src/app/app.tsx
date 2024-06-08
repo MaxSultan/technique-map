@@ -85,7 +85,7 @@ export const App = styled(({ className }) => {
   }
 
   & > ${Panel} {
-    background: linear-gradient(var(--blue100), var(--blue900));
+    background: linear-gradient(var(--blue500), var(--blue900));
   }
 
   @media screen and (width > 850px) {

@@ -110,7 +110,7 @@ export const PracticePlan = styled(({ className }) => {
   );
 })`
   min-height: 100%;
-  background: linear-gradient(var(--blue100), var(--blue900));
+  background: linear-gradient(var(--blue500), var(--blue900));
   padding: 32px;
   color: white;
   display: grid;
