@@ -31,6 +31,7 @@ import {
   FormModal,
   Loader,
   PageLoader,
+  ProgressChart,
   ToastContext,
   ToastContextType,
 } from '@technique-map/design-system';
@@ -802,6 +803,7 @@ const GoalsTable = styled.table`
   border-collapse: collapse;
   border-radius: 8px;
   overflow: clip;
+  min-width: 100%;
 `;
 
 const GoalsTableRow = styled.tr``;
@@ -819,28 +821,32 @@ type GoalsRowType = {
   practicePlans: PracticePlanType[];
 };
 
+const calculateApplicablePlans = async (moveId: string, teamId: string, endDate: string, startDate: string) =>
+await getDocs(
+  query(
+    collection(db, 'practice_plan'),
+    and(
+      where('teamId', '==', teamId),
+      where('moves', 'array-contains', moveId),
+    )
+  )
+).then((querySnapshot) => querySnapshot.docs.map((doc) => ({
+  ...doc.data(),
+  id: doc.id,
+})).filter(i => i.date.seconds > (new Date(endDate).getTime() / 1000) && i.date.seconds < (new Date(startDate).getTime() / 1000)).length);
+
 const GoalsRow = styled(
   ({ className, goal, teamId, moves, practicePlans }: GoalsRowType) => {
     const [applicablePracticePlans, setCurrentApplicablePracticePlans] =
       useState<number>();
 
     useEffect(() => {
-      calculateCurrentPercentage(goal.moveId, teamId).then((plans) =>
+      if (goal && teamId){
+        calculateApplicablePlans(goal.moveId, teamId, goal.startDate, goal.endDate).then((plans) =>
         setCurrentApplicablePracticePlans(plans)
-      );
-    }, [goal.moveId, teamId]);
-
-    const calculateCurrentPercentage = async (moveId: string, teamId: string) =>
-      await getDocs(
-        query(
-          collection(db, 'practice_plan'),
-          and(
-            where('teamId', '==', teamId),
-            where('moves', 'array-contains', moveId)
-            // TODO: add start date and end date queries
-          )
-        )
-      ).then((querySnapshot) => querySnapshot.docs.length);
+        );
+      }
+    }, [goal, goal.moveId, teamId]);
 
     const currentMove = moves.find((move) => move.id === goal.moveId) || {
       name: '',
@@ -892,6 +898,33 @@ type GoalsSectionType = {
   moves: MoveType[];
   practicePlans: PracticePlanType[];
 };
+
+const GoalProgressChart = ({goal, teamId}) => {
+  const {startDate, endDate, practicePlanPercentage} = goal;
+
+  const [plansInTimeFrame, setPlansInTimeFrame] = useState();
+
+  const calculatePlansWithinTimeframe = async (moveId: string, teamId: string, endDate: string, startDate: string) =>
+await getDocs(
+  query(
+    collection(db, 'practice_plan'),
+    where('teamId', '==', teamId),
+  )
+).then((querySnapshot) => querySnapshot.docs.map((doc) => ({
+  ...doc.data(),
+  id: doc.id,
+})).filter(i => i.date.seconds > (new Date(endDate).getTime() / 1000) && i.date.seconds < (new Date(startDate).getTime() / 1000)));
+
+  useEffect(() => {
+    calculatePlansWithinTimeframe(goal.moveId, teamId, startDate, endDate).then((plans) => setPlansInTimeFrame(plans))
+  }, [endDate, goal.moveId, startDate])
+
+  
+
+  return (
+  <ProgressChart total={plansInTimeFrame?.length} current={plansInTimeFrame?.filter(plan => plan.moves.includes(goal.moveId)).length} />
+)
+}
 
 const GoalsSection = styled(
   ({ className, team, setTeam, moves, practicePlans }: GoalsSectionType) => {
@@ -956,31 +989,36 @@ const GoalsSection = styled(
     return (
       <section className={className}>
         <h2>Goals</h2>
-        <GoalTableScroll>
-          <GoalsTable>
-            <GoalsTableHead>
-              <GoalsTableRow>
-                <GoalsTableCell>Name</GoalsTableCell>
-                <GoalsTableCell>Area</GoalsTableCell>
-                <GoalsTableCell>Position</GoalsTableCell>
-                <GoalsTableCell>Start</GoalsTableCell>
-                <GoalsTableCell>End</GoalsTableCell>
-                <GoalsTableCell>Goal Percentage</GoalsTableCell>
-                <GoalsTableCell>Current Percentage</GoalsTableCell>
-              </GoalsTableRow>
-            </GoalsTableHead>
-            <tbody>
-              {team.goals.map((goal) => (
-                <GoalsRow
-                  goal={goal}
-                  teamId={team.id}
-                  moves={moves}
-                  practicePlans={practicePlans}
-                />
-              ))}
-            </tbody>
-          </GoalsTable>
-        </GoalTableScroll>
+        {team.goals.length ? (
+          <GoalTableScroll>
+            <GoalsTable>
+              <GoalsTableHead>
+                <GoalsTableRow>
+                  <GoalsTableCell>Name</GoalsTableCell>
+                  <GoalsTableCell>Area</GoalsTableCell>
+                  <GoalsTableCell>Position</GoalsTableCell>
+                  <GoalsTableCell>Start</GoalsTableCell>
+                  <GoalsTableCell>End</GoalsTableCell>
+                  <GoalsTableCell>Goal Percentage</GoalsTableCell>
+                  <GoalsTableCell>Current Percentage of all plans</GoalsTableCell>
+                </GoalsTableRow>
+              </GoalsTableHead>
+              <tbody>
+                {team.goals.map((goal) => (
+                  <GoalsRow
+                    goal={goal}
+                    teamId={team.id}
+                    moves={moves}
+                    practicePlans={practicePlans}
+                  />
+                ))}
+              </tbody>
+            </GoalsTable>
+          </GoalTableScroll>
+        ) : (
+          <p>No Goals</p>
+        )}
+        {team.goals.map((goal) => <GoalProgressChart goal={goal} teamId={team.id}/>)}
         <Button
           text="Add Goal"
           onClick={showAddGoalModalForm}
@@ -1158,7 +1196,7 @@ export const Team = styled(({ className }) => {
   );
 })`
   min-height: 100%;
-  background: linear-gradient(var(--blue100), var(--blue900));
+  background: linear-gradient(var(--blue500), var(--blue900));
   color: white;
   padding: 8px;
   display: flex;
