@@ -55,7 +55,6 @@ export const Toast = styled(
     const ref = useRef<HTMLDivElement>();
     const Icon = ICON_VARIANTS[variant];
 
-    // Use the popover API to make this appear on top of the dialog
     useEffect(() => {
       if (ref.current) ref.current.showPopover();
       const timer = setTimeout(() => {
@@ -145,7 +144,11 @@ export const ToastDisplay = styled(
   display: grid;
   gap: 16px;
   margin: 0;
-  justify-items: start;
+  justify-items: center;
+
+  @media screen and (width > 850px) {
+    justify-items: end;
+  }
 `;
 
 export type ToastContextType = {

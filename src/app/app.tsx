@@ -82,10 +82,11 @@ export const App = styled(({ className }) => {
   }
 
   & > ${ToastDisplay} {
-    --toast-position: 50%;
+    --toast-position: 0%;
     position: fixed;
     bottom: 16px;
-    right: 50%;
+    right: var(--toast-position);
+    width: 100%;
   }
 
   & > ${Panel} {
