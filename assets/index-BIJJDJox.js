@@ -4013,7 +4013,11 @@ to {
   display: grid;
   gap: 16px;
   margin: 0;
-  justify-items: start;
+  justify-items: center;
+
+  @media screen and (width > 850px) {
+    justify-items: end;
+  }
 `,Xo=D.createContext(null),_4=({children:t})=>{const[e,n]=D.useState([]),r=s=>{n(o=>[...o,s])},i=s=>{n(o=>o.filter(a=>a.message!==s))};return g.jsxs(Xo.Provider,{value:{removeToast:i,addToast:r},children:[t,g.jsx(Np,{toasts:e})]})},ls=B(({passedRef:t,className:e,children:n,onClose:r})=>g.jsxs("dialog",{ref:t,className:e,children:[g.jsx("button",{onClick:r,formNoValidate:!0,children:g.jsx(kd,{})}),n]}))`
   border: none;
   border-radius: 16px;
@@ -4594,10 +4598,11 @@ to {
   }
 
   & > ${Np} {
-    --toast-position: 50%;
+    --toast-position: 0%;
     position: fixed;
     bottom: 16px;
-    right: 50%;
+    right: var(--toast-position);
+    width: 100%;
   }
 
   & > ${Zf} {
