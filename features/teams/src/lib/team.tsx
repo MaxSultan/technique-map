@@ -877,6 +877,10 @@ const GoalsRow = styled(
 const GoalTableScroll = styled.div`
   min-width: 0;
   overflow: auto;
+
+  & > ${GoalsTable} {
+    min-width: 100%;
+  }
 `;
 
 const GoalsTableHead = styled.thead`
@@ -1158,7 +1162,7 @@ export const Team = styled(({ className }) => {
   );
 })`
   min-height: 100%;
-  background: linear-gradient(var(--blue100), var(--blue900));
+  background: linear-gradient(var(--blue500), var(--blue900));
   color: white;
   padding: 8px;
   display: flex;

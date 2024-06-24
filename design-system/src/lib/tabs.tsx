@@ -25,8 +25,8 @@ export const Tabs = styled(
   grid-area: nav;
   display: flex;
   gap: 1px;
-  background-color: var(--primary);
-  border-bottom: 1px groove var(--secondary);
+  background-color: var(--blue500);
+  border-bottom: 1px groove var(--blue500);
   color: white;
   list-style: none;
   margin: 0;
