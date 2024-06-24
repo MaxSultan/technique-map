@@ -877,6 +877,10 @@ const GoalsRow = styled(
 const GoalTableScroll = styled.div`
   min-width: 0;
   overflow: auto;
+
+  & > ${GoalsTable} {
+    min-width: 100%;
+  }
 `;
 
 const GoalsTableHead = styled.thead`
