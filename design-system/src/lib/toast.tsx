@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 import { CheckIcon } from './icons/check-icon';
 import {
   ReactNode,
@@ -9,13 +9,27 @@ import {
   useState,
 } from 'react';
 import { CloseIcon } from './icons/close-icon';
+import { AlertTriangleIcon } from './icons/alert-triangle-icon';
 
 const ICON_VARIANTS = {
   success: CheckIcon,
+  warning: AlertTriangleIcon,
+  error: AlertTriangleIcon,
 };
 const VARIANT_COLORS = {
   success: 'var(--affirmative)',
+  warning: 'var(--orange500)',
+  error: 'red',
 };
+
+const CloseButton = styled.button`
+  padding: 8px 8px;
+  display: grid;
+  place-content: center;
+  border-radius: 50%;
+  border: none;
+  filter: drop-shadow(0px 0px 2px var(--primary));
+`;
 
 type ToastComponentTypes = {
   variant: keyof typeof ICON_VARIANTS;
@@ -23,6 +37,18 @@ type ToastComponentTypes = {
   onClose: () => void;
   children: ReactNode | ReactNode[];
 };
+
+const animateIn = keyframes`
+  from {
+    transform: translateX(calc(100% + var(--toast-position)));
+    opacity: 0.25;
+  }
+
+  to {
+    transform: translateX(0%);
+    opacity: 1;
+  }
+`;
 
 export const Toast = styled(
   ({ className, variant, children, onClose }: ToastComponentTypes) => {
@@ -36,7 +62,7 @@ export const Toast = styled(
         onClose();
       }, 4000);
       return () => clearTimeout(timer);
-    }, []);
+    }, [onClose]);
 
     return (
       <div
@@ -46,34 +72,33 @@ export const Toast = styled(
       >
         <Icon style={{ color: VARIANT_COLORS[variant] }} />
         <div>{children}</div>
-        <button onClick={onClose}>
+        <CloseButton onClick={onClose}>
           <CloseIcon />
-        </button>
+        </CloseButton>
       </div>
     );
   }
 )`
-  border-radius: 16px;
-  box-shadow: 0px 2px 4px var(--primary);
+  border-radius: 4px;
+  filter: drop-shadow(0px 2px 4px var(--primary));
   padding: 16px;
   display: grid;
   grid-template-columns: min-content 1fr;
   gap: 16px;
   position: relative;
   overflow: visible;
+  border: none;
+  border-left: 5px solid ${(props) => VARIANT_COLORS[props.variant]};
+  align-items: center;
+  background-color: var(--blue400);
+  color: var(--gray100);
 
-  & > div {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
+  animation: ${animateIn} 300ms ease-in both;
 
-  & > button {
+  & > ${CloseButton} {
     position: absolute;
     top: 0;
     right: 0;
-    border-radius: 50%;
-    aspect-ratio: 1/1;
     transform: translate(50%, -50%);
   }
 `;
@@ -90,10 +115,20 @@ type ToastDisplayTypes = {
 export const ToastDisplay = styled(
   ({ toasts, className }: ToastDisplayTypes) => {
     const id = useId(); // TODO: come up with a better plan for this
+
+    const idGenerator = () => {
+      let id = 0;
+      return () => {
+        id++;
+        return id;
+      };
+    };
+
+    const getId = idGenerator();
     return (
       <ul className={className}>
         {toasts.map(({ variant, onClose, message }) => (
-          <li key={id}>
+          <li key={getId()}>
             <Toast
               variant={variant}
               onClose={onClose}
@@ -111,11 +146,6 @@ export const ToastDisplay = styled(
   gap: 16px;
   margin: 0;
   justify-items: start;
-
-  & > li > ${Toast} {
-    background-color: var(--secondary);
-    color: white;
-  }
 `;
 
 export type ToastContextType = {

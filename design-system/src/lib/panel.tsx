@@ -21,6 +21,7 @@ export const PanelList = styled.ul`
   display: grid;
   padding-inline-start: 32px;
   padding-inline-end: 32px;
+  padding-block-start: 16px;
 `;
 
 export const PanelItem = styled(
@@ -88,6 +89,7 @@ const PanelHeader = styled.hgroup`
   display: flex;
   justify-content: space-between;
   align-items: center;
+  height: 32px;
 `;
 
 type PanelProps = {

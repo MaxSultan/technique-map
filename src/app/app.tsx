@@ -77,21 +77,25 @@ export const App = styled(({ className }) => {
 })`
   height: 100%;
 
+  & > ${Panel} {
+    background: linear-gradient(var(--blue500), var(--blue900));
+  }
+
   & > ${ToastDisplay} {
+    --toast-position: 50%;
     position: fixed;
     bottom: 16px;
     right: 50%;
-    transform: translateX(50%);
   }
 
   & > ${Panel} {
-    background: linear-gradient(var(--blue100), var(--blue900));
+    background: linear-gradient(var(--blue500), var(--blue900));
   }
 
   @media screen and (width > 850px) {
     & > ${ToastDisplay} {
-      right: 32px;
-      transform: translateX(0%);
+      --toast-position: 32px;
+      right: var(--toast-position);
     }
   }
 `;

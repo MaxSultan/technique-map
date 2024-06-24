@@ -11,7 +11,7 @@ export interface HomeProps {}
 
 const StyledHome = styled.main`
   min-height: 100%;
-  background: linear-gradient(var(--blue100), var(--blue900));
+  background: linear-gradient(var(--blue500), var(--blue900));
   color: white;
 
   & a {

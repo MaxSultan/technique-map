@@ -58,8 +58,8 @@ export const NavBar = styled(({ className }) => {
     </>
   );
 })`
-  border-bottom: 1px groove var(--blue100);
-  background-color: var(--blue100);
+  border-bottom: 1px groove var(--blue500);
+  background-color: var(--blue500);
   padding: 16px 8px;
   color: white;
 
