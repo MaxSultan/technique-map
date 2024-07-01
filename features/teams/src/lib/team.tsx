@@ -28,6 +28,7 @@ import {
 } from 'react';
 import {
   Button,
+  DoughnutChart,
   FormModal,
   Loader,
   PageLoader,
@@ -1059,6 +1060,92 @@ const GoalsSection = styled(
 
 // #endregion goals
 
+// #region overviewCharts
+
+type OverviewChartsTypes = {
+  className?: string;
+  practicePlans: PracticePlanType[];
+  moves: MoveType[];
+};
+
+const OverviewCharts = styled(
+  ({ className, practicePlans, moves }: OverviewChartsTypes) => {
+    const moveCountAggregation = Object.entries(
+      practicePlans
+        .flatMap((i) => i.moves)
+        .reduce(
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-expect-error
+          (acc, val) => ({ ...acc, [val]: acc[val] ? acc[val] + 1 : 1 }),
+          {}
+        )
+    ).map(([key, value]) => ({
+      ...(moves.find((i) => i.id === key) ?? {}),
+      value,
+    }));
+
+    const positionCountAggregation = Object.entries(
+      moveCountAggregation.reduce(
+        (acc, val) => ({
+          ...acc,
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-expect-error
+          [val.position]: acc[val.position]
+            ? // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-expect-error
+              acc[val.position] + val.value
+            : val.value,
+        }),
+        {}
+      )
+    ).map(([position, value]) => ({ name: position, value }));
+
+    const areaCountAggregation = Object.entries(
+      moveCountAggregation.reduce(
+        (acc, val) => ({
+          ...acc,
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-expect-error
+          [val.area]: acc[val.area] ? acc[val.area] + val.value : val.value,
+        }),
+        {}
+      )
+    ).map(([area, value]) => ({ name: area, value }));
+
+    return (
+      <section className={className}>
+        <DoughnutChart
+          data={moveCountAggregation as { name: string; value: number }[]}
+          width={500}
+          height={500}
+        />
+        <DoughnutChart
+          data={positionCountAggregation as { name: string; value: number }[]}
+          width={500}
+          height={500}
+        />
+        <DoughnutChart
+          data={areaCountAggregation as { name: string; value: number }[]}
+          width={500}
+          height={500}
+        />
+      </section>
+    );
+  }
+)`
+  display: grid;
+  grid-template-rows: repeat(3, 1fr);
+  justify-content: center;
+
+  @media screen and (width >= 850px) {
+    grid-template-rows: 1fr;
+    grid-template-columns: repeat(3, 1fr);
+    justify-content: unset;
+  }
+`;
+
+// #endregion overviewCharts
+
 // #region Team
 
 const MainContent = styled.main`
@@ -1113,8 +1200,8 @@ export const Team = styled(({ className }) => {
             </h1>
             <NumberTileLayout>
               <NumberTile
-                title="Season"
-                value="Nov 2024 - Feb 2025"
+                title="Goals"
+                value={team.goals?.length ?? 0}
               />
               <NumberTile
                 title="Practice Plans"
@@ -1127,6 +1214,11 @@ export const Team = styled(({ className }) => {
               />
             </NumberTileLayout>
           </HeaderContent>
+          <Divider />
+          <OverviewCharts
+            practicePlans={practicePlans}
+            moves={moves}
+          />
           <Divider />
           <GoalsSection
             team={team}
