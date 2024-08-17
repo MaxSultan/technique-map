@@ -3826,17 +3826,6 @@ to {
     --orange: #F86543;
     --yellow: #E39506;
 
-
-    // new colors
-
-    --blue1: #2E314F;
-    --blue2: #3D3C60;
-    --blue3: #2C2C4E;
-    --purple1: hsl(248, 39, 15);
-    --gray1: #454766;
-
-    --gray9: #8C8DA0;
-
     // 10 color pallet
 
     --1:#1C1837;
