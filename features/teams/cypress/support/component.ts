@@ -1,5 +1,4 @@
 import { mount } from 'cypress/react18';
-import { HashRouter } from 'react-router-dom';
 // ***********************************************************
 // This example support/component.ts is processed and
 // loaded automatically before your test files.
@@ -19,7 +18,6 @@ import { HashRouter } from 'react-router-dom';
 import './commands';
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import '../../../../sc-monkeypatch';
-import { GlobalStyle } from '@technique-map/design-system';
 
 // add component testing only related command here, such as mount
 declare global {
@@ -32,21 +30,4 @@ declare global {
   }
 }
 
-Cypress.Commands.add(
-  'mount',
-  (component, options = { routerProps: { initialEntries: ['/'] } }) => {
-    const { routerProps, ...mountOptions } = options;
-
-    const wrapped = (
-      <HashRouter
-        {...routerProps}
-        basename="/technique-map/"
-      >
-        {component}
-        <GlobalStyle />
-      </HashRouter>
-    );
-
-    return mount(wrapped, mountOptions);
-  }
-);
+Cypress.Commands.add('mount', mount);
