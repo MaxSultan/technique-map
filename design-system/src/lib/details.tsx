@@ -11,7 +11,7 @@ export const Details = styled(({ className, children, title, ...rest }) => {
     </details>
   );
 })`
-  background-color: var(--primary);
+  border-radius: 8px;
   color: white;
   padding: 8px;
 `;

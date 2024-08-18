@@ -32,7 +32,7 @@ const StyledPositions = styled.div`
   }
 
   & > ${Panel} {
-    background: linear-gradient(var(--blue500), var(--blue900));
+    background: var(--gray100);
   }
 
   @media screen and (width > 850px) {

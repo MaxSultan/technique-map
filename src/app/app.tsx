@@ -78,7 +78,11 @@ export const App = styled(({ className }) => {
   height: 100%;
 
   & > ${Panel} {
-    background: linear-gradient(var(--blue500), var(--blue900));
+    background-color: var(--blue500);
+    color: var(--gray100);
+    & a {
+      color: currentColor;
+    }
   }
 
   & > ${ToastDisplay} {
@@ -87,10 +91,6 @@ export const App = styled(({ className }) => {
     bottom: 16px;
     right: var(--toast-position);
     width: 100%;
-  }
-
-  & > ${Panel} {
-    background: linear-gradient(var(--blue500), var(--blue900));
   }
 
   @media screen and (width > 850px) {

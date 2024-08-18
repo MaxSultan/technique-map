@@ -5,6 +5,7 @@ import { useState } from 'react';
 const ResponsiveSVG = styled.svg`
   max-width: 100%;
   height: auto;
+  filter: drop-shadow(2px 4px 8px var(--shadow-color));
 `;
 
 type DataItem = {
@@ -46,8 +47,7 @@ const Tooltip = ({ label, count }: { label: string; count: number }) => {
 
 const HoverableSlice = styled.g`
   &:hover > path {
-    stroke: white;
-    transform: scale(1.2);
+    transform: scale(1.1);
   }
 `;
 

@@ -28,7 +28,7 @@ const CloseButton = styled.button`
   place-content: center;
   border-radius: 50%;
   border: none;
-  filter: drop-shadow(0px 0px 2px var(--primary));
+  box-shadow: var(--shadow-elevation-low);
 `;
 
 type ToastComponentTypes = {
@@ -79,7 +79,7 @@ export const Toast = styled(
   }
 )`
   border-radius: 4px;
-  filter: drop-shadow(0px 2px 4px var(--primary));
+  box-shadow: var(--shadow-elevation-high);
   padding: 16px;
   display: grid;
   grid-template-columns: min-content 1fr;

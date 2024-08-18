@@ -200,12 +200,9 @@ export const ContentMap = styled(
   }
 )`
   min-height: 100%;
-  background: linear-gradient(var(--blue500), var(--blue900));
+  background: var(--gray100);
 
   & > g > line {
     stroke: var(--orange);
-  }
-
-  ${PanelItem} > span {
   }
 `;

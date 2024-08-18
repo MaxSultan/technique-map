@@ -17,6 +17,7 @@ import {
 } from '@technique-map/map-items';
 import { Button, Details, EditIcon } from '@technique-map/design-system';
 import styled from 'styled-components';
+import { PracticePlanType } from './practice-plans';
 
 const DetailsList = styled.ul`
   list-style: none;
@@ -27,9 +28,41 @@ const DetailsList = styled.ul`
   padding: 0;
 `;
 
+const MovesList = styled.ul`
+  list-style: none;
+`;
+
+const q = (currentPracticePlanId: string) =>
+  query(
+    collection(db, 'practice_plan'),
+    where(documentId(), '==', currentPracticePlanId)
+  );
+
+const getPracticePlanData = (currentPracticePlanId: string) =>
+  getDocs(q(currentPracticePlanId)).then((querySnapshot) => {
+    const newData = querySnapshot.docs.map((doc) => ({
+      ...doc.data(),
+      id: doc.id,
+    }));
+    const [plan] = newData;
+    return plan;
+  });
+
+const getMovesData = () =>
+  getDocs(collection(db, 'moves')).then((querySnapshot) => {
+    const newData = querySnapshot.docs.map((doc) => ({
+      ...doc.data(),
+      id: doc.id,
+    }));
+    return newData;
+  });
+
+const dayMonthYearFromUnixTime = (unixTime: number | string) =>
+  new Date(Number(unixTime) * 1000).toLocaleDateString();
+
 export const PracticePlan = styled(({ className }) => {
-  const [practicePlan, setPracticePlan] = useState<PlanType>({
-    date: new Date(),
+  const [practicePlan, setPracticePlan] = useState<PracticePlanType>({
+    date: { seconds: '', milliseconds: '' },
     moves: [],
     id: '',
   });
@@ -39,34 +72,12 @@ export const PracticePlan = styled(({ className }) => {
 
   const currentPracticePlanId = location.pathname.split('/').at(-1) ?? '';
 
-  const q = query(
-    collection(db, 'practice_plan'),
-    where(documentId(), '==', currentPracticePlanId)
-  );
-
-  const getMovesData = () =>
-    getDocs(collection(db, 'moves')).then((querySnapshot) => {
-      const newData = querySnapshot.docs.map((doc) => ({
-        ...doc.data(),
-        id: doc.id,
-      }));
-      setMoves(newData as MoveType[]);
-    });
-
-  const getPracticePlanData = () =>
-    getDocs(q).then((querySnapshot) => {
-      const newData = querySnapshot.docs.map((doc) => ({
-        ...doc.data(),
-        id: doc.id,
-      }));
-      const [plan] = newData;
-      setPracticePlan(plan as unknown as PlanType);
-    });
-
   useEffect(() => {
-    getMovesData();
-    getPracticePlanData();
-  }, []);
+    getMovesData().then((data) => setMoves(data as MoveType[]));
+    getPracticePlanData(currentPracticePlanId).then((data) =>
+      setPracticePlan(data as unknown as PracticePlanType)
+    );
+  }, [currentPracticePlanId]);
 
   const editPracticePlan = (id: string) => {
     navigate(`edit`);
@@ -74,31 +85,36 @@ export const PracticePlan = styled(({ className }) => {
 
   return (
     <main className={className}>
+      <h1>{dayMonthYearFromUnixTime(practicePlan.date.seconds)}</h1>
       {Object.entries(
         aggregateMovesByPosition(findMoves(moves, practicePlan.moves))
       ).map(([key, value]) => (
-        <DetailsList key={key}>
+        <>
           <h2>{key}</h2>
-          {value.map(
-            (position: {
-              name: string;
-              moves: Pick<MoveType, 'id' | 'name'>[];
-            }) => (
-              <li key={position.name}>
-                <Details
-                  title={position.name}
-                  open
-                >
-                  <ul>
-                    {position?.moves.map((move) => (
-                      <li key={`${position.name}-${move.name}`}>{move.name}</li>
-                    ))}
-                  </ul>
-                </Details>
-              </li>
-            )
-          )}
-        </DetailsList>
+          <DetailsList key={key}>
+            {value.map(
+              (position: {
+                name: string;
+                moves: Pick<MoveType, 'id' | 'name'>[];
+              }) => (
+                <li key={position.name}>
+                  <Details
+                    title={position.name}
+                    open
+                  >
+                    <MovesList>
+                      {position?.moves.map((move) => (
+                        <li key={`${position.name}-${move.name}`}>
+                          {move.name}
+                        </li>
+                      ))}
+                    </MovesList>
+                  </Details>
+                </li>
+              )
+            )}
+          </DetailsList>
+        </>
       ))}
       <Button
         onClick={() => editPracticePlan(currentPracticePlanId)}
@@ -110,9 +126,9 @@ export const PracticePlan = styled(({ className }) => {
   );
 })`
   min-height: 100%;
-  background: linear-gradient(var(--blue500), var(--blue900));
+  background: var(--gray100);
   padding: 32px;
-  color: white;
+  color: var(--gray900);
   display: grid;
   grid-auto-flow: row;
   gap: 20px;
@@ -122,6 +138,6 @@ export const PracticePlan = styled(({ className }) => {
   }
 
   & ${Details} {
-    background-color: var(--secondary);
+    background-color: var(--blue500);
   }
 `;

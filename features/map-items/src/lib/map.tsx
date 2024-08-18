@@ -30,6 +30,7 @@ import {
   ToastContextType,
   PanelContext,
   PanelContextType,
+  Panel,
 } from '@technique-map/design-system';
 import { db } from '@technique-map/firebase';
 import { NavigateFunction, useNavigate, useParams } from 'react-router';
@@ -295,10 +296,10 @@ const PracticePlanDisplay = styled(
     );
   }
 )`
-  background: linear-gradient(var(--blue500), var(--blue900));
+  background: var(--gray100);
   color: white;
   padding: clamp(8px, 3vw, 32px);
-  box-shadow: 16px 0px 16px -16px hsl(from var(--primary) h s calc(l * 0.1));
+  box-shadow: var(--shadow-elevation-high);
   transition: transform 300ms;
   transform: var(--transform);
   display: flex;
@@ -315,7 +316,7 @@ const PracticePlanDisplay = styled(
     background-color: var(--secondary);
     color: white;
     border: none;
-    box-shadow: 2px 0px 16px hsl(from var(--primary) h s calc(l * 0.6));
+    box-shadow: var(--shadow-elevation-medium);
     cursor: pointer;
     transform: translateX(90%);
     @media screen and (width >= 850px) {
@@ -418,6 +419,12 @@ const getData = (teamId: string) =>
       }))
   );
 
+const MapTabs = styled(Tabs)`
+  grid-area: nav;
+  position: sticky;
+  bottom: 0;
+`;
+
 export const Map = styled(({ className }) => {
   const [currentTab, setCurrentTab] = useState<Area>('neutral');
   const [moves, setMoves] = useState<MoveType[]>([]);
@@ -490,11 +497,6 @@ export const Map = styled(({ className }) => {
 
   return (
     <main className={className}>
-      <Tabs
-        tabs={positionsByArea(moves).map((i) => i.name)}
-        currentTab={currentTab}
-        setCurrentTab={setCurrentTab}
-      />
       <PracticePlanDisplay
         moves={moves}
         practicePlanMoves={practicePlanMoves}
@@ -517,16 +519,21 @@ export const Map = styled(({ className }) => {
         area={currentTab}
         moves={moves}
       />
+      <MapTabs
+        tabs={positionsByArea(moves).map((i) => i.name)}
+        currentTab={currentTab}
+        setCurrentTab={setCurrentTab}
+      />
     </main>
   );
 })`
   display: grid;
-  grid-template-areas: 'nav' 'content';
+  grid-template-areas: 'content' 'nav';
   grid-template-columns: 1fr;
-  grid-template-rows: fit-content 1fr;
+  grid-template-rows: 1fr fit-content;
 
   @media screen and (width >= 850px) {
-    grid-template-areas: 'nav nav' 'plan content';
+    grid-template-areas: 'plan content' 'nav nav';
     grid-template-columns: min(300px, 75%) 1fr;
   }
 
@@ -536,11 +543,18 @@ export const Map = styled(({ className }) => {
     top: 0;
     height: 100svh;
     box-sizing: border-box;
+    background-color: var(--blue500);
 
     @media screen and (width <= 850px) {
       position: fixed;
       left: 0;
       width: 75vw;
+    }
+  }
+
+  :root {
+    ${Panel} {
+      background-color: red !important;
     }
   }
 `;

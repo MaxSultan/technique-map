@@ -31,6 +31,7 @@ export const Button = styled(({ text, onClick, className, Icon, ...rest }) => {
   cursor: pointer;
   color: white;
   position: relative;
+  box-shadow: var(--shadow-elevation-low);
 
   &:hover,
   &:hover > div {
@@ -40,6 +41,7 @@ export const Button = styled(({ text, onClick, className, Icon, ...rest }) => {
   &:active,
   &:active > div {
     background-color: hsl(from var(--button-color) h s calc(l * 0.7));
+    box-shadow: none;
   }
 
   & > div {

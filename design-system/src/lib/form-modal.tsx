@@ -1,6 +1,29 @@
 import styled from 'styled-components';
 import { CloseIcon } from './icons/close-icon';
 
+const CloseButton = styled(({ onClose, className }) => {
+  return (
+    <button
+      onClick={onClose}
+      className={className}
+      formNoValidate
+    >
+      <CloseIcon />
+    </button>
+  );
+})`
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  padding: 16px;
+  border: none;
+  box-shadow: var(--shadow-elevation-low);
+
+  &:active {
+    box-shadow: none;
+  }
+`;
+
 export const FormModal = styled(
   ({ passedRef, className, children, onClose }) => {
     return (
@@ -8,12 +31,7 @@ export const FormModal = styled(
         ref={passedRef}
         className={className}
       >
-        <button
-          onClick={onClose}
-          formNoValidate
-        >
-          <CloseIcon />
-        </button>
+        <CloseButton onClose={onClose} />
         {children}
       </dialog>
     );
@@ -21,7 +39,7 @@ export const FormModal = styled(
 )`
   border: none;
   border-radius: 16px;
-  filter: drop-shadow(1px 2px 8px var(--blue900));
+  box-shadow: var(--shadow-elevation-high);
   position: fixed;
   top: 50%;
   left: 50%;
@@ -32,11 +50,10 @@ export const FormModal = styled(
     position: absolute;
     top: 0;
     right: 0;
-    border-radius: 50%;
-    display: grid;
-    place-items: center;
     transform: translate(50%, -50%);
-    padding: 16px;
-    border: none;
+  }
+
+  html:has([open]) {
+    overflow: none;
   }
 `;

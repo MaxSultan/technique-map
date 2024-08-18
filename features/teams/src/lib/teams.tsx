@@ -120,18 +120,28 @@ const TeamsList = styled.ul`
   padding-right: 16px;
   display: grid;
   max-width: 100%;
+  gap: 8px;
 `;
 
 const TeamListItem = styled.li`
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
   align-items: center;
   gap: 8px;
   padding: 8px;
-  border-bottom: white 1px solid;
+  background-color: var(--blue400);
+  border-radius: 8px;
+  box-shadow: var(--shadow-elevation-medium);
 
-  &:hover {
-    background-color: var(--blue900);
+  & > a {
+    display: block;
+    & > ${Button} {
+      --shadow-color: hsl(236deg 22% 21%);
+      box-shadow: 0px 0.8px 0.8px hsl(from var(--shadow-color) h s l / 0.65),
+        0px 1.3px 1.2px -1.9px hsl(from var(--shadow-color) h s l / 0.5),
+        0px 3.6px 3.4px -3.7px hsl(from var(--shadow-color) h s l / 0.36);
+      width: 100%;
+    }
   }
 
   @media screen and (max-width: 750px) {
@@ -150,7 +160,10 @@ const Count = styled.div`
   height: 16px;
   width: 16px;
   font-size: 8px;
-  filter: drop-shadow(2px 4px 4px black);
+  --shadow-color: hsl(236deg 22% 21%);
+  box-shadow: 0px 0.8px 0.8px hsl(from var(--shadow-color) h s l / 0.65),
+    0px 1.3px 1.2px -1.9px hsl(from var(--shadow-color) h s l / 0.5),
+    0px 3.6px 3.4px -3.7px hsl(from var(--shadow-color) h s l / 0.36);
 `;
 
 const CountText = styled.div`
@@ -273,30 +286,28 @@ const TeamsIndexContent = styled(
           {teams
             .filter((team) => team.userIds.includes(user.uid))
             .map((team) => (
-              <Link
-                to={`${team.id}`}
-                key={team.id}
-              >
-                <TeamListItem>
-                  <span>
-                    {team.name} ({team.state})
-                  </span>
-                  <CountText>
-                    Users <Count>{team.users.length}</Count>
-                  </CountText>
-                  <CountText>
-                    <span>Join Requests</span>{' '}
-                    <Count>{team.joinRequests.length}</Count>
-                  </CountText>
-                  {team.users.find(
-                    (u) => u.uid === user.uid && u.role === 'admin'
-                  ) ? (
-                    <Tag $color="white">Admin</Tag>
-                  ) : (
-                    <span></span>
-                  )}
-                </TeamListItem>
-              </Link>
+              <TeamListItem key={team.id}>
+                <span>
+                  {team.name} ({team.state})
+                </span>
+                <CountText>
+                  Users <Count>{team.users.length}</Count>
+                </CountText>
+                <CountText>
+                  <span>Join Requests</span>{' '}
+                  <Count>{team.joinRequests.length}</Count>
+                </CountText>
+                {team.users.find(
+                  (u) => u.uid === user.uid && u.role === 'admin'
+                ) ? (
+                  <Tag $color="white">Admin</Tag>
+                ) : (
+                  <span></span>
+                )}
+                <Link to={team.id}>
+                  <Button text="view" />
+                </Link>
+              </TeamListItem>
             ))}
         </TeamsList>
         <Buttons>
@@ -405,6 +416,7 @@ const TeamsIndexContent = styled(
 
   & > h1 {
     margin: 0;
+    color: var(--gray900);
   }
 
   & > ${FormModal} > form {
@@ -446,5 +458,5 @@ export const TeamsIndex = styled(({ className }) => {
   );
 })`
   min-height: 100%;
-  background: linear-gradient(var(--blue500), var(--blue900));
+  background: var(--gray100);
 `;
