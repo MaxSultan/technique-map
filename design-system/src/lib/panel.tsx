@@ -7,6 +7,7 @@ import {
   useRef,
   Dispatch,
   SetStateAction,
+  ComponentType,
 } from 'react';
 import styled, { keyframes } from 'styled-components';
 import { CloseIcon } from './icons/close-icon';
@@ -138,7 +139,7 @@ export const Panel = styled(
   --animation-timing: 0.3s;
   --panel-width: 300px;
   transform-origin: right center;
-  box-shadow: -16px 0px 16px -16px hsl(from var(--primary) h s calc(l * 0.1));
+  box-shadow: var(--shadow-elevation-high);
   border: none;
   inset: unset;
   min-height: 100%;
@@ -147,7 +148,6 @@ export const Panel = styled(
   top: 0;
   right: calc(-1 * var(--panel-width));
   padding: 0;
-  background-color: var(--primary);
 
   &[open] {
     &::backdrop {
@@ -178,7 +178,7 @@ export const Panel = styled(
 
 export type PanelContextType = {
   panelContent: ReactNode | ReactNode[];
-  setPanelContent: Dispatch<SetStateAction<undefined>>;
+  setPanelContent: Dispatch<SetStateAction<ReactNode | ReactNode[]>>;
   panelTitle: string;
   setPanelTitle: Dispatch<SetStateAction<string>>;
   panelRef: MutableRefObject<MutableRefObject<HTMLDialogElement> | undefined>;
@@ -186,13 +186,17 @@ export type PanelContextType = {
   closePanel: () => void;
 };
 
+const Null = () => null;
+
 export const PanelContext = createContext<PanelContextType | null>(null);
 export const PanelProvider = ({
   children,
 }: {
   children: ReactNode | ReactNode[];
 }) => {
-  const [panelContent, setPanelContent] = useState<any>();
+  const [panelContent, setPanelContent] = useState<ReactNode | ReactNode[]>(
+    () => <Null />
+  );
   const [panelTitle, setPanelTitle] = useState<string>('');
   const panelRef = useRef<MutableRefObject<HTMLDialogElement> | undefined>();
   const [animationDirection, setAnimationDirection] = useState<boolean>(false);

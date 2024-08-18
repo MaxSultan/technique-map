@@ -22,7 +22,6 @@ export const Tabs = styled(
     </ul>
   )
 )`
-  grid-area: nav;
   display: flex;
   gap: 1px;
   background-color: var(--blue500);

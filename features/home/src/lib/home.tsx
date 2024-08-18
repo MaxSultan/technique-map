@@ -11,12 +11,14 @@ export interface HomeProps {}
 
 const StyledHome = styled.main`
   min-height: 100%;
-  background: linear-gradient(var(--blue500), var(--blue900));
+  background: var(--gray100);
   color: white;
 
   & a {
     color: currentColor;
   }
+
+  color: var(--gray900);
 `;
 
 const getTeamData = (userId: string) =>

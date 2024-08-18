@@ -175,7 +175,7 @@ const UserRoleItem = styled(
             text="Update Role"
           />
           {uid !== user.uid && (
-            <OutlineCautionButton
+            <CautionButton
               $level="caution"
               onClick={handleRemoveUserFromTeam}
               text="Remove User"
@@ -395,6 +395,9 @@ const MovesSection = styled(({ className, moves, setMoves, teamId, team }) => {
 })`
   display: grid;
   gap: 16px;
+  & > h2 {
+    color: var(--gray900);
+  }
 `;
 
 const MovesList = styled.ul`
@@ -443,9 +446,10 @@ const MoveItem = styled(({ className, move }) => {
   & > div {
     display: grid;
     gap: 4px;
-    border: 1px solid white;
     border-radius: 8px;
     padding: 8px;
+    background-color: var(--blue400);
+    box-shadow: var(--shadow-elevation-medium);
 
     h3 {
       margin: 0;
@@ -479,13 +483,13 @@ const NumberTile = styled(({ className, title, subtext, value }) => {
     </output>
   );
 })`
-  background-color: var(--blue900);
+  background-color: var(--blue500);
   display: grid;
   justify-items: center;
   padding: 8px;
   border-radius: 8px;
   text-align: center;
-  box-shadow: 2px 2px 8px hsl(0deg 0% 1.55% / 50%);
+  box-shadow: var(--shadow-elevation-medium);
 `;
 
 const NumberTileLayout = styled.div`
@@ -619,7 +623,7 @@ const AdminSection = styled(({ className, team, setTeam, teamId }) => {
                     onClick={() => handleAcceptJoinRequest(request)}
                     text="Accept"
                   />
-                  <OutlineCautionButton
+                  <CautionButton
                     $level="caution"
                     onClick={() => handleDenyJoinRequest(request)}
                     text="Decline"
@@ -635,6 +639,7 @@ const AdminSection = styled(({ className, team, setTeam, teamId }) => {
 })`
   display: grid;
   gap: 16px;
+  color: var(--gray900);
 `;
 
 // #endregion Admin
@@ -651,36 +656,44 @@ const Category = styled.div`
   z-index: 1;
 `;
 
-const PracticePlanCategory = styled.div`
-  &:not(:last-of-type) {
-    border-bottom: 2px solid var(--blue900);
-  }
+const PracticePlanCategory = styled.li`
+  color: var(--gray100);
   position: relative;
+  background-color: var(--blue500);
+  border-radius: 8px;
+  overflow: clip;
+  box-shadow: var(--shadow-elevation-medium);
 `;
 
-const PracticePlanListItem = styled.li`
+const PracticePlanListItem = styled.div`
   padding: 8px 16px;
   display: grid;
   align-items: center;
   gap: 16px;
-  grid-template-rows: repeat(2, min-content);
+  grid-template-rows: repeat(3, min-content);
   grid-template-columns: 1fr;
 
   @media screen and (width >= 650px) {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(4, 1fr);
     grid-template-rows: 1fr;
+  }
+
+  & > ${Button}, & > a > ${Button} {
+    --shadow-color: hsl(236deg 22% 21%);
+    box-shadow: 0px 0.8px 0.8px hsl(from var(--shadow-color) h s l / 0.65),
+      0px 1.3px 1.2px -1.9px hsl(from var(--shadow-color) h s l / 0.5),
+      0px 3.6px 3.4px -3.7px hsl(from var(--shadow-color) h s l / 0.36);
   }
 `;
 
-const OutlineCautionButton = styled(Button)`
-  background: transparent;
+const CautionButton = styled(Button)`
   color: var(--caution);
-  border: 2px solid var(--caution);
   padding: 8px;
   white-space: nowrap;
+  color: var(--gray100);
 
   &:hover {
-    background-color: var(--blue900);
+    background-color: var(--orange600);
   }
 `;
 
@@ -715,7 +728,7 @@ const PracticePlanList = styled(
           id: plan.id,
         }))
         .reduce((acc, val) => {
-          const [month, _, year] = val.time.split('/');
+          const [month, , year] = val.time.split('/');
           const monthYear = `${MONTHS[Number(month) - 1]}, ${year}`;
           return {
             ...acc,
@@ -745,14 +758,12 @@ const PracticePlanList = styled(
             <PracticePlanCategory key={category}>
               <Category>{category}</Category>
               {plans.map((plan) => (
-                <PracticePlanListItem>
-                  <Link
-                    to={`practice_plans/${plan.id}`}
-                    key={plan.id}
-                  >
-                    {plan.time}
+                <PracticePlanListItem key={plan.id}>
+                  {plan.time}
+                  <Link to={`practice_plans/${plan.id}`}>
+                    <Button text="view" />
                   </Link>
-                  <OutlineCautionButton
+                  <CautionButton
                     $level="caution"
                     text="Delete Practice Plan"
                     onClick={() => deletePracticePlan(plan.id)}
@@ -769,8 +780,8 @@ const PracticePlanList = styled(
   list-style: none;
   padding: 0;
   margin: 0;
-  border-radius: 8px;
-  border: 1px solid var(--blue900);
+  display: grid;
+  gap: 8px;
 `;
 
 const PracticePlanSection = styled(
@@ -794,6 +805,7 @@ const PracticePlanSection = styled(
 )`
   display: grid;
   gap: 16px;
+  color: var(--gray900);
 `;
 // #endregion PracticePlans
 
@@ -878,6 +890,8 @@ const GoalsRow = styled(
 const GoalTableScroll = styled.div`
   min-width: 0;
   overflow: auto;
+  border-radius: 8px;
+  box-shadow: var(--shadow-elevation-medium);
 
   & > ${GoalsTable} {
     min-width: 100%;
@@ -981,6 +995,7 @@ const GoalsSection = styled(
                   teamId={team.id}
                   moves={moves}
                   practicePlans={practicePlans}
+                  key={JSON.stringify(goal)}
                 />
               ))}
             </tbody>
@@ -1056,11 +1071,27 @@ const GoalsSection = styled(
   display: grid;
   grid-template-rows: min-content 1fr min-content;
   gap: 16px;
+
+  & > h2 {
+    color: var(--gray900);
+  }
 `;
 
 // #endregion goals
 
 // #region overviewCharts
+
+const ChartGrid = styled.div`
+  display: grid;
+  grid-template-rows: repeat(3, 1fr);
+  justify-content: center;
+
+  @media screen and (width >= 850px) {
+    grid-template-rows: 1fr;
+    grid-template-columns: repeat(3, 1fr);
+    justify-content: unset;
+  }
+`;
 
 type OverviewChartsTypes = {
   className?: string;
@@ -1112,36 +1143,61 @@ const OverviewCharts = styled(
       )
     ).map(([area, value]) => ({ name: area, value }));
 
+    const moveDataCount = (
+      Object.values(areaCountAggregation) as { name: string; value: number }[]
+    )
+      .map(({ value }) => value)
+      .reduce((acc, val) => (acc += val), 0);
+
     return (
       <section className={className}>
-        <DoughnutChart
-          data={moveCountAggregation as { name: string; value: number }[]}
-          width={500}
-          height={500}
-        />
-        <DoughnutChart
-          data={positionCountAggregation as { name: string; value: number }[]}
-          width={500}
-          height={500}
-        />
-        <DoughnutChart
-          data={areaCountAggregation as { name: string; value: number }[]}
-          width={500}
-          height={500}
-        />
+        <h2>Practice Overview</h2>
+        <ChartGrid>
+          {moveDataCount > 0 ? (
+            <>
+              <div>
+                <h3>Moves</h3>
+                <DoughnutChart
+                  data={
+                    moveCountAggregation as { name: string; value: number }[]
+                  }
+                  width={500}
+                  height={500}
+                />
+              </div>
+              <div>
+                <h3>Positions</h3>
+                <DoughnutChart
+                  data={
+                    positionCountAggregation as {
+                      name: string;
+                      value: number;
+                    }[]
+                  }
+                  width={500}
+                  height={500}
+                />
+              </div>
+              <div>
+                <h3>Areas</h3>
+                <DoughnutChart
+                  data={
+                    areaCountAggregation as { name: string; value: number }[]
+                  }
+                  width={500}
+                  height={500}
+                />
+              </div>
+            </>
+          ) : (
+            <h3>No data to visualize, add a practice plan</h3>
+          )}
+        </ChartGrid>
       </section>
     );
   }
 )`
-  display: grid;
-  grid-template-rows: repeat(3, 1fr);
-  justify-content: center;
-
-  @media screen and (width >= 850px) {
-    grid-template-rows: 1fr;
-    grid-template-columns: repeat(3, 1fr);
-    justify-content: unset;
-  }
+  color: var(--gray900);
 `;
 
 // #endregion overviewCharts
@@ -1162,6 +1218,9 @@ const HeaderContent = styled.div`
   padding-top: 64px;
   display: grid;
   gap: 16px;
+  & > h1 {
+    color: var(--gray900);
+  }
 `;
 
 const Divider = styled.hr`
@@ -1205,7 +1264,6 @@ export const Team = styled(({ className }) => {
               />
               <NumberTile
                 title="Practice Plans"
-                subtext="practice plans in the current season"
                 value={practicePlans.length}
               />
               <NumberTile
@@ -1254,7 +1312,7 @@ export const Team = styled(({ className }) => {
   );
 })`
   min-height: 100%;
-  background: linear-gradient(var(--blue500), var(--blue900));
+  background: var(--gray100);
   color: white;
   padding: 8px;
   display: flex;

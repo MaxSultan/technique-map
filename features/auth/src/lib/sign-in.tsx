@@ -91,7 +91,7 @@ export const SignInPage = styled(({ className }) => {
 })`
   --form-padding: 16px;
   height: 100%;
-  background: linear-gradient(var(--blue500), var(--blue900));
+  background: var(--gray100);
   color: white;
   display: grid;
   place-items: center;

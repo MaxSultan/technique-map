@@ -72,6 +72,32 @@ export const GlobalStyle = createGlobalStyle`
     --orange800: #873a1c;
     --orange900: #662c15;
     --orange950: #441d0e;
+
+  --shadow-color: hsl(240deg 4% 50%);
+
+  --shadow-elevation-low:
+    0px 0.8px 0.8px hsl(from var(--shadow-color) h s l / 0.65),
+    0px 1.3px 1.2px -1.9px hsl(from var(--shadow-color) h s l / 0.5),
+    0px 3.6px 3.4px -3.7px hsl(from var(--shadow-color) h s l / 0.36);
+
+  --shadow-elevation-medium:
+    0px 0.8px 0.8px hsl(from var(--shadow-color) h s l / 0.68),
+    0px 2.2px 2.1px -1.2px hsl(from var(--shadow-color) h s l / 0.57),
+    0px 6.7px 6.3px -2.5px hsl(from var(--shadow-color) h s l / 0.45),
+    0px 18.2px 17.1px -3.7px hsl(from var(--shadow-color) h s l / 0.34);
+    
+  --shadow-elevation-high:
+    0px 0.8px 0.8px hsl(from var(--shadow-color) h s l / 0.63),
+    0px 3.4px 3.2px -0.5px hsl(from var(--shadow-color) h s l / 0.58),
+    0px 7px 6.6px -1.1px hsl(from var(--shadow-color) h s l / 0.53),
+    0px 13.3px 12.5px -1.6px hsl(from var(--shadow-color) h s l / 0.47),
+    -0.1px 24.1px 22.6px -2.1px hsl(from var(--shadow-color) h s l / 0.42),
+    -0.1px 41.2px 38.6px -2.7px hsl(from var(--shadow-color) h s l / 0.37),
+    -0.2px 66.3px 62.2px -3.2px hsl(from var(--shadow-color) h s l / 0.32),
+    -0.2px 101.2px 94.9px -3.7px hsl(from var(--shadow-color) h s l / 0.26);
+
+  --serif-font-family: ;
+  --sans-serif-font-family: 'Rubik', sans-serif;
   }
 
   html,body {

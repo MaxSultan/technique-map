@@ -7,7 +7,7 @@ const Page = styled(({ className, children }) => {
   return <div className={className}>{children}</div>;
 })`
   min-height: 100vh;
-  background: linear-gradient(var(--blue500), var(--blue900));
+  background: var(--gray100);
 `;
 
 export const SuccessToast = (args: any) => (
