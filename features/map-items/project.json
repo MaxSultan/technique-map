@@ -5,16 +5,14 @@
   "projectType": "library",
   "tags": [],
   "targets": {
-    "lint": {
-      "executor": "@nx/eslint:lint",
-      "outputs": ["{options.outputFile}"]
-    },
     "build": {
-      "executor": "@nx/vite:build",
-      "outputs": ["{options.outputPath}"],
+      "outputs": [
+        "{projectRoot}/{options.outDir}",
+        "{workspaceRoot}/features/dist/map-items"
+      ],
       "defaultConfiguration": "production",
       "options": {
-        "outputPath": "dist/features"
+        "outDir": "../../dist/features"
       },
       "configurations": {
         "development": {
@@ -26,11 +24,13 @@
       }
     },
     "test": {
-      "executor": "@nx/vite:test",
-      "outputs": ["{options.reportsDirectory}"],
+      "outputs": [
+        "{projectRoot}/{options.coverage.reportsDirectory}",
+        "{workspaceRoot}/features/coverage/map-items"
+      ],
       "options": {
-        "reportsDirectory": "../coverage/features",
-        "passWithNoTests": true
+        "passWithNoTests": true,
+        "coverage.reportsDirectory": "../../coverage/features"
       }
     }
   }

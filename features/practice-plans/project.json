@@ -5,15 +5,13 @@
   "projectType": "library",
   "tags": [],
   "targets": {
-    "lint": {
-      "executor": "@nx/eslint:lint",
-      "outputs": ["{options.outputFile}"]
-    },
     "test": {
-      "executor": "@nx/vite:test",
-      "outputs": ["{options.reportsDirectory}"],
+      "outputs": [
+        "{projectRoot}/{options.coverage.reportsDirectory}",
+        "{workspaceRoot}/coverage/practice-plans"
+      ],
       "options": {
-        "reportsDirectory": "../../coverage/features/practice-plans"
+        "coverage.reportsDirectory": "../../coverage/features/practice-plans"
       }
     }
   }

@@ -3,13 +3,16 @@
   "$schema": "node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "./src",
   "projectType": "application",
+  "tags": [],
   "targets": {
     "build": {
-      "executor": "@nx/vite:build",
-      "outputs": ["{options.outputPath}"],
+      "outputs": [
+        "{projectRoot}/{options.outDir}",
+        "{projectRoot}/dist/technique-map"
+      ],
       "defaultConfiguration": "production",
       "options": {
-        "outputPath": "dist/technique-map"
+        "outDir": "./dist/technique-map"
       },
       "configurations": {
         "development": {
@@ -21,48 +24,26 @@
       }
     },
     "serve": {
-      "executor": "@nx/vite:dev-server",
       "defaultConfiguration": "development",
-      "options": {
-        "buildTarget": "technique-map:build"
-      },
       "configurations": {
-        "development": {
-          "buildTarget": "technique-map:build:development",
-          "hmr": true
-        },
-        "production": {
-          "buildTarget": "technique-map:build:production",
-          "hmr": false
-        }
+        "development": {},
+        "production": {}
       }
     },
     "preview": {
-      "executor": "@nx/vite:preview-server",
       "defaultConfiguration": "development",
-      "options": {
-        "buildTarget": "technique-map:build"
-      },
       "configurations": {
-        "development": {
-          "buildTarget": "technique-map:build:development"
-        },
-        "production": {
-          "buildTarget": "technique-map:build:production"
-        }
+        "development": {},
+        "production": {}
       }
     },
     "test": {
-      "executor": "@nx/vite:test",
-      "outputs": ["{options.reportsDirectory}"],
+      "outputs": [
+        "{projectRoot}/{options.coverage.reportsDirectory}",
+        "{projectRoot}/coverage/technique-map"
+      ],
       "options": {
-        "reportsDirectory": "coverage/technique-map"
-      }
-    },
-    "lint": {
-      "executor": "@nx/eslint:lint",
-      "options": {
-        "lintFilePatterns": ["{projectRoot}/src"]
+        "coverage.reportsDirectory": "./coverage/technique-map"
       }
     },
     "serve-static": {
@@ -71,6 +52,5 @@
         "buildTarget": "technique-map:build"
       }
     }
-  },
-  "tags": []
+  }
 }

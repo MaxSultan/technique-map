@@ -5,23 +5,18 @@
   "projectType": "library",
   "tags": [],
   "targets": {
-    "lint": {
-      "executor": "@nx/eslint:lint"
-    },
     "test": {
-      "executor": "@nx/vite:test",
-      "outputs": ["{options.reportsDirectory}"],
+      "outputs": [
+        "{projectRoot}/{options.coverage.reportsDirectory}",
+        "{workspaceRoot}/coverage/features/teams"
+      ],
       "options": {
-        "reportsDirectory": "../../coverage/features/teams"
+        "coverage.reportsDirectory": "../../coverage/features/teams"
       }
     },
     "component-test": {
-      "executor": "@nx/cypress:cypress",
       "options": {
-        "cypressConfig": "features/teams/cypress.config.ts",
-        "testingType": "component",
-        "devServerTarget": "technique-map:build",
-        "skipServe": true
+        "config-file": "./cypress.config.ts"
       }
     }
   }

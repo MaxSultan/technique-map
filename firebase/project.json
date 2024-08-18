@@ -3,6 +3,7 @@
   "$schema": "../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "firebase/src",
   "projectType": "library",
+  "tags": [],
   "targets": {
     "build": {
       "executor": "@nx/js:tsc",
@@ -14,16 +15,14 @@
         "assets": ["firebase/*.md"]
       }
     },
-    "lint": {
-      "executor": "@nx/eslint:lint"
-    },
     "test": {
-      "executor": "@nx/vite:test",
-      "outputs": ["{options.reportsDirectory}"],
+      "outputs": [
+        "{projectRoot}/{options.coverage.reportsDirectory}",
+        "{workspaceRoot}/coverage/firebase"
+      ],
       "options": {
-        "reportsDirectory": "../coverage/firebase"
+        "coverage.reportsDirectory": "../coverage/firebase"
       }
     }
-  },
-  "tags": []
+  }
 }

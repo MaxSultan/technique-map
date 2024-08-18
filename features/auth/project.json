@@ -5,14 +5,13 @@
   "projectType": "library",
   "tags": [],
   "targets": {
-    "lint": {
-      "executor": "@nx/eslint:lint"
-    },
     "test": {
-      "executor": "@nx/vite:test",
-      "outputs": ["{options.reportsDirectory}"],
+      "outputs": [
+        "{projectRoot}/{options.coverage.reportsDirectory}",
+        "{workspaceRoot}/coverage/feature/auth"
+      ],
       "options": {
-        "reportsDirectory": "../../coverage/features/auth"
+        "coverage.reportsDirectory": "../../coverage/features/auth"
       }
     }
   }

@@ -56,6 +56,8 @@ const preview: Preview = {
       </StyledPositions>
     ),
   ],
+
+  tags: ['autodocs'],
 };
 
 export default preview;
