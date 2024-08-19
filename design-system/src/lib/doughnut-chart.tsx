@@ -5,7 +5,7 @@ import { useState } from 'react';
 const ResponsiveSVG = styled.svg`
   max-width: 100%;
   height: auto;
-  filter: drop-shadow(2px 4px 8px var(--shadow-color));
+  filter: drop-shadow(2px 4px 8px hsl(var(--shadow-color) / 0.24));
 `;
 
 type DataItem = {

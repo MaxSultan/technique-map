@@ -27,10 +27,6 @@ const ThinButton = styled(Button)`
   padding-left: 8px;
   padding-right: 8px;
   white-space: nowrap;
-  --shadow-color: hsl(236deg 22% 21%);
-  box-shadow: 0px 0.8px 0.8px hsl(from var(--shadow-color) h s l / 0.65),
-    0px 1.3px 1.2px -1.9px hsl(from var(--shadow-color) h s l / 0.5),
-    0px 3.6px 3.4px -3.7px hsl(from var(--shadow-color) h s l / 0.36);
 `;
 
 const OverflowEmail = styled.li`
@@ -80,10 +76,7 @@ const NavigationPanelButton = styled(({ className }) => {
   padding: 8px;
   display: grid;
   place-items: center;
-  --shadow-color: hsl(236deg 22% 21%);
-  box-shadow: 0px 0.8px 0.8px hsl(from var(--shadow-color) h s l / 0.65),
-    0px 1.3px 1.2px -1.9px hsl(from var(--shadow-color) h s l / 0.5),
-    0px 3.6px 3.4px -3.7px hsl(from var(--shadow-color) h s l / 0.36);
+  box-shadow: var(--shadow-elevation-low);
 
   &:active {
     box-shadow: none;
