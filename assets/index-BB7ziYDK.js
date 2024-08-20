@@ -4082,11 +4082,11 @@ to {
   max-width: 100%;
   height: auto;
   filter: drop-shadow(2px 4px 8px hsl(var(--shadow-color) / 0.24));
-`,lj=({label:t,count:e})=>g.jsxs(g.Fragment,{children:[g.jsx("circle",{r:70,fill:"white"}),g.jsx("text",{x:-25,y:0,stroke:"black",transform:"translateX(-50%)",children:t}),g.jsx("text",{x:-25,y:20,stroke:"black",transform:"translateX(-50%)",children:e})]}),uj=B.g`
+`,lj=Intl.NumberFormat("en-US",{style:"percent",minimumFractionDigits:2,maximumFractionDigits:2}),uj=({label:t,count:e,percentageOfTotal:n})=>{const r=lj.format(n);return g.jsxs(g.Fragment,{children:[g.jsx("circle",{r:70,fill:"white"}),g.jsx("text",{x:-25,y:0,stroke:"black",transform:"translateX(-50%)",children:t}),g.jsxs("text",{x:-25,y:20,stroke:"black",transform:"translateX(-50%)",children:[r," (",e,")"]})]})},cj=B.g`
   &:hover > path {
     transform: scale(1.1);
   }
-`,cj=oj().value(t=>t.value),dj=(t,e)=>{const n=nj();return cj(t).map(r=>({path:n({innerRadius:70,outerRadius:e,startAngle:r.startAngle,endAngle:r.endAngle}),...r}))},hj=t=>{const e=t+1;return`var(--${t>=10?"blue":t>=20?"purple":"gray"}${e%10===0?"950":`${e%10}00`})`},mf=({width:t,height:e,data:n})=>{const i=Math.min(t,e)/2-100,s={label:"",count:NaN,x:0,y:0},[o,a]=N.useState(s),u=c=>d=>{a({label:c.data.name,count:c.data.value,x:d.clientX,y:d.clientY})};return g.jsx(aj,{width:t,height:e,viewBox:`0 0 ${e} ${t}`,preserveAspectRatio:"xMidYMid meet",children:g.jsxs("g",{transform:`translate(${t/2}, ${e/2})`,children:[dj(n,i).map((c,d)=>g.jsxs(uj,{d:c.path,onMouseEnter:u(c),onMouseLeave:()=>a(s),children:[" ",g.jsx("path",{d:c.path,fill:hj(d)})," "]},d)),o.label&&g.jsx(lj,{label:o.label,count:o.count})]})})},fj=N.createContext(null),gf={didCatch:!1,error:null};class pj extends N.Component{constructor(e){super(e),this.resetErrorBoundary=this.resetErrorBoundary.bind(this),this.state=gf}static getDerivedStateFromError(e){return{didCatch:!0,error:e}}resetErrorBoundary(){const{error:e}=this.state;if(e!==null){for(var n,r,i=arguments.length,s=new Array(i),o=0;o<i;o++)s[o]=arguments[o];(n=(r=this.props).onReset)===null||n===void 0||n.call(r,{args:s,reason:"imperative-api"}),this.setState(gf)}}componentDidCatch(e,n){var r,i;(r=(i=this.props).onError)===null||r===void 0||r.call(i,e,n)}componentDidUpdate(e,n){const{didCatch:r}=this.state,{resetKeys:i}=this.props;if(r&&n.error!==null&&mj(e.resetKeys,i)){var s,o;(s=(o=this.props).onReset)===null||s===void 0||s.call(o,{next:i,prev:e.resetKeys,reason:"keys"}),this.setState(gf)}}render(){const{children:e,fallbackRender:n,FallbackComponent:r,fallback:i}=this.props,{didCatch:s,error:o}=this.state;let a=e;if(s){const u={error:o,resetErrorBoundary:this.resetErrorBoundary};if(typeof n=="function")a=n(u);else if(r)a=N.createElement(r,u);else if(i===null||N.isValidElement(i))a=i;else throw o}return N.createElement(fj.Provider,{value:{didCatch:s,error:o,resetErrorBoundary:this.resetErrorBoundary}},a)}}function mj(){let t=arguments.length>0&&arguments[0]!==void 0?arguments[0]:[],e=arguments.length>1&&arguments[1]!==void 0?arguments[1]:[];return t.length!==e.length||t.some((n,r)=>!Object.is(n,e[r]))}const gj=B.hgroup`
+`,dj=oj().value(t=>t.value),hj=(t,e)=>{const n=nj();return dj(t).map(r=>({path:n({innerRadius:70,outerRadius:e,startAngle:r.startAngle,endAngle:r.endAngle}),...r}))},fj=t=>{const e=t+1;return`var(--${t>=10?"blue":t>=20?"purple":"gray"}${e%10===0?"950":`${e%10}00`})`},mf=({width:t,height:e,data:n})=>{const i=Math.min(t,e)/2-100,s={label:"",count:NaN},[o,a]=N.useState(s),u=n.reduce((d,f)=>d+=f.value,0),c=d=>f=>{a({label:d.data.name,count:d.data.value})};return g.jsx(aj,{width:t,height:e,viewBox:`0 0 ${e} ${t}`,preserveAspectRatio:"xMidYMid meet",children:g.jsxs("g",{transform:`translate(${t/2}, ${e/2})`,children:[hj(n,i).map((d,f)=>g.jsxs(cj,{d:d.path,onMouseEnter:c(d),onMouseLeave:()=>a(s),children:[" ",g.jsx("path",{d:d.path,fill:fj(f)})," "]},f)),o.label&&g.jsx(uj,{label:o.label,count:o.count,percentageOfTotal:o.count/u})]})})},pj=N.createContext(null),gf={didCatch:!1,error:null};class mj extends N.Component{constructor(e){super(e),this.resetErrorBoundary=this.resetErrorBoundary.bind(this),this.state=gf}static getDerivedStateFromError(e){return{didCatch:!0,error:e}}resetErrorBoundary(){const{error:e}=this.state;if(e!==null){for(var n,r,i=arguments.length,s=new Array(i),o=0;o<i;o++)s[o]=arguments[o];(n=(r=this.props).onReset)===null||n===void 0||n.call(r,{args:s,reason:"imperative-api"}),this.setState(gf)}}componentDidCatch(e,n){var r,i;(r=(i=this.props).onError)===null||r===void 0||r.call(i,e,n)}componentDidUpdate(e,n){const{didCatch:r}=this.state,{resetKeys:i}=this.props;if(r&&n.error!==null&&gj(e.resetKeys,i)){var s,o;(s=(o=this.props).onReset)===null||s===void 0||s.call(o,{next:i,prev:e.resetKeys,reason:"keys"}),this.setState(gf)}}render(){const{children:e,fallbackRender:n,FallbackComponent:r,fallback:i}=this.props,{didCatch:s,error:o}=this.state;let a=e;if(s){const u={error:o,resetErrorBoundary:this.resetErrorBoundary};if(typeof n=="function")a=n(u);else if(r)a=N.createElement(r,u);else if(i===null||N.isValidElement(i))a=i;else throw o}return N.createElement(pj.Provider,{value:{didCatch:s,error:o,resetErrorBoundary:this.resetErrorBoundary}},a)}}function gj(){let t=arguments.length>0&&arguments[0]!==void 0?arguments[0]:[],e=arguments.length>1&&arguments[1]!==void 0?arguments[1]:[];return t.length!==e.length||t.some((n,r)=>!Object.is(n,e[r]))}const yj=B.hgroup`
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -4095,7 +4095,7 @@ to {
   @media screen and (width > 600px) {
     flex-direction: row;
   }
-`,yj=B.button`
+`,vj=B.button`
   background-color: var(--caution);
   border: none;
   border-radius: 8px;
@@ -4120,7 +4120,7 @@ to {
     align-items: center;
     flex-direction: column;
   }
-`,vj=B(({id:t,unixTime:e,deletePracticePlan:n,className:r})=>{const i=N.useRef(null),s=o=>new Date(Number(o)*1e3).toLocaleDateString();return g.jsxs("li",{className:r,children:[g.jsx(Xo,{to:`/practice_plans/${t}`,children:s(e)}),g.jsx(yj,{onClick:()=>{var o;return(o=i.current)==null?void 0:o.showModal()},children:"Delete Practice Plan"}),g.jsxs(mw,{passedRef:i,children:["Are you sure you want to delete Practice Plan from"," ",s(e),"? ",g.jsx("br",{})," This action cannot be undone"," ",g.jsxs("div",{children:[g.jsx("button",{onClick:()=>{var o;return(o=i.current)==null?void 0:o.close()},children:"Cancel"}),g.jsx("button",{onClick:()=>n(t),children:"Delete"})]})]})]})})`
+`,_j=B(({id:t,unixTime:e,deletePracticePlan:n,className:r})=>{const i=N.useRef(null),s=o=>new Date(Number(o)*1e3).toLocaleDateString();return g.jsxs("li",{className:r,children:[g.jsx(Xo,{to:`/practice_plans/${t}`,children:s(e)}),g.jsx(vj,{onClick:()=>{var o;return(o=i.current)==null?void 0:o.showModal()},children:"Delete Practice Plan"}),g.jsxs(mw,{passedRef:i,children:["Are you sure you want to delete Practice Plan from"," ",s(e),"? ",g.jsx("br",{})," This action cannot be undone"," ",g.jsxs("div",{children:[g.jsx("button",{onClick:()=>{var o;return(o=i.current)==null?void 0:o.close()},children:"Cancel"}),g.jsx("button",{onClick:()=>n(t),children:"Delete"})]})]})]})})`
   list-style: none;
   padding: 16px;
   background-color: var(--secondary);
@@ -4136,7 +4136,7 @@ to {
       gap: 16px;
     }
   }
-`,_j=B(({className:t,practicePlans:e,deletePracticePlan:n})=>{const r=qi(),i=s=>{s("/create")};return g.jsxs("main",{className:t,children:[g.jsxs(gj,{children:[g.jsx("h1",{children:"Practice plans"}),g.jsx(et,{onClick:()=>i(r),text:"Add Practice Plan"})]}),g.jsx("ul",{children:e.map(s=>g.jsx(vj,{id:s.id,unixTime:s.date.seconds,deletePracticePlan:n},s.id))})]})})`
+`,wj=B(({className:t,practicePlans:e,deletePracticePlan:n})=>{const r=qi(),i=s=>{s("/create")};return g.jsxs("main",{className:t,children:[g.jsxs(yj,{children:[g.jsx("h1",{children:"Practice plans"}),g.jsx(et,{onClick:()=>i(r),text:"Add Practice Plan"})]}),g.jsx("ul",{children:e.map(s=>g.jsx(_j,{id:s.id,unixTime:s.date.seconds,deletePracticePlan:n},s.id))})]})})`
   background: var(--gray100);
   color: white;
   min-height: 100%;
@@ -4161,10 +4161,10 @@ to {
     grid-auto-flow: row;
     gap: 4px;
   }
-`;B(({className:t})=>{const[e,n]=N.useState([]),[r,i]=N.useState(!1),{addToast:s,removeToast:o}=N.useContext(ia),a=async c=>{await FS(on(Ke,"practice_plan",c)),n(d=>d.filter(f=>f.id!==c)),s({variant:"success",message:"Practice Plan Successfully Deleted",onClose:()=>o("Practice Plan Successfully Deleted")})},u=()=>(i(!0),Sr(Hn(Ke,"practice_plan")).then(c=>{const d=c.docs.map(f=>({...f.data(),id:f.id})).sort((f,p)=>Number(p.date.seconds)-Number(f.date.seconds));n(d)}).catch(c=>{throw new Error(c)}).finally(()=>{i(!1)}));return N.useEffect(()=>{u()},[]),g.jsx(pj,{fallback:g.jsx("p",{children:"⚠️ Something went wrong"}),children:g.jsx("div",{className:t,children:r?g.jsx(py,{children:g.jsx(my,{})}):g.jsx(_j,{practicePlans:e,deletePracticePlan:a})})})})`
+`;B(({className:t})=>{const[e,n]=N.useState([]),[r,i]=N.useState(!1),{addToast:s,removeToast:o}=N.useContext(ia),a=async c=>{await FS(on(Ke,"practice_plan",c)),n(d=>d.filter(f=>f.id!==c)),s({variant:"success",message:"Practice Plan Successfully Deleted",onClose:()=>o("Practice Plan Successfully Deleted")})},u=()=>(i(!0),Sr(Hn(Ke,"practice_plan")).then(c=>{const d=c.docs.map(f=>({...f.data(),id:f.id})).sort((f,p)=>Number(p.date.seconds)-Number(f.date.seconds));n(d)}).catch(c=>{throw new Error(c)}).finally(()=>{i(!1)}));return N.useEffect(()=>{u()},[]),g.jsx(mj,{fallback:g.jsx("p",{children:"⚠️ Something went wrong"}),children:g.jsx("div",{className:t,children:r?g.jsx(py,{children:g.jsx(my,{})}):g.jsx(wj,{practicePlans:e,deletePracticePlan:a})})})})`
   background: var(--gray100);
   height: calc(100% - 51px);
-`;const wj=B(({className:t,text:e,x:n,y:r,r:i,onClick:s})=>g.jsxs("g",{onClick:s,className:t,children:[g.jsx("circle",{r:i+5,cy:r,cx:n}),g.jsx("circle",{className:t,r:i,cy:r,cx:n}),g.jsx("text",{x:n,y:r,dominantBaseline:"middle",textAnchor:"middle",children:e})]}))`
+`;const Ej=B(({className:t,text:e,x:n,y:r,r:i,onClick:s})=>g.jsxs("g",{onClick:s,className:t,children:[g.jsx("circle",{r:i+5,cy:r,cx:n}),g.jsx("circle",{className:t,r:i,cy:r,cx:n}),g.jsx("text",{x:n,y:r,dominantBaseline:"middle",textAnchor:"middle",children:e})]}))`
   & > circle {
     fill: var(--orange);
     stroke-width: 2px;
@@ -4187,7 +4187,7 @@ to {
   color: white;
   padding: 4px 8px;
   border-radius: 20em;
-`,Ej=B(({area:t,position:e,move:n,addToPracticePlan:r,practicePlans:i,className:s})=>{const a=(c=>{const d=i.find(f=>f.moves.includes(c));return d?new Date(Number(d.date.seconds)*1e3).toLocaleDateString():"Not Reviewed"})(n.id),u=c=>c==="Not Reviewed"?1/0:Math.floor((Date.parse(new Date().toLocaleDateString())-Date.parse(c))/864e5);return g.jsxs(aP,{className:s,addToPracticePlan:()=>r(n.id),children:[g.jsx("span",{children:n.name}),g.jsxs("span",{children:["Last Review: ",a]}),g.jsx(gw,{$reviewUrgency:u(a),children:u(a)})]},`${t}-${e}-${n.name}`)})`
+`,Tj=B(({area:t,position:e,move:n,addToPracticePlan:r,practicePlans:i,className:s})=>{const a=(c=>{const d=i.find(f=>f.moves.includes(c));return d?new Date(Number(d.date.seconds)*1e3).toLocaleDateString():"Not Reviewed"})(n.id),u=c=>c==="Not Reviewed"?1/0:Math.floor((Date.parse(new Date().toLocaleDateString())-Date.parse(c))/864e5);return g.jsxs(aP,{className:s,addToPracticePlan:()=>r(n.id),children:[g.jsx("span",{children:n.name}),g.jsxs("span",{children:["Last Review: ",a]}),g.jsx(gw,{$reviewUrgency:u(a),children:u(a)})]},`${t}-${e}-${n.name}`)})`
   & > button {
     display: flex;
     flex-direction: column;
@@ -4201,21 +4201,21 @@ to {
     top: 50%;
     transform: translate(50%, -50%);
   }
-`,Tj=B(({className:t,content:e,addToPracticePlan:n,area:r,moves:i})=>{const{showPanel:s,setPanelContent:o,setPanelTitle:a}=N.useContext(Bd),[u,c]=N.useState([]),{id:d=""}=pg(),f=P=>Sr(zs(Hn(Ke,"practice_plan"),Ui("teamId","==",P))).then(_=>{const v=_.docs.map(A=>({...A.data(),id:A.id})).sort((A,D)=>Number(D.date.seconds)-Number(A.date.seconds));c(v)}).catch(_=>{throw new Error(_)});N.useEffect(()=>{f(d)},[]);const p=50,T=70,E=P=>{const _="50%",v="25%",A="75%";return P%3===1||P===0?_:P%6===2||P%6===3?v:A},C=P=>{o(P),s()};return g.jsx("svg",{height:Math.max(110*(e.length+2),window.innerHeight-52),width:"100%",className:t,children:e.map((P,_)=>g.jsxs("g",{children:[g.jsx("line",{x1:E(_),y1:T+_*110,x2:E(_+1),y2:T+(_+1)*110}),g.jsx(wj,{r:p,y:T+_*110,x:E(_),onClick:()=>{a(P),C(()=>g.jsx(g.Fragment,{children:i.filter(v=>v.area===r&&v.position===P).map(v=>g.jsx(Ej,{position:P,area:r,move:v,addToPracticePlan:n,practicePlans:u},v.id))}))},text:P})]},P))})})`
+`,Ij=B(({className:t,content:e,addToPracticePlan:n,area:r,moves:i})=>{const{showPanel:s,setPanelContent:o,setPanelTitle:a}=N.useContext(Bd),[u,c]=N.useState([]),{id:d=""}=pg(),f=P=>Sr(zs(Hn(Ke,"practice_plan"),Ui("teamId","==",P))).then(_=>{const v=_.docs.map(A=>({...A.data(),id:A.id})).sort((A,D)=>Number(D.date.seconds)-Number(A.date.seconds));c(v)}).catch(_=>{throw new Error(_)});N.useEffect(()=>{f(d)},[]);const p=50,T=70,E=P=>{const _="50%",v="25%",A="75%";return P%3===1||P===0?_:P%6===2||P%6===3?v:A},C=P=>{o(P),s()};return g.jsx("svg",{height:Math.max(110*(e.length+2),window.innerHeight-52),width:"100%",className:t,children:e.map((P,_)=>g.jsxs("g",{children:[g.jsx("line",{x1:E(_),y1:T+_*110,x2:E(_+1),y2:T+(_+1)*110}),g.jsx(Ej,{r:p,y:T+_*110,x:E(_),onClick:()=>{a(P),C(()=>g.jsx(g.Fragment,{children:i.filter(v=>v.area===r&&v.position===P).map(v=>g.jsx(Tj,{position:P,area:r,move:v,addToPracticePlan:n,practicePlans:u},v.id))}))},text:P})]},P))})})`
   min-height: 100%;
   background: var(--gray100);
 
   & > g > line {
     stroke: var(--orange);
   }
-`,ux=t=>!isNaN(t),gy=(t,e)=>e.map(n=>t.find(r=>r.id===n)),yy=t=>t.reduce((e,n)=>{var r;return{...e,[n==null?void 0:n.area]:[...(e[n==null?void 0:n.area]??[]).filter(i=>i.name!==(n==null?void 0:n.position)),{name:n==null?void 0:n.position,moves:[...((r=(e[n==null?void 0:n.area]??[]).find(i=>i.name===(n==null?void 0:n.position)))==null?void 0:r.moves)??[],{name:n==null?void 0:n.name,id:n==null?void 0:n.id}]}]}},{neutral:[],top:[],bottom:[]}),yw=t=>t.reduce((e,n)=>{const r=e.findIndex(i=>i.name===n.area);return e[r].positions.add(n.position),e},[{name:"neutral",positions:new Set},{name:"top",positions:new Set},{name:"bottom",positions:new Set}]),Ij=(t,e)=>window.navigator.clipboard.writeText(JSON.stringify(yy(gy(t,e)))),Sj=async(t,e)=>{if(!ux(t.date)){alert("please submit a valid date");return}await ay(Hn(Ke,"practice_plan"),t).then(n=>{e(`/teams/${t.teamId}/practice_plans/${n.id}`)})},xj=async(t,e,n)=>{const r=on(Ke,"practice_plan",t);if(!ux(e.date)){alert("please submit a valid date");return}await Mi(r,e),n(`/teams/${e.teamId}/practice_plans/${t}`)},Aj=B.div`
+`,ux=t=>!isNaN(t),gy=(t,e)=>e.map(n=>t.find(r=>r.id===n)),yy=t=>t.reduce((e,n)=>{var r;return{...e,[n==null?void 0:n.area]:[...(e[n==null?void 0:n.area]??[]).filter(i=>i.name!==(n==null?void 0:n.position)),{name:n==null?void 0:n.position,moves:[...((r=(e[n==null?void 0:n.area]??[]).find(i=>i.name===(n==null?void 0:n.position)))==null?void 0:r.moves)??[],{name:n==null?void 0:n.name,id:n==null?void 0:n.id}]}]}},{neutral:[],top:[],bottom:[]}),yw=t=>t.reduce((e,n)=>{const r=e.findIndex(i=>i.name===n.area);return e[r].positions.add(n.position),e},[{name:"neutral",positions:new Set},{name:"top",positions:new Set},{name:"bottom",positions:new Set}]),Sj=(t,e)=>window.navigator.clipboard.writeText(JSON.stringify(yy(gy(t,e)))),xj=async(t,e)=>{if(!ux(t.date)){alert("please submit a valid date");return}await ay(Hn(Ke,"practice_plan"),t).then(n=>{e(`/teams/${t.teamId}/practice_plans/${n.id}`)})},Aj=async(t,e,n)=>{const r=on(Ke,"practice_plan",t);if(!ux(e.date)){alert("please submit a valid date");return}await Mi(r,e),n(`/teams/${e.teamId}/practice_plans/${t}`)},Cj=B.div`
   height: 100%;
   overflow: scroll;
-`,Cj=B.div`
+`,Rj=B.div`
   display: grid;
   grid-auto-flow: row;
   gap: 20px;
-`,Rj=B.input``,vw=B(({className:t,moves:e,practicePlanMoves:n,practicePlanDate:r,removeFromPracticePlan:i,clearPracticePlan:s,currentPracticePlanId:o,updatePracticePlanDate:a,teamId:u})=>{const c=qi(),[d,f]=N.useState(window.innerWidth>850),{closePanel:p}=N.useContext(Bd);N.useEffect(()=>()=>p(),[]);const T=()=>{window.innerWidth>850&&f(!0)};N.useLayoutEffect(()=>(window.addEventListener("resize",T),()=>{window.removeEventListener("resize",T)}),[]);const E=()=>{f(P=>!P)},C=P=>{const[_,v,A]=P.split("-");return new Date(`${v}/${A}/${_}`)};return g.jsxs("aside",{className:t,style:{"--transform":d?"translateX(0%)":"translateX(-100%)"},children:[g.jsx("button",{"aria-label":"show practice plan",onClick:E,children:g.jsx(_4,{})}),g.jsxs(Aj,{children:["Date:",g.jsx(Rj,{type:"date",value:r,onChange:P=>a(P.target.value)}),g.jsx("h1",{children:"Practice Plan"}),Object.entries(yy(gy(e,n))).map(([P,_])=>g.jsxs(N.Fragment,{children:[g.jsx("h2",{children:P}),_.map(v=>g.jsx(Wp,{title:v.name,children:v.moves.map(({name:A,id:D})=>g.jsxs(kj,{children:[A,g.jsx(bj,{onClick:()=>i(D),children:g.jsx(zd,{})})]},`${v.name}=${A}`))},v.name))]},P)),g.jsxs(Cj,{children:[!o&&g.jsx(et,{onClick:s,text:"Clear Practice Plan",Icon:Pj,$level:"caution"}),g.jsx(et,{onClick:()=>Ij(e,n),text:"Copy Practice Plan",Icon:m4}),g.jsx(et,{onClick:()=>{o?xj(o,{moves:n,date:C(r),teamId:u},c):Sj({moves:n,date:C(r),teamId:u},c)},text:o?"Update Practice Plan":"Save Practice Plan",Icon:g4})]})]})]})})`
+`,Pj=B.input``,vw=B(({className:t,moves:e,practicePlanMoves:n,practicePlanDate:r,removeFromPracticePlan:i,clearPracticePlan:s,currentPracticePlanId:o,updatePracticePlanDate:a,teamId:u})=>{const c=qi(),[d,f]=N.useState(window.innerWidth>850),{closePanel:p}=N.useContext(Bd);N.useEffect(()=>()=>p(),[]);const T=()=>{window.innerWidth>850&&f(!0)};N.useLayoutEffect(()=>(window.addEventListener("resize",T),()=>{window.removeEventListener("resize",T)}),[]);const E=()=>{f(P=>!P)},C=P=>{const[_,v,A]=P.split("-");return new Date(`${v}/${A}/${_}`)};return g.jsxs("aside",{className:t,style:{"--transform":d?"translateX(0%)":"translateX(-100%)"},children:[g.jsx("button",{"aria-label":"show practice plan",onClick:E,children:g.jsx(_4,{})}),g.jsxs(Cj,{children:["Date:",g.jsx(Pj,{type:"date",value:r,onChange:P=>a(P.target.value)}),g.jsx("h1",{children:"Practice Plan"}),Object.entries(yy(gy(e,n))).map(([P,_])=>g.jsxs(N.Fragment,{children:[g.jsx("h2",{children:P}),_.map(v=>g.jsx(Wp,{title:v.name,children:v.moves.map(({name:A,id:D})=>g.jsxs(bj,{children:[A,g.jsx(Dj,{onClick:()=>i(D),children:g.jsx(zd,{})})]},`${v.name}=${A}`))},v.name))]},P)),g.jsxs(Rj,{children:[!o&&g.jsx(et,{onClick:s,text:"Clear Practice Plan",Icon:kj,$level:"caution"}),g.jsx(et,{onClick:()=>Sj(e,n),text:"Copy Practice Plan",Icon:m4}),g.jsx(et,{onClick:()=>{o?Aj(o,{moves:n,date:C(r),teamId:u},c):xj({moves:n,date:C(r),teamId:u},c)},text:o?"Update Practice Plan":"Save Practice Plan",Icon:g4})]})]})]})})`
   background: var(--gray100);
   color: white;
   padding: clamp(8px, 3vw, 32px);
@@ -4243,16 +4243,16 @@ to {
       display: none;
     }
   }
-`,Pj=B(y4)`
+`,kj=B(y4)`
   stroke: white;
-`,kj=B.li`
+`,bj=B.li`
   display: flex;
   justify-content: space-between;
   list-style: none;
   padding: 8px 16px;
   background-color: var(--secondary);
   position: relative;
-`,bj=B.button`
+`,Dj=B.button`
   border-radius: 5000px 50px 5000px 5000px;
   background: linear-gradient(var(--secondary), var(--tertiary));
   padding: 8px;
@@ -4266,11 +4266,11 @@ to {
   display: flex;
   justify-content: center;
   align-items: center;
-`,_w=t=>{const[e,n,r]=new Date(t).toLocaleDateString("en-US").split("/");return`${r}-${e.padStart(2,"0")}-${n.padStart(2,"0")}`},Dj=t=>{const[e,n]=N.useState([]),[r,i]=N.useState(_w(new Date));return N.useEffect(()=>{t&&oy(on(Ke,"practice_plan",t)).then(o=>{const a={...o.data(),id:o.id};i(_w(new Date(Number(a.date.seconds)*1e3))),n(a.moves)})},[t]),[e,n,r,i]},Nj=t=>Sr(zs(Hn(Ke,"moves"),Ui("teamId","==",t))).then(e=>e.docs.map(n=>({...n.data(),id:n.id}))),Mj=B(dP)`
+`,_w=t=>{const[e,n,r]=new Date(t).toLocaleDateString("en-US").split("/");return`${r}-${e.padStart(2,"0")}-${n.padStart(2,"0")}`},Nj=t=>{const[e,n]=N.useState([]),[r,i]=N.useState(_w(new Date));return N.useEffect(()=>{t&&oy(on(Ke,"practice_plan",t)).then(o=>{const a={...o.data(),id:o.id};i(_w(new Date(Number(a.date.seconds)*1e3))),n(a.moves)})},[t]),[e,n,r,i]},Mj=t=>Sr(zs(Hn(Ke,"moves"),Ui("teamId","==",t))).then(e=>e.docs.map(n=>({...n.data(),id:n.id}))),Oj=B(dP)`
   grid-area: nav;
   position: sticky;
   bottom: 0;
-`,ww=B(({className:t})=>{const[e,n]=N.useState("neutral"),[r,i]=N.useState([]),{addToast:s,removeToast:o}=N.useContext(ia),{practice_plan_id:a,id:u=""}=pg(),[c,d,f,p]=Dj(a);N.useEffect(()=>{Nj(u).then(_=>i(_))},[u]);const T=()=>{p(new Date),d([]),s({variant:"success",message:"practice plan cleared",onClose:()=>o("practice plan cleared")})},E=_=>{d(v=>v.includes(_)?(s({variant:"error",message:"move already exists",onClose:()=>o("move already exists")}),v):(s({variant:"success",message:"move was successfully added",onClose:()=>o("move was successfully added")}),[...v,_]))},C=_=>{d(v=>[...v].filter(A=>A!==_)),s({variant:"success",message:"move was successfully removed",onClose:()=>o("move was successfully removed")})},P=_=>{p(_),s({variant:"success",message:"practice plan date updated",onClose:()=>o("practice plan date updated")})};return g.jsxs("main",{className:t,children:[g.jsx(vw,{moves:r,practicePlanMoves:c,practicePlanDate:f,clearPracticePlan:T,removeFromPracticePlan:C,currentPracticePlanId:a,updatePracticePlanDate:P,teamId:u}),g.jsx(Tj,{addToPracticePlan:E,content:[...yw(r).find(_=>_.name===e).positions],area:e,moves:r}),g.jsx(Mj,{tabs:yw(r).map(_=>_.name),currentTab:e,setCurrentTab:n})]})})`
+`,ww=B(({className:t})=>{const[e,n]=N.useState("neutral"),[r,i]=N.useState([]),{addToast:s,removeToast:o}=N.useContext(ia),{practice_plan_id:a,id:u=""}=pg(),[c,d,f,p]=Nj(a);N.useEffect(()=>{Mj(u).then(_=>i(_))},[u]);const T=()=>{p(new Date),d([]),s({variant:"success",message:"practice plan cleared",onClose:()=>o("practice plan cleared")})},E=_=>{d(v=>v.includes(_)?(s({variant:"error",message:"move already exists",onClose:()=>o("move already exists")}),v):(s({variant:"success",message:"move was successfully added",onClose:()=>o("move was successfully added")}),[...v,_]))},C=_=>{d(v=>[...v].filter(A=>A!==_)),s({variant:"success",message:"move was successfully removed",onClose:()=>o("move was successfully removed")})},P=_=>{p(_),s({variant:"success",message:"practice plan date updated",onClose:()=>o("practice plan date updated")})};return g.jsxs("main",{className:t,children:[g.jsx(vw,{moves:r,practicePlanMoves:c,practicePlanDate:f,clearPracticePlan:T,removeFromPracticePlan:C,currentPracticePlanId:a,updatePracticePlanDate:P,teamId:u}),g.jsx(Ij,{addToPracticePlan:E,content:[...yw(r).find(_=>_.name===e).positions],area:e,moves:r}),g.jsx(Oj,{tabs:yw(r).map(_=>_.name),currentTab:e,setCurrentTab:n})]})})`
   display: grid;
   grid-template-areas: 'content' 'nav';
   grid-template-columns: 1fr;
@@ -4301,16 +4301,16 @@ to {
       background-color: red !important;
     }
   }
-`,Oj=B.ul`
+`,Lj=B.ul`
   list-style: none;
   display: grid;
   gap: 2px;
   align-content: start;
   margin: 0;
   padding: 0;
-`,Lj=B.ul`
+`,Vj=B.ul`
   list-style: none;
-`,Vj=t=>zs(Hn(Ke,"practice_plan"),Ui(wL(),"==",t)),jj=t=>Sr(Vj(t)).then(e=>{const n=e.docs.map(i=>({...i.data(),id:i.id})),[r]=n;return r}),Fj=()=>Sr(Hn(Ke,"moves")).then(t=>t.docs.map(n=>({...n.data(),id:n.id}))),Uj=t=>new Date(Number(t)*1e3).toLocaleDateString(),$j=B(({className:t})=>{const[e,n]=N.useState({date:{seconds:"",milliseconds:""},moves:[],id:""}),[r,i]=N.useState([]),s=Ms(),o=qi(),a=s.pathname.split("/").at(-1)??"";N.useEffect(()=>{Fj().then(c=>i(c)),jj(a).then(c=>n(c))},[a]);const u=c=>{o("edit")};return g.jsxs("main",{className:t,children:[g.jsx("h1",{children:Uj(e.date.seconds)}),Object.entries(yy(gy(r,e.moves))).map(([c,d])=>g.jsxs(g.Fragment,{children:[g.jsx("h2",{children:c}),g.jsx(Oj,{children:d.map(f=>g.jsx("li",{children:g.jsx(Wp,{title:f.name,open:!0,children:g.jsx(Lj,{children:f==null?void 0:f.moves.map(p=>g.jsx("li",{children:p.name},`${f.name}-${p.name}`))})})},f.name))},c)]})),g.jsx(et,{onClick:()=>u(),text:"Edit Practice Plan",Icon:v4,$level:"caution"})]})})`
+`,jj=t=>zs(Hn(Ke,"practice_plan"),Ui(wL(),"==",t)),Fj=t=>Sr(jj(t)).then(e=>{const n=e.docs.map(i=>({...i.data(),id:i.id})),[r]=n;return r}),Uj=()=>Sr(Hn(Ke,"moves")).then(t=>t.docs.map(n=>({...n.data(),id:n.id}))),$j=t=>new Date(Number(t)*1e3).toLocaleDateString(),zj=B(({className:t})=>{const[e,n]=N.useState({date:{seconds:"",milliseconds:""},moves:[],id:""}),[r,i]=N.useState([]),s=Ms(),o=qi(),a=s.pathname.split("/").at(-1)??"";N.useEffect(()=>{Uj().then(c=>i(c)),Fj(a).then(c=>n(c))},[a]);const u=c=>{o("edit")};return g.jsxs("main",{className:t,children:[g.jsx("h1",{children:$j(e.date.seconds)}),Object.entries(yy(gy(r,e.moves))).map(([c,d])=>g.jsxs(g.Fragment,{children:[g.jsx("h2",{children:c}),g.jsx(Lj,{children:d.map(f=>g.jsx("li",{children:g.jsx(Wp,{title:f.name,open:!0,children:g.jsx(Vj,{children:f==null?void 0:f.moves.map(p=>g.jsx("li",{children:p.name},`${f.name}-${p.name}`))})})},f.name))},c)]})),g.jsx(et,{onClick:()=>u(),text:"Edit Practice Plan",Icon:v4,$level:"caution"})]})})`
   min-height: 100%;
   background: var(--gray100);
   padding: 32px;
@@ -4336,7 +4336,7 @@ to {
   width: min-content;
   padding: 4px 8px;
   white-space: nowrap;
-`,zj=["AL","AK","AZ","AR","CA","CO","CT","DE","FL","GA","HI","ID","IL","IN","IA","KS","KY","LA","ME","MD","MA","MI","MN","MS","MO","MT","NE","NV","NH","NJ","NM","NY","NC","ND","OH","OK","OR","PA","RI","SC","SD","TN","TX","UT","VT","VA","WA","WV","WI","WY"],cx=Hn(Ke,"teams"),Bj=()=>Sr(cx).then(t=>t.docs.map(n=>({...n.data(),id:n.id}))),Hj=B.ul`
+`,Bj=["AL","AK","AZ","AR","CA","CO","CT","DE","FL","GA","HI","ID","IL","IN","IA","KS","KY","LA","ME","MD","MA","MI","MN","MS","MO","MT","NE","NV","NH","NJ","NM","NY","NC","ND","OH","OK","OR","PA","RI","SC","SD","TN","TX","UT","VT","VA","WA","WV","WI","WY"],cx=Hn(Ke,"teams"),Hj=()=>Sr(cx).then(t=>t.docs.map(n=>({...n.data(),id:n.id}))),qj=B.ul`
   list-style: none;
   margin: 0;
   padding-left: 16px;
@@ -4344,7 +4344,7 @@ to {
   display: grid;
   max-width: 100%;
   gap: 8px;
-`,qj=B.li`
+`,Wj=B.li`
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
   align-items: center;
@@ -4385,12 +4385,12 @@ to {
   & > span {
     white-space: nowrap;
   }
-`,Wj=B.div`
+`,Gj=B.div`
   display: grid;
   gap: 16px;
   grid-auto-flow: column;
   padding: 16px;
-`,Gj=B(({className:t,teams:e,setTeams:n})=>{const r=N.useContext(Bs),{addToast:i,removeToast:s}=N.useContext(ia),o=N.useRef(),a=N.useRef(),u=()=>{o.current&&o.current.showModal()},c=()=>{o.current&&o.current.close()},d=()=>{a.current&&a.current.showModal()},f=()=>{a.current&&a.current.close()},p=E=>{E.preventDefault();const C=new FormData(E.currentTarget),P={name:C.get("teamName"),state:C.get("stateLocation"),joinRequests:[],goals:[],userIds:[r.uid],users:[{role:"admin",uid:r.uid}]};ay(cx,P).then(_=>{n(v=>[...v,{...P,id:_.id}]),c()})},T=E=>{E.preventDefault();const C=new FormData(E.currentTarget),P=e.find(_=>_.id===C.get("teamToJoin"));if(P&&P.joinRequests.find(v=>v.uid===r.uid)){i({variant:"success",message:"You have an existing request to join this team",onClose:()=>s("You have an existing request to join this team")});return}Mi(on(Ke,"teams",C.get("teamToJoin")),{joinRequests:bl({userEmail:r.email,uid:r.uid,role:C.get("requestedRole")})}).then(()=>{f(),i({variant:"success",message:"Request Successfully Submitted",onClose:()=>s("Request Successfully Submitted")})})};return g.jsxs("main",{className:t,children:[g.jsx("h1",{children:"My Teams"}),g.jsx(Hj,{children:e.filter(E=>E.userIds.includes(r.uid)).map(E=>g.jsxs(qj,{children:[g.jsxs("span",{children:[E.name," (",E.state,")"]}),g.jsxs(Tw,{children:["Users ",g.jsx(Ew,{children:E.users.length})]}),g.jsxs(Tw,{children:[g.jsx("span",{children:"Join Requests"})," ",g.jsx(Ew,{children:E.joinRequests.length})]}),E.users.find(C=>C.uid===r.uid&&C.role==="admin")?g.jsx(sd,{$color:"white",children:"Admin"}):g.jsx("span",{}),g.jsx(Xo,{to:E.id,children:g.jsx(et,{text:"view"})})]},E.id))}),g.jsxs(Wj,{children:[g.jsx(et,{text:"Request to Join a Team",onClick:d}),g.jsx(et,{text:"Create a Team",onClick:u})]}),g.jsx(ps,{passedRef:o,onClose:c,children:g.jsxs("form",{onSubmit:p,children:[g.jsxs("label",{htmlFor:"teamName",children:[g.jsx("span",{children:"Team Name:"}),g.jsx("input",{name:"teamName",type:"text",id:"teamName"})]}),g.jsxs("label",{htmlFor:"stateLocation",children:[g.jsx("span",{children:"State:"}),g.jsx("select",{name:"stateLocation",id:"stateLocation",children:zj.map(E=>g.jsx("option",{value:E,children:E},E))})]}),g.jsx(et,{text:"Create",type:"submit"})]})}),g.jsx(ps,{passedRef:a,onClose:f,children:g.jsxs("form",{onSubmit:T,children:[g.jsxs("label",{htmlFor:"teamToJoin",children:[g.jsx("span",{children:"Team:"}),g.jsx("select",{name:"teamToJoin",id:"teamToJoin",children:e.filter(E=>!E.userIds.includes(r.uid)).map(E=>g.jsxs("option",{value:E.id,children:[E.name," (",E.state,")"]},E.id))})]}),g.jsxs("label",{htmlFor:"requestedRole",children:[g.jsx("span",{children:"Requested Role:"}),g.jsx("select",{name:"requestedRole",id:"requestedRole",children:["admin","base+","base"].map(E=>g.jsx("option",{value:E,children:E},E))})]}),g.jsx(et,{text:"Send Request to Join",type:"submit"})]})})]})})`
+`,Kj=B(({className:t,teams:e,setTeams:n})=>{const r=N.useContext(Bs),{addToast:i,removeToast:s}=N.useContext(ia),o=N.useRef(),a=N.useRef(),u=()=>{o.current&&o.current.showModal()},c=()=>{o.current&&o.current.close()},d=()=>{a.current&&a.current.showModal()},f=()=>{a.current&&a.current.close()},p=E=>{E.preventDefault();const C=new FormData(E.currentTarget),P={name:C.get("teamName"),state:C.get("stateLocation"),joinRequests:[],goals:[],userIds:[r.uid],users:[{role:"admin",uid:r.uid}]};ay(cx,P).then(_=>{n(v=>[...v,{...P,id:_.id}]),c()})},T=E=>{E.preventDefault();const C=new FormData(E.currentTarget),P=e.find(_=>_.id===C.get("teamToJoin"));if(P&&P.joinRequests.find(v=>v.uid===r.uid)){i({variant:"success",message:"You have an existing request to join this team",onClose:()=>s("You have an existing request to join this team")});return}Mi(on(Ke,"teams",C.get("teamToJoin")),{joinRequests:bl({userEmail:r.email,uid:r.uid,role:C.get("requestedRole")})}).then(()=>{f(),i({variant:"success",message:"Request Successfully Submitted",onClose:()=>s("Request Successfully Submitted")})})};return g.jsxs("main",{className:t,children:[g.jsx("h1",{children:"My Teams"}),g.jsx(qj,{children:e.filter(E=>E.userIds.includes(r.uid)).map(E=>g.jsxs(Wj,{children:[g.jsxs("span",{children:[E.name," (",E.state,")"]}),g.jsxs(Tw,{children:["Users ",g.jsx(Ew,{children:E.users.length})]}),g.jsxs(Tw,{children:[g.jsx("span",{children:"Join Requests"})," ",g.jsx(Ew,{children:E.joinRequests.length})]}),E.users.find(C=>C.uid===r.uid&&C.role==="admin")?g.jsx(sd,{$color:"white",children:"Admin"}):g.jsx("span",{}),g.jsx(Xo,{to:E.id,children:g.jsx(et,{text:"view"})})]},E.id))}),g.jsxs(Gj,{children:[g.jsx(et,{text:"Request to Join a Team",onClick:d}),g.jsx(et,{text:"Create a Team",onClick:u})]}),g.jsx(ps,{passedRef:o,onClose:c,children:g.jsxs("form",{onSubmit:p,children:[g.jsxs("label",{htmlFor:"teamName",children:[g.jsx("span",{children:"Team Name:"}),g.jsx("input",{name:"teamName",type:"text",id:"teamName"})]}),g.jsxs("label",{htmlFor:"stateLocation",children:[g.jsx("span",{children:"State:"}),g.jsx("select",{name:"stateLocation",id:"stateLocation",children:Bj.map(E=>g.jsx("option",{value:E,children:E},E))})]}),g.jsx(et,{text:"Create",type:"submit"})]})}),g.jsx(ps,{passedRef:a,onClose:f,children:g.jsxs("form",{onSubmit:T,children:[g.jsxs("label",{htmlFor:"teamToJoin",children:[g.jsx("span",{children:"Team:"}),g.jsx("select",{name:"teamToJoin",id:"teamToJoin",children:e.filter(E=>!E.userIds.includes(r.uid)).map(E=>g.jsxs("option",{value:E.id,children:[E.name," (",E.state,")"]},E.id))})]}),g.jsxs("label",{htmlFor:"requestedRole",children:[g.jsx("span",{children:"Requested Role:"}),g.jsx("select",{name:"requestedRole",id:"requestedRole",children:["admin","base+","base"].map(E=>g.jsx("option",{value:E,children:E},E))})]}),g.jsx(et,{text:"Send Request to Join",type:"submit"})]})})]})})`
   color: white;
   padding: 8px;
   display: grid;
@@ -4416,14 +4416,14 @@ to {
       gap: 4px;
     }
   }
-`,Kj=B(({className:t})=>{const[e,n]=N.useState([]),[r,i]=N.useState(!1);return N.useEffect(()=>{i(!0),Bj().then(s=>n(s)).then(()=>i(!1))},[]),g.jsx("div",{className:t,children:r?g.jsx(py,{children:g.jsx(my,{})}):g.jsx(Gj,{teams:e,setTeams:n})})})`
+`,Qj=B(({className:t})=>{const[e,n]=N.useState([]),[r,i]=N.useState(!1);return N.useEffect(()=>{i(!0),Hj().then(s=>n(s)).then(()=>i(!1))},[]),g.jsx("div",{className:t,children:r?g.jsx(py,{children:g.jsx(my,{})}):g.jsx(Kj,{teams:e,setTeams:n})})})`
   min-height: 100%;
   background: var(--gray100);
-`,Qj=B(et)`
+`,Yj=B(et)`
   padding-left: 8px;
   padding-right: 8px;
   white-space: nowrap;
-`,vy=({roles:t,team:e,children:n})=>{const r=N.useContext(Bs),i=e.users.find(s=>s.uid===(r==null?void 0:r.uid));return i&&t.includes(i.role)?n:null},Yj=B(({uid:t,role:e,team:n,setTeam:r,className:i})=>{const[s,o]=N.useState(""),a=N.useContext(Bs),u=N.useRef(),c=async E=>await oy(on(Ke,"users",E)).then(C=>({...C.data(),id:C.id}).email);N.useEffect(()=>{c(t).then(o)},[t]);const d=()=>{Mi(on(Ke,"teams",n.id),{users:rl({uid:t,role:e}),userIds:rl(t)}),r(E=>({...E,users:E.users.filter(C=>C.uid!==t),userIds:E.userIds.filter(C=>C!==t)}))},f=()=>{u.current&&u.current.showModal()},p=()=>{u.current&&u.current.close()},T=E=>{E.preventDefault();const C=new FormData(E.currentTarget);Mi(on(Ke,"teams",n.id),{users:rl({uid:t,role:e})}),Mi(on(Ke,"teams",n.id),{users:bl({uid:t,role:C.get("newRole")})}),r(P=>{const _=P.users.find(v=>v.uid===t);if(!_){alert("could not find user!");return}return _.role=C.get("newRole"),{...P,users:[...P.users.filter(v=>v.uid!==t),_].filter(v=>v)}}),u.current&&p()};return g.jsxs("li",{className:i,children:[g.jsx("span",{children:s}),g.jsx(sd,{children:e}),g.jsxs(vy,{roles:["admin"],team:n,children:[g.jsx(Qj,{onClick:f,text:"Update Role"}),t!==a.uid&&g.jsx(_y,{$level:"caution",onClick:d,text:"Remove User"}),g.jsx(ps,{passedRef:u,onClose:p,children:g.jsxs("form",{onSubmit:T,children:[g.jsxs("label",{htmlFor:"newRole",children:[g.jsx("span",{children:"New Role:"}),g.jsx("select",{name:"newRole",id:"newRole",children:["admin","base+","base"].map(E=>g.jsx("option",{value:E,children:E},E))})]}),g.jsx(et,{text:"Update Role",type:"submit"})]})})]})]})})`
+`,vy=({roles:t,team:e,children:n})=>{const r=N.useContext(Bs),i=e.users.find(s=>s.uid===(r==null?void 0:r.uid));return i&&t.includes(i.role)?n:null},Xj=B(({uid:t,role:e,team:n,setTeam:r,className:i})=>{const[s,o]=N.useState(""),a=N.useContext(Bs),u=N.useRef(),c=async E=>await oy(on(Ke,"users",E)).then(C=>({...C.data(),id:C.id}).email);N.useEffect(()=>{c(t).then(o)},[t]);const d=()=>{Mi(on(Ke,"teams",n.id),{users:rl({uid:t,role:e}),userIds:rl(t)}),r(E=>({...E,users:E.users.filter(C=>C.uid!==t),userIds:E.userIds.filter(C=>C!==t)}))},f=()=>{u.current&&u.current.showModal()},p=()=>{u.current&&u.current.close()},T=E=>{E.preventDefault();const C=new FormData(E.currentTarget);Mi(on(Ke,"teams",n.id),{users:rl({uid:t,role:e})}),Mi(on(Ke,"teams",n.id),{users:bl({uid:t,role:C.get("newRole")})}),r(P=>{const _=P.users.find(v=>v.uid===t);if(!_){alert("could not find user!");return}return _.role=C.get("newRole"),{...P,users:[...P.users.filter(v=>v.uid!==t),_].filter(v=>v)}}),u.current&&p()};return g.jsxs("li",{className:i,children:[g.jsx("span",{children:s}),g.jsx(sd,{children:e}),g.jsxs(vy,{roles:["admin"],team:n,children:[g.jsx(Yj,{onClick:f,text:"Update Role"}),t!==a.uid&&g.jsx(_y,{$level:"caution",onClick:d,text:"Remove User"}),g.jsx(ps,{passedRef:u,onClose:p,children:g.jsxs("form",{onSubmit:T,children:[g.jsxs("label",{htmlFor:"newRole",children:[g.jsx("span",{children:"New Role:"}),g.jsx("select",{name:"newRole",id:"newRole",children:["admin","base+","base"].map(E=>g.jsx("option",{value:E,children:E},E))})]}),g.jsx(et,{text:"Update Role",type:"submit"})]})})]})]})})`
   display: grid;
   grid-template-columns: 2fr 1fr 1fr 1fr;
   grid-template-rows: 1fr;
@@ -4442,19 +4442,19 @@ to {
       justify-self: center;
     }
   }
-`,Xj=t=>oy(on(Ke,"teams",t)).then(e=>({...e.data(),id:e.id})),Jj=t=>Sr(zs(Hn(Ke,"moves"),Ui("teamId","==",t))).then(e=>e.docs.map(r=>({...r.data(),id:r.id}))),Zj=t=>Sr(zs(Hn(Ke,"practice_plan"),Ui("teamId","==",t))).then(e=>e.docs.map(r=>({...r.data(),id:r.id}))),e5=["jv","varsity","state qualifier","state placer"],t5=["neutral","top","bottom"],n5=B(({className:t,moves:e,setMoves:n,teamId:r,team:i})=>{const s=N.useRef(),o=()=>{s.current&&s.current.showModal()},a=()=>{s.current&&s.current.close()},u=c=>{c.preventDefault();const d=new FormData(c.currentTarget),f={area:d.get("area"),level:d.get("level"),name:d.get("name"),position:d.get("position"),teamId:r};ay(Hn(Ke,"moves"),f).then(p=>{n(T=>[...T,{...f,id:p.id}])}),a()};return g.jsxs("section",{className:t,children:[g.jsx("h2",{children:"Moves"}),g.jsx(r5,{children:e.map(c=>g.jsx(o5,{move:c}))}),g.jsxs(vy,{roles:["admin","base+"],team:i,children:[g.jsx(et,{onClick:o,text:"Add Move"}),g.jsx(ps,{passedRef:s,onClose:a,children:g.jsxs("form",{onSubmit:u,children:[g.jsxs("label",{htmlFor:"name",children:[g.jsx("span",{children:"Move name:"}),g.jsx("input",{type:"text",name:"name",id:"name"})]}),g.jsxs("label",{htmlFor:"area",children:[g.jsx("span",{children:"Move Area:"}),g.jsx("select",{name:"area",id:"area",children:t5.map(c=>g.jsx("option",{value:c,children:c},c))})]}),g.jsxs("label",{htmlFor:"level",children:[g.jsx("span",{children:"Move Level:"}),g.jsx("select",{name:"level",id:"level",children:e5.map(c=>g.jsx("option",{value:c,children:c},c))})]}),g.jsxs("label",{htmlFor:"position",children:[g.jsx("span",{children:"Move Position:"}),g.jsx("input",{type:"text",name:"position",id:"position"})]}),g.jsx(et,{text:"Add Move",type:"submit"})]})})]})]})})`
+`,Jj=t=>oy(on(Ke,"teams",t)).then(e=>({...e.data(),id:e.id})),Zj=t=>Sr(zs(Hn(Ke,"moves"),Ui("teamId","==",t))).then(e=>e.docs.map(r=>({...r.data(),id:r.id}))),e5=t=>Sr(zs(Hn(Ke,"practice_plan"),Ui("teamId","==",t))).then(e=>e.docs.map(r=>({...r.data(),id:r.id}))),t5=["jv","varsity","state qualifier","state placer"],n5=["neutral","top","bottom"],r5=B(({className:t,moves:e,setMoves:n,teamId:r,team:i})=>{const s=N.useRef(),o=()=>{s.current&&s.current.showModal()},a=()=>{s.current&&s.current.close()},u=c=>{c.preventDefault();const d=new FormData(c.currentTarget),f={area:d.get("area"),level:d.get("level"),name:d.get("name"),position:d.get("position"),teamId:r};ay(Hn(Ke,"moves"),f).then(p=>{n(T=>[...T,{...f,id:p.id}])}),a()};return g.jsxs("section",{className:t,children:[g.jsx("h2",{children:"Moves"}),g.jsx(i5,{children:e.map(c=>g.jsx(a5,{move:c}))}),g.jsxs(vy,{roles:["admin","base+"],team:i,children:[g.jsx(et,{onClick:o,text:"Add Move"}),g.jsx(ps,{passedRef:s,onClose:a,children:g.jsxs("form",{onSubmit:u,children:[g.jsxs("label",{htmlFor:"name",children:[g.jsx("span",{children:"Move name:"}),g.jsx("input",{type:"text",name:"name",id:"name"})]}),g.jsxs("label",{htmlFor:"area",children:[g.jsx("span",{children:"Move Area:"}),g.jsx("select",{name:"area",id:"area",children:n5.map(c=>g.jsx("option",{value:c,children:c},c))})]}),g.jsxs("label",{htmlFor:"level",children:[g.jsx("span",{children:"Move Level:"}),g.jsx("select",{name:"level",id:"level",children:t5.map(c=>g.jsx("option",{value:c,children:c},c))})]}),g.jsxs("label",{htmlFor:"position",children:[g.jsx("span",{children:"Move Position:"}),g.jsx("input",{type:"text",name:"position",id:"position"})]}),g.jsx(et,{text:"Add Move",type:"submit"})]})})]})]})})`
   display: grid;
   gap: 16px;
   & > h2 {
     color: var(--gray900);
   }
-`,r5=B.ul`
+`,i5=B.ul`
   list-style: none;
   margin: 0;
   padding: 8px;
   display: grid;
   gap: 8px;
-`,i5=t=>t==="jv"?"hsl(30, 61%, 50%)":t==="varsity"?"silver":t==="state qualifier"?"gold":t==="state placer"?"hsl(40, 5%, 89%)":"white",s5=t=>t==="jv"?"JV":t==="varsity"?"V":t==="state qualifier"?"SQ":t==="state placer"?"SP":"",o5=B(({className:t,move:e})=>g.jsx("li",{className:t,children:g.jsxs("div",{children:[g.jsx("h3",{children:e.name}),g.jsxs("span",{children:[e.area," - ",e.position]}),g.jsx(sd,{$color:i5(e.level),children:s5(e.level)})]})}))`
+`,s5=t=>t==="jv"?"hsl(30, 61%, 50%)":t==="varsity"?"silver":t==="state qualifier"?"gold":t==="state placer"?"hsl(40, 5%, 89%)":"white",o5=t=>t==="jv"?"JV":t==="varsity"?"V":t==="state qualifier"?"SQ":t==="state placer"?"SP":"",a5=B(({className:t,move:e})=>g.jsx("li",{className:t,children:g.jsxs("div",{children:[g.jsx("h3",{children:e.name}),g.jsxs("span",{children:[e.area," - ",e.position]}),g.jsx(sd,{$color:s5(e.level),children:o5(e.level)})]})}))`
   & > div {
     display: grid;
     gap: 4px;
@@ -4472,11 +4472,11 @@ to {
       padding: 0;
     }
   }
-`,a5=B.span`
-  font-size: 1.5em;
 `,l5=B.span`
+  font-size: 1.5em;
+`,u5=B.span`
   font-size: 2em;
-`,dc=B(({className:t,title:e,subtext:n,value:r})=>g.jsxs("output",{className:t,children:[g.jsx(a5,{children:e}),g.jsx("p",{children:n}),g.jsx(l5,{children:r})]}))`
+`,dc=B(({className:t,title:e,subtext:n,value:r})=>g.jsxs("output",{className:t,children:[g.jsx(l5,{children:e}),g.jsx("p",{children:n}),g.jsx(u5,{children:r})]}))`
   background-color: var(--blue500);
   display: grid;
   justify-items: center;
@@ -4484,7 +4484,7 @@ to {
   border-radius: 8px;
   text-align: center;
   box-shadow: var(--shadow-elevation-medium);
-`,u5=B.div`
+`,c5=B.div`
   display: grid;
   grid-template-columns: 1fr;
   grid-template-rows: repeat(3, 1fr);
@@ -4498,13 +4498,13 @@ to {
   & > ${dc} {
     width: auto;
   }
-`,c5=B.ul`
+`,d5=B.ul`
   list-style: none;
   margin: 0;
   padding: 0;
   display: grid;
   gap: 8px;
-`,d5=B.div`
+`,h5=B.div`
   display: grid;
   grid-template-columns: 1fr;
   grid-template-rows: 1fr 1fr;
@@ -4518,9 +4518,9 @@ to {
 `,Iw=B.section`
   display: grid;
   gap: 8px;
-`,h5=B.ul`
+`,f5=B.ul`
   list-style: none;
-`,f5=B.li`
+`,p5=B.li`
   display: grid;
   align-items: center;
   justify-content: space-between;
@@ -4536,11 +4536,11 @@ to {
     grid-template-rows: 1fr 1fr;
     border: none;
   }
-`,p5=B(({className:t,team:e,setTeam:n,teamId:r})=>{const i=o=>{Mi(on(Ke,"teams",r),{joinRequests:rl(o),users:bl({uid:o.uid,role:o.role}),userIds:bl(o.uid)}),n(a=>({...a,joinRequests:a.joinRequests.filter(u=>u.uid!==o.uid),users:[...a.users,{uid:o.uid,role:o.role}],userIds:[...a.userIds,o.uid]}))},s=o=>{Mi(on(Ke,"teams",r),{joinRequests:rl(o)}),n(a=>({...a,joinRequests:a.joinRequests.filter(u=>u.uid!==o.uid)}))};return e?g.jsxs("div",{className:t,children:[g.jsx("h2",{children:"Admin"}),g.jsx(d5,{children:g.jsxs(vy,{roles:["admin","base+"],team:e,children:[g.jsxs(Iw,{children:[g.jsx("h3",{children:"Team Users"}),g.jsx(c5,{children:e.users.map(o=>g.jsx(Yj,{team:e,setTeam:n,uid:o.uid,role:o.role}))})]}),g.jsxs(Iw,{children:[g.jsx("h3",{children:"Open Join Requests:"}),g.jsx(h5,{children:e.joinRequests.map(o=>g.jsxs(f5,{children:[g.jsx("span",{children:o.userEmail}),g.jsx("span",{children:o.role}),g.jsx(et,{onClick:()=>i(o),text:"Accept"}),g.jsx(_y,{$level:"caution",onClick:()=>s(o),text:"Decline"})]}))})]})]})})]}):null})`
+`,m5=B(({className:t,team:e,setTeam:n,teamId:r})=>{const i=o=>{Mi(on(Ke,"teams",r),{joinRequests:rl(o),users:bl({uid:o.uid,role:o.role}),userIds:bl(o.uid)}),n(a=>({...a,joinRequests:a.joinRequests.filter(u=>u.uid!==o.uid),users:[...a.users,{uid:o.uid,role:o.role}],userIds:[...a.userIds,o.uid]}))},s=o=>{Mi(on(Ke,"teams",r),{joinRequests:rl(o)}),n(a=>({...a,joinRequests:a.joinRequests.filter(u=>u.uid!==o.uid)}))};return e?g.jsxs("div",{className:t,children:[g.jsx("h2",{children:"Admin"}),g.jsx(h5,{children:g.jsxs(vy,{roles:["admin","base+"],team:e,children:[g.jsxs(Iw,{children:[g.jsx("h3",{children:"Team Users"}),g.jsx(d5,{children:e.users.map(o=>g.jsx(Xj,{team:e,setTeam:n,uid:o.uid,role:o.role}))})]}),g.jsxs(Iw,{children:[g.jsx("h3",{children:"Open Join Requests:"}),g.jsx(f5,{children:e.joinRequests.map(o=>g.jsxs(p5,{children:[g.jsx("span",{children:o.userEmail}),g.jsx("span",{children:o.role}),g.jsx(et,{onClick:()=>i(o),text:"Accept"}),g.jsx(_y,{$level:"caution",onClick:()=>s(o),text:"Decline"})]}))})]})]})})]}):null})`
   display: grid;
   gap: 16px;
   color: var(--gray900);
-`,m5=B.div`
+`,g5=B.div`
   background-color: var(--blue900);
   position: absolute;
   top: 0;
@@ -4548,14 +4548,14 @@ to {
   border-radius: 0 0 0 8px;
   padding: 8px;
   z-index: 1;
-`,g5=B.li`
+`,y5=B.li`
   color: var(--gray100);
   position: relative;
   background-color: var(--blue500);
   border-radius: 8px;
   overflow: clip;
   box-shadow: var(--shadow-elevation-medium);
-`,y5=B.div`
+`,v5=B.div`
   padding: 8px 16px;
   display: grid;
   align-items: center;
@@ -4576,13 +4576,13 @@ to {
   &:hover {
     background-color: var(--orange600);
   }
-`,v5=B(({className:t,practicePlans:e,setPracticePlans:n})=>{const r=["January","February","March","April","May","June","July","August","September","October","November","December"],{addToast:i,removeToast:s}=N.useContext(ia),o=c=>new Date(Number(c)*1e3).toLocaleDateString(),a=c=>c.map(d=>({time:o(d.date.seconds),id:d.id})).reduce((d,f)=>{const[p,,T]=f.time.split("/"),E=`${r[Number(p)-1]}, ${T}`;return{...d,[E]:[...String(E)in d?d[String(E)]:[],f]}},{}),u=async c=>{await FS(on(Ke,"practice_plan",c)),n(d=>d.filter(f=>f.id!==c)),i({variant:"success",message:"Practice Plan Successfully Deleted",onClose:()=>s("Practice Plan Successfully Deleted")})};return g.jsx("ul",{className:t,children:Object.entries(a(e)).map(([c,d])=>g.jsxs(g5,{children:[g.jsx(m5,{children:c}),d.map(f=>g.jsxs(y5,{children:[f.time,g.jsx(Xo,{to:`practice_plans/${f.id}`,children:g.jsx(et,{text:"view"})}),g.jsx(_y,{$level:"caution",text:"Delete Practice Plan",onClick:()=>u(f.id)})]},f.id))]},c))})})`
+`,_5=B(({className:t,practicePlans:e,setPracticePlans:n})=>{const r=["January","February","March","April","May","June","July","August","September","October","November","December"],{addToast:i,removeToast:s}=N.useContext(ia),o=c=>new Date(Number(c)*1e3).toLocaleDateString(),a=c=>c.map(d=>({time:o(d.date.seconds),id:d.id})).reduce((d,f)=>{const[p,,T]=f.time.split("/"),E=`${r[Number(p)-1]}, ${T}`;return{...d,[E]:[...String(E)in d?d[String(E)]:[],f]}},{}),u=async c=>{await FS(on(Ke,"practice_plan",c)),n(d=>d.filter(f=>f.id!==c)),i({variant:"success",message:"Practice Plan Successfully Deleted",onClose:()=>s("Practice Plan Successfully Deleted")})};return g.jsx("ul",{className:t,children:Object.entries(a(e)).map(([c,d])=>g.jsxs(y5,{children:[g.jsx(g5,{children:c}),d.map(f=>g.jsxs(v5,{children:[f.time,g.jsx(Xo,{to:`practice_plans/${f.id}`,children:g.jsx(et,{text:"view"})}),g.jsx(_y,{$level:"caution",text:"Delete Practice Plan",onClick:()=>u(f.id)})]},f.id))]},c))})})`
   list-style: none;
   padding: 0;
   margin: 0;
   display: grid;
   gap: 8px;
-`,_5=B(({className:t,practicePlans:e,setPracticePlans:n})=>{const r=qi();return g.jsxs("section",{className:t,children:[g.jsx("h2",{children:"Practice Plans"}),g.jsx(v5,{practicePlans:e,setPracticePlans:n}),g.jsx(et,{text:"Add Practice Plan",onClick:()=>r("practice_plans/create")})]})})`
+`,w5=B(({className:t,practicePlans:e,setPracticePlans:n})=>{const r=qi();return g.jsxs("section",{className:t,children:[g.jsx("h2",{children:"Practice Plans"}),g.jsx(_5,{practicePlans:e,setPracticePlans:n}),g.jsx(et,{text:"Add Practice Plan",onClick:()=>r("practice_plans/create")})]})})`
   display: grid;
   gap: 16px;
   color: var(--gray900);
@@ -4593,12 +4593,12 @@ to {
 `,wy=B.tr``,hn=B.td`
   padding: 4px 16px;
   text-align: center;
-`,w5=B(({className:t,goal:e,teamId:n,moves:r,practicePlans:i})=>{const[s,o]=N.useState();N.useEffect(()=>{a(e.moveId,n).then(c=>o(c))},[e.moveId,n]);const a=async(c,d)=>await Sr(zs(Hn(Ke,"practice_plan"),bL(Ui("teamId","==",d),Ui("moves","array-contains",c)))).then(f=>f.docs.length),u=r.find(c=>c.id===e.moveId)||{name:"",area:"",position:""};return g.jsxs(wy,{className:t,children:[g.jsx(hn,{children:u.name}),g.jsx(hn,{children:u.area}),g.jsx(hn,{children:u.position}),g.jsx(hn,{children:String(e.startDate)}),g.jsx(hn,{children:String(e.endDate)}),g.jsxs(hn,{children:[Math.round(e.practicePlanPercentage*100),"%"]}),g.jsxs(hn,{children:[Math.round(Number(s)/i.length*100),"%"]})]})})`
+`,E5=B(({className:t,goal:e,teamId:n,moves:r,practicePlans:i})=>{const[s,o]=N.useState();N.useEffect(()=>{a(e.moveId,n).then(c=>o(c))},[e.moveId,n]);const a=async(c,d)=>await Sr(zs(Hn(Ke,"practice_plan"),bL(Ui("teamId","==",d),Ui("moves","array-contains",c)))).then(f=>f.docs.length),u=r.find(c=>c.id===e.moveId)||{name:"",area:"",position:""};return g.jsxs(wy,{className:t,children:[g.jsx(hn,{children:u.name}),g.jsx(hn,{children:u.area}),g.jsx(hn,{children:u.position}),g.jsx(hn,{children:String(e.startDate)}),g.jsx(hn,{children:String(e.endDate)}),g.jsxs(hn,{children:[Math.round(e.practicePlanPercentage*100),"%"]}),g.jsxs(hn,{children:[Math.round(Number(s)/i.length*100),"%"]})]})})`
   &:nth-of-type(odd) {
     background-color: hsla(255, 10%, 50%, 0.5);
     backdrop-filter: blur(3px);
   }
-`,E5=B.div`
+`,T5=B.div`
   min-width: 0;
   overflow: auto;
   border-radius: 8px;
@@ -4607,11 +4607,11 @@ to {
   & > ${dx} {
     min-width: 100%;
   }
-`,T5=B.thead`
+`,I5=B.thead`
   & > ${wy} {
     background-color: var(--blue900);
   }
-`,I5=B(({className:t,team:e,setTeam:n,moves:r,practicePlans:i})=>{const[s,o]=N.useState(.5),a=N.useRef(),u=()=>{a.current&&a.current.showModal()},c=()=>{a.current&&a.current.close()},d=f=>{f.preventDefault();const p=new FormData(f.currentTarget);if(!p.get("endDate")&&p.get("startDate")&&!p.get("move")){alert("Please enter all fields");return}if(Number(new Date(p.get("endDate")))-Number(new Date(p.get("startDate")))<0){alert("Start date cannot be after end date");return}const T={moveId:p.get("move"),startDate:p.get("startDate"),endDate:p.get("endDate"),practicePlanPercentage:s};Mi(on(Ke,"teams",e.id),{goals:bl(T)}),n(E=>({...E,goals:[...E.goals,T]})),c()};return g.jsxs("section",{className:t,children:[g.jsx("h2",{children:"Goals"}),g.jsx(E5,{children:g.jsxs(dx,{children:[g.jsx(T5,{children:g.jsxs(wy,{children:[g.jsx(hn,{children:"Name"}),g.jsx(hn,{children:"Area"}),g.jsx(hn,{children:"Position"}),g.jsx(hn,{children:"Start"}),g.jsx(hn,{children:"End"}),g.jsx(hn,{children:"Goal Percentage"}),g.jsx(hn,{children:"Current Percentage"})]})}),g.jsx("tbody",{children:e.goals.map(f=>g.jsx(w5,{goal:f,teamId:e.id,moves:r,practicePlans:i},JSON.stringify(f)))})]})}),g.jsx(et,{text:"Add Goal",onClick:u}),g.jsx(ps,{passedRef:a,onClose:c,children:g.jsxs("form",{onSubmit:d,children:[g.jsx("h2",{children:"Add a Goal"}),g.jsxs("label",{htmlFor:"move",children:[g.jsx("span",{children:"Move:"}),g.jsx("select",{name:"move",id:"move",children:r.map(({id:f,name:p,area:T,position:E})=>g.jsxs("option",{value:f,children:[p," - ",T," - ",E]},f))})]}),g.jsxs("label",{htmlFor:"startDate",children:[g.jsx("span",{children:"Start Date:"}),g.jsx("input",{type:"date",name:"startDate",id:"startDate"})]}),g.jsxs("label",{htmlFor:"endDate",children:[g.jsx("span",{children:"End Date:"}),g.jsx("input",{type:"date",name:"endDate",id:"endDate"})]}),g.jsxs("label",{htmlFor:"practicePlanPercentage",children:[g.jsx("span",{children:"Percentage of Practices"}),g.jsx("output",{children:Math.round(s*100)}),g.jsx("input",{type:"range",max:"1",min:"0",step:".01",value:s,onChange:f=>o(Number(f.target.value))})]}),g.jsx(et,{text:"Add Goal",type:"submit"})]})})]})})`
+`,S5=B(({className:t,team:e,setTeam:n,moves:r,practicePlans:i})=>{const[s,o]=N.useState(.5),a=N.useRef(),u=()=>{a.current&&a.current.showModal()},c=()=>{a.current&&a.current.close()},d=f=>{f.preventDefault();const p=new FormData(f.currentTarget);if(!p.get("endDate")&&p.get("startDate")&&!p.get("move")){alert("Please enter all fields");return}if(Number(new Date(p.get("endDate")))-Number(new Date(p.get("startDate")))<0){alert("Start date cannot be after end date");return}const T={moveId:p.get("move"),startDate:p.get("startDate"),endDate:p.get("endDate"),practicePlanPercentage:s};Mi(on(Ke,"teams",e.id),{goals:bl(T)}),n(E=>({...E,goals:[...E.goals,T]})),c()};return g.jsxs("section",{className:t,children:[g.jsx("h2",{children:"Goals"}),g.jsx(T5,{children:g.jsxs(dx,{children:[g.jsx(I5,{children:g.jsxs(wy,{children:[g.jsx(hn,{children:"Name"}),g.jsx(hn,{children:"Area"}),g.jsx(hn,{children:"Position"}),g.jsx(hn,{children:"Start"}),g.jsx(hn,{children:"End"}),g.jsx(hn,{children:"Goal Percentage"}),g.jsx(hn,{children:"Current Percentage"})]})}),g.jsx("tbody",{children:e.goals.map(f=>g.jsx(E5,{goal:f,teamId:e.id,moves:r,practicePlans:i},JSON.stringify(f)))})]})}),g.jsx(et,{text:"Add Goal",onClick:u}),g.jsx(ps,{passedRef:a,onClose:c,children:g.jsxs("form",{onSubmit:d,children:[g.jsx("h2",{children:"Add a Goal"}),g.jsxs("label",{htmlFor:"move",children:[g.jsx("span",{children:"Move:"}),g.jsx("select",{name:"move",id:"move",children:r.map(({id:f,name:p,area:T,position:E})=>g.jsxs("option",{value:f,children:[p," - ",T," - ",E]},f))})]}),g.jsxs("label",{htmlFor:"startDate",children:[g.jsx("span",{children:"Start Date:"}),g.jsx("input",{type:"date",name:"startDate",id:"startDate"})]}),g.jsxs("label",{htmlFor:"endDate",children:[g.jsx("span",{children:"End Date:"}),g.jsx("input",{type:"date",name:"endDate",id:"endDate"})]}),g.jsxs("label",{htmlFor:"practicePlanPercentage",children:[g.jsx("span",{children:"Percentage of Practices"}),g.jsx("output",{children:Math.round(s*100)}),g.jsx("input",{type:"range",max:"1",min:"0",step:".01",value:s,onChange:f=>o(Number(f.target.value))})]}),g.jsx(et,{text:"Add Goal",type:"submit"})]})})]})})`
   display: grid;
   grid-template-rows: min-content 1fr min-content;
   gap: 16px;
@@ -4619,7 +4619,7 @@ to {
   & > h2 {
     color: var(--gray900);
   }
-`,S5=B.div`
+`,x5=B.div`
   display: grid;
   grid-template-rows: repeat(3, 1fr);
   justify-content: center;
@@ -4629,9 +4629,9 @@ to {
     grid-template-columns: repeat(3, 1fr);
     justify-content: unset;
   }
-`,x5=B(({className:t,practicePlans:e,moves:n})=>{const r=Object.entries(e.flatMap(a=>a.moves).reduce((a,u)=>({...a,[u]:a[u]?a[u]+1:1}),{})).map(([a,u])=>({...n.find(c=>c.id===a)??{},value:u})),i=Object.entries(r.reduce((a,u)=>({...a,[u.position]:a[u.position]?a[u.position]+u.value:u.value}),{})).map(([a,u])=>({name:a,value:u})),s=Object.entries(r.reduce((a,u)=>({...a,[u.area]:a[u.area]?a[u.area]+u.value:u.value}),{})).map(([a,u])=>({name:a,value:u})),o=Object.values(s).map(({value:a})=>a).reduce((a,u)=>a+=u,0);return g.jsxs("section",{className:t,children:[g.jsx("h2",{children:"Practice Overview"}),g.jsx(S5,{children:o>0?g.jsxs(g.Fragment,{children:[g.jsxs("div",{children:[g.jsx("h3",{children:"Moves"}),g.jsx(mf,{data:r,width:500,height:500})]}),g.jsxs("div",{children:[g.jsx("h3",{children:"Positions"}),g.jsx(mf,{data:i,width:500,height:500})]}),g.jsxs("div",{children:[g.jsx("h3",{children:"Areas"}),g.jsx(mf,{data:s,width:500,height:500})]})]}):g.jsx("h3",{children:"No data to visualize, add a practice plan"})})]})})`
+`,A5=B(({className:t,practicePlans:e,moves:n})=>{const r=Object.entries(e.flatMap(a=>a.moves).reduce((a,u)=>({...a,[u]:a[u]?a[u]+1:1}),{})).map(([a,u])=>({...n.find(c=>c.id===a)??{},value:u})),i=Object.entries(r.reduce((a,u)=>({...a,[u.position]:a[u.position]?a[u.position]+u.value:u.value}),{})).map(([a,u])=>({name:a,value:u})),s=Object.entries(r.reduce((a,u)=>({...a,[u.area]:a[u.area]?a[u.area]+u.value:u.value}),{})).map(([a,u])=>({name:a,value:u})),o=Object.values(s).map(({value:a})=>a).reduce((a,u)=>a+=u,0);return g.jsxs("section",{className:t,children:[g.jsx("h2",{children:"Practice Overview"}),g.jsx(x5,{children:o>0?g.jsxs(g.Fragment,{children:[g.jsxs("div",{children:[g.jsx("h3",{children:"Moves"}),g.jsx(mf,{data:r,width:500,height:500})]}),g.jsxs("div",{children:[g.jsx("h3",{children:"Positions"}),g.jsx(mf,{data:i,width:500,height:500})]}),g.jsxs("div",{children:[g.jsx("h3",{children:"Areas"}),g.jsx(mf,{data:s,width:500,height:500})]})]}):g.jsx("h3",{children:"No data to visualize, add a practice plan"})})]})})`
   color: var(--gray900);
-`,A5=B.main`
+`,C5=B.main`
   display: grid;
   gap: 64px;
   max-width: 90%;
@@ -4639,7 +4639,7 @@ to {
   @media screen and (width > 550px) {
     max-width: 80%;
   }
-`,C5=B.div`
+`,R5=B.div`
   padding-top: 64px;
   display: grid;
   gap: 16px;
@@ -4648,7 +4648,7 @@ to {
   }
 `,Pa=B.hr`
   color: white;
-`,R5=B(({className:t})=>{var d;const[e,n]=N.useState(),[r,i]=N.useState([]),[s,o]=N.useState([]),a=N.useContext(Bs),{id:u=""}=pg(),c=qi();return N.useEffect(()=>{u&&(Xj(u).then(n),Jj(u).then(i),Zj(u).then(o))},[u]),N.useEffect(()=>{a&&e&&!e.userIds.includes(a.uid)&&c("/")},[c,e,a]),g.jsx("div",{className:t,children:e?g.jsxs(A5,{children:[g.jsxs(C5,{children:[g.jsxs("h1",{children:[e.name," (",e.state,")"]}),g.jsxs(u5,{children:[g.jsx(dc,{title:"Goals",value:((d=e.goals)==null?void 0:d.length)??0}),g.jsx(dc,{title:"Practice Plans",value:s.length}),g.jsx(dc,{title:"Moves",value:r.length})]})]}),g.jsx(Pa,{}),g.jsx(x5,{practicePlans:s,moves:r}),g.jsx(Pa,{}),g.jsx(I5,{team:e,setTeam:n,moves:r,practicePlans:s}),g.jsx(Pa,{}),g.jsx(_5,{practicePlans:s,setPracticePlans:o}),g.jsx(Pa,{}),g.jsx(n5,{team:e,teamId:u,setMoves:i,moves:r}),g.jsx(Pa,{}),g.jsx(p5,{setTeam:n,team:e,teamId:u})]}):g.jsx(py,{children:g.jsx(my,{})})})})`
+`,P5=B(({className:t})=>{var d;const[e,n]=N.useState(),[r,i]=N.useState([]),[s,o]=N.useState([]),a=N.useContext(Bs),{id:u=""}=pg(),c=qi();return N.useEffect(()=>{u&&(Jj(u).then(n),Zj(u).then(i),e5(u).then(o))},[u]),N.useEffect(()=>{a&&e&&!e.userIds.includes(a.uid)&&c("/")},[c,e,a]),g.jsx("div",{className:t,children:e?g.jsxs(C5,{children:[g.jsxs(R5,{children:[g.jsxs("h1",{children:[e.name," (",e.state,")"]}),g.jsxs(c5,{children:[g.jsx(dc,{title:"Goals",value:((d=e.goals)==null?void 0:d.length)??0}),g.jsx(dc,{title:"Practice Plans",value:s.length}),g.jsx(dc,{title:"Moves",value:r.length})]})]}),g.jsx(Pa,{}),g.jsx(A5,{practicePlans:s,moves:r}),g.jsx(Pa,{}),g.jsx(S5,{team:e,setTeam:n,moves:r,practicePlans:s}),g.jsx(Pa,{}),g.jsx(w5,{practicePlans:s,setPracticePlans:o}),g.jsx(Pa,{}),g.jsx(r5,{team:e,teamId:u,setMoves:i,moves:r}),g.jsx(Pa,{}),g.jsx(m5,{setTeam:n,team:e,teamId:u})]}):g.jsx(py,{children:g.jsx(my,{})})})})`
   min-height: 100%;
   background: var(--gray100);
   color: white;
@@ -4674,7 +4674,7 @@ to {
       gap: 4px;
     }
   }
-`,P5=B.main`
+`,k5=B.main`
   min-height: 100%;
   background: var(--gray100);
   color: white;
@@ -4684,7 +4684,7 @@ to {
   }
 
   color: var(--gray900);
-`,k5=t=>Sr(zs(Hn(Ke,"teams"),Ui("teamIds","array-contains",t))).then(e=>{e.docs.map(n=>({...n.data(),id:n.id}))});function b5(t){const e=N.useContext(Bs);return N.useEffect(()=>{e!=null&&e.uid&&k5(e.uid)},[e]),g.jsxs(P5,{children:[g.jsx("h1",{children:"Welcome to Home!"}),g.jsx(Xo,{to:"/teams",children:"Go To Teams"})]})}const D5=Pk(vp(g.jsxs(cr,{path:"/",element:g.jsx(p4,{}),children:[g.jsx(cr,{path:"/",element:g.jsx(b5,{})}),g.jsx(cr,{path:"teams/:id/practice_plans/create",element:g.jsx(ww,{})}),g.jsx(cr,{path:"teams/:id/practice_plans/:practice_plan_id",element:g.jsx($j,{})}),g.jsx(cr,{path:"/teams",element:g.jsx(Kj,{})}),g.jsx(cr,{path:"/teams/:id",element:g.jsx(R5,{})}),g.jsx(cr,{path:"teams/:id/practice_plans/:practice_plan_id/edit",element:g.jsx(ww,{})}),g.jsx(cr,{path:"/sign_in",element:g.jsx(NN,{})}),g.jsx(cr,{path:"/sign_up",element:g.jsx(a4,{})})]}))),N5=B(({className:t})=>g.jsx("div",{className:t,children:g.jsx(l4,{children:g.jsx(z4,{children:g.jsxs(nT,{children:[g.jsx(Vk,{router:D5}),g.jsx(I4,{})]})})})}))`
+`,b5=t=>Sr(zs(Hn(Ke,"teams"),Ui("teamIds","array-contains",t))).then(e=>{e.docs.map(n=>({...n.data(),id:n.id}))});function D5(t){const e=N.useContext(Bs);return N.useEffect(()=>{e!=null&&e.uid&&b5(e.uid)},[e]),g.jsxs(k5,{children:[g.jsx("h1",{children:"Welcome to Home!"}),g.jsx(Xo,{to:"/teams",children:"Go To Teams"})]})}const N5=Pk(vp(g.jsxs(cr,{path:"/",element:g.jsx(p4,{}),children:[g.jsx(cr,{path:"/",element:g.jsx(D5,{})}),g.jsx(cr,{path:"teams/:id/practice_plans/create",element:g.jsx(ww,{})}),g.jsx(cr,{path:"teams/:id/practice_plans/:practice_plan_id",element:g.jsx(zj,{})}),g.jsx(cr,{path:"/teams",element:g.jsx(Qj,{})}),g.jsx(cr,{path:"/teams/:id",element:g.jsx(P5,{})}),g.jsx(cr,{path:"teams/:id/practice_plans/:practice_plan_id/edit",element:g.jsx(ww,{})}),g.jsx(cr,{path:"/sign_in",element:g.jsx(NN,{})}),g.jsx(cr,{path:"/sign_up",element:g.jsx(a4,{})})]}))),M5=B(({className:t})=>g.jsx("div",{className:t,children:g.jsx(l4,{children:g.jsx(z4,{children:g.jsxs(nT,{children:[g.jsx(Vk,{router:N5}),g.jsx(I4,{})]})})})}))`
   height: 100%;
 
   & > ${sg} {
@@ -4709,4 +4709,4 @@ to {
       right: var(--toast-position);
     }
   }
-`,M5=VE(document.getElementById("root"));async function O5(){if(!["development","test"].includes("production"))return;const{worker:t}=await Dx(()=>import("./browser-BxBLihda.js"),[]);return t.start({serviceWorker:{url:"/technique-map/mockServiceWorker.js"}})}O5().then(()=>{M5.render(g.jsx(N.StrictMode,{children:g.jsx(N5,{})}))});
+`,O5=VE(document.getElementById("root"));async function L5(){if(!["development","test"].includes("production"))return;const{worker:t}=await Dx(()=>import("./browser-BxBLihda.js"),[]);return t.start({serviceWorker:{url:"/technique-map/mockServiceWorker.js"}})}L5().then(()=>{O5.render(g.jsx(N.StrictMode,{children:g.jsx(M5,{})}))});
