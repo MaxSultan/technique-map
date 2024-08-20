@@ -18,7 +18,22 @@ type DonutChartProps = {
   data: DataItem[];
 };
 
-const Tooltip = ({ label, count }: { label: string; count: number }) => {
+const percentage = Intl.NumberFormat('en-US', {
+  style: 'percent',
+  minimumFractionDigits: 2,
+  maximumFractionDigits: 2,
+});
+
+const Tooltip = ({
+  label,
+  count,
+  percentageOfTotal,
+}: {
+  label: string;
+  count: number;
+  percentageOfTotal: number;
+}) => {
+  const displayPercentage = percentage.format(percentageOfTotal);
   return (
     <>
       <circle
@@ -39,7 +54,7 @@ const Tooltip = ({ label, count }: { label: string; count: number }) => {
         stroke="black"
         transform="translateX(-50%)"
       >
-        {count}
+        {displayPercentage} ({count})
       </text>
     </>
   );
@@ -77,8 +92,10 @@ const calculateFillColor = (index: number) => {
 export const DoughnutChart = ({ width, height, data }: DonutChartProps) => {
   const MARGIN = 100;
   const radius = Math.min(width, height) / 2 - MARGIN;
-  const DEFAULT_TOOLTIP = { label: '', count: NaN, x: 0, y: 0 };
+  const DEFAULT_TOOLTIP = { label: '', count: NaN };
   const [tooltipInfo, setTooltipInfo] = useState(DEFAULT_TOOLTIP);
+
+  const total = data.reduce((acc, val) => (acc += val.value), 0);
 
   const handleMouseEnter =
     (item: {
@@ -94,8 +111,6 @@ export const DoughnutChart = ({ width, height, data }: DonutChartProps) => {
       setTooltipInfo({
         label: item.data.name,
         count: item.data.value,
-        x: event.clientX,
-        y: event.clientY,
       });
     };
 
@@ -127,6 +142,7 @@ export const DoughnutChart = ({ width, height, data }: DonutChartProps) => {
           <Tooltip
             label={tooltipInfo.label}
             count={tooltipInfo.count}
+            percentageOfTotal={tooltipInfo.count / total}
           />
         )}
       </g>
