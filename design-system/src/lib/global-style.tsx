@@ -73,28 +73,29 @@ export const GlobalStyle = createGlobalStyle`
     --orange900: #662c15;
     --orange950: #441d0e;
 
-  --shadow-color: hsl(240deg 4% 50%);
 
+  --shadow-color: 0deg 0% 0%;
   --shadow-elevation-low:
-    0px 0.8px 0.8px hsl(from var(--shadow-color) h s l / 0.65),
-    0px 1.3px 1.2px -1.9px hsl(from var(--shadow-color) h s l / 0.5),
-    0px 3.6px 3.4px -3.7px hsl(from var(--shadow-color) h s l / 0.36);
-
+    0px 0.7px 0.6px hsl(var(--shadow-color) / 0.17),
+    0px 1px 0.9px -2px hsl(var(--shadow-color) / 0.12),
+    0px 2.7px 2.4px -4px hsl(var(--shadow-color) / 0.08);
   --shadow-elevation-medium:
-    0px 0.8px 0.8px hsl(from var(--shadow-color) h s l / 0.68),
-    0px 2.2px 2.1px -1.2px hsl(from var(--shadow-color) h s l / 0.57),
-    0px 6.7px 6.3px -2.5px hsl(from var(--shadow-color) h s l / 0.45),
-    0px 18.2px 17.1px -3.7px hsl(from var(--shadow-color) h s l / 0.34);
-    
+    0px 0.7px 0.6px hsl(var(--shadow-color) / 0.14),
+    0px 1.2px 1.1px -1px hsl(var(--shadow-color) / 0.12),
+    0px 2.7px 2.4px -2px hsl(var(--shadow-color) / 0.1),
+    0.1px 6.3px 5.7px -3px hsl(var(--shadow-color) / 0.08),
+    0.2px 13.3px 12px -4px hsl(var(--shadow-color) / 0.06);
   --shadow-elevation-high:
-    0px 0.8px 0.8px hsl(from var(--shadow-color) h s l / 0.63),
-    0px 3.4px 3.2px -0.5px hsl(from var(--shadow-color) h s l / 0.58),
-    0px 7px 6.6px -1.1px hsl(from var(--shadow-color) h s l / 0.53),
-    0px 13.3px 12.5px -1.6px hsl(from var(--shadow-color) h s l / 0.47),
-    -0.1px 24.1px 22.6px -2.1px hsl(from var(--shadow-color) h s l / 0.42),
-    -0.1px 41.2px 38.6px -2.7px hsl(from var(--shadow-color) h s l / 0.37),
-    -0.2px 66.3px 62.2px -3.2px hsl(from var(--shadow-color) h s l / 0.32),
-    -0.2px 101.2px 94.9px -3.7px hsl(from var(--shadow-color) h s l / 0.26);
+    0px 0.7px 0.6px hsl(var(--shadow-color) / 0.13),
+    0px 1.7px 1.5px -0.4px hsl(var(--shadow-color) / 0.12),
+    0px 3.1px 2.8px -0.9px hsl(var(--shadow-color) / 0.11),
+    0.1px 5.3px 4.8px -1.3px hsl(var(--shadow-color) / 0.1),
+    0.1px 8.9px 8px -1.8px hsl(var(--shadow-color) / 0.09),
+    0.2px 14.4px 13px -2.2px hsl(var(--shadow-color) / 0.08),
+    0.3px 22.3px 20.1px -2.7px hsl(var(--shadow-color) / 0.07),
+    0.5px 33.3px 30px -3.1px hsl(var(--shadow-color) / 0.06),
+    0.6px 47.8px 43px -3.6px hsl(var(--shadow-color) / 0.05),
+    0.9px 66.3px 59.7px -4px hsl(var(--shadow-color) / 0.04);
 
   --serif-font-family: ;
   --sans-serif-font-family: 'Rubik', sans-serif;

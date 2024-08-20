@@ -677,13 +677,6 @@ const PracticePlanListItem = styled.div`
     grid-template-columns: repeat(4, 1fr);
     grid-template-rows: 1fr;
   }
-
-  & > ${Button}, & > a > ${Button} {
-    --shadow-color: hsl(236deg 22% 21%);
-    box-shadow: 0px 0.8px 0.8px hsl(from var(--shadow-color) h s l / 0.65),
-      0px 1.3px 1.2px -1.9px hsl(from var(--shadow-color) h s l / 0.5),
-      0px 3.6px 3.4px -3.7px hsl(from var(--shadow-color) h s l / 0.36);
-  }
 `;
 
 const CautionButton = styled(Button)`
