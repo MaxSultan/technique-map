@@ -1,4 +1,5 @@
 import { render } from '@testing-library/react';
+// eslint-disable-next-line @nx/enforce-module-boundaries
 import { ToastProvider } from '@technique-map/design-system';
 import { ReactElement } from 'react';
 

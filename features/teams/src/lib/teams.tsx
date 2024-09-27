@@ -5,9 +5,7 @@ import {
   collection,
   doc,
   getDocs,
-  query,
   updateDoc,
-  where,
 } from 'firebase/firestore';
 import { db } from '@technique-map/firebase';
 import {
@@ -18,7 +16,9 @@ import {
   useRef,
   useState,
 } from 'react';
+// eslint-disable-next-line @nx/enforce-module-boundaries
 import { UserContext, UserContextType } from '@technique-map/auth';
+// eslint-disable-next-line @nx/enforce-module-boundaries
 import {
   Button,
   FormModal,
@@ -28,7 +28,7 @@ import {
   ToastContextType,
 } from '@technique-map/design-system';
 import { Link } from 'react-router-dom';
-import { TeamType } from './types';
+import { TeamType } from '@technique-map/types';
 import { Tag } from './tag';
 
 export interface TeamsProps {
@@ -100,18 +100,6 @@ const getAllTeams = () =>
     }));
     return newData;
   });
-
-const getMyTeams = (userId: string) => {
-  const q = query(teamsRef, where('userIds', 'array-contains', userId));
-
-  return getDocs(q).then((snapShot) => {
-    const newData = snapShot.docs.map((doc) => ({
-      ...doc.data(),
-      id: doc.id,
-    }));
-    return newData;
-  });
-};
 
 const TeamsList = styled.ul`
   list-style: none;

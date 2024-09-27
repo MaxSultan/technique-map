@@ -11,7 +11,6 @@ import { useEffect, useState } from 'react';
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import {
   MoveType,
-  PlanType,
   findMoves,
   aggregateMovesByPosition,
 } from '@technique-map/map-items';
