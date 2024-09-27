@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 type TrashIconProps = {
-  className: string;
+  className?: string;
 };
 
 export const TrashIcon = styled(({ className = '' }: TrashIconProps) => (

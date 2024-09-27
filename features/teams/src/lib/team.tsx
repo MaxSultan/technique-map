@@ -44,7 +44,7 @@ import type {
   TeamRequestType,
   TeamType,
   TeamUserType,
-} from './types';
+} from '@technique-map/types';
 import { Tag } from './tag';
 import { PracticePlanType } from '@technique-map/practice-plans';
 

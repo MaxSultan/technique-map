@@ -21,7 +21,8 @@
       "@technique-map/home": ["features/home/src/index.ts"],
       "@technique-map/map-items": ["features/map-items/src/index.ts"],
       "@technique-map/practice-plans": ["features/practice-plans/src/index.ts"],
-      "@technique-map/teams": ["features/teams/src/index.ts"]
+      "@technique-map/teams": ["features/teams/src/index.ts"],
+      "@technique-map/types": ["types/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

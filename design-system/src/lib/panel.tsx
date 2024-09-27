@@ -7,7 +7,6 @@ import {
   useRef,
   Dispatch,
   SetStateAction,
-  ComponentType,
 } from 'react';
 import styled, { keyframes } from 'styled-components';
 import { CloseIcon } from './icons/close-icon';
@@ -79,7 +78,10 @@ const handleClick = (
   const { top, bottom, left, right } = ref.current.getBoundingClientRect();
   const clickX = e.clientX;
   const clickY = e.clientY;
-  if (clickX < left || clickX > right || clickY < top || clickY > bottom)
+  if (
+    (clickX < left || clickX > right || clickY < top || clickY > bottom) &&
+    !ref.current?.contains(e.currentTarget)
+  )
     callback();
 };
 
@@ -91,6 +93,8 @@ const PanelHeader = styled.hgroup`
   justify-content: space-between;
   align-items: center;
   height: 32px;
+  font-weight: 600;
+  font-size: 1em;
 `;
 
 type PanelProps = {
@@ -128,7 +132,7 @@ export const Panel = styled(
         }}
       >
         <PanelHeader>
-          {title}
+          <h2>{title}</h2>
           <CloseIcon onClick={onClose} />
         </PanelHeader>
         {children}
